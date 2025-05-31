@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>TimerFreak</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+
+    <div class="flex-container">
+        <div class="flex-container-internal"><h1>Create new</h1>
+
+<form action="{{ url_for('start_timer') }}" method="post" id="timerForm">
+        
+    
+        <div id="timerInputs">
+            <!-- Initial Timer Form -->
+            <div class="timer-form">
+                <label>Timer 1 Name (Optional):</label>
+                <input type="text" name="timer_name[]">
+                <label>Duration:</label>
+                <div class="timer-digits">
+                    <div class="digit-group">
+                        <button type="button" class="digit-button" onclick="incrementDigit(this, 24)">+</button>
+                        <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="0" size="2">
+                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
+                        <span>h</span>
+                    </div>
+                    <div class="digit-group">
+                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
+                        <input type="number" class="digit-input" name="minutes[]" min="0" max="59" value="0" size="2">
+                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
+                        <span>m</span>
+                    </div>
+                    <div class="digit-group">
+                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
+                        <input type="number" class="digit-input" name="seconds[]" min="0" max="59" value="0" size="2">
+                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
+                        <span>s</span>
+                    </div>
+                </div>
+                <label>Color:</label>
+                <input type="color" name="color[]" value="#4caf50">
+                <label>Alarm Sound:</label>
+                <select name="alarm_sound[]">
+                    {% for sound in alarm_sounds %}
+                        <option value="{{ sound }}">{{ sound }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" onclick="previewSound(this)">Preview</button>
+                <div class="validation-message"></div> <!-- Validation message container -->
+            </div>
+        </div>
+
+        <button type="button" onclick="addTimer()" class="btn-solid-3d">+ Add Timer +</button><br>
+        <br><br> <label>Sequence Name (Optional):</label>   <input type="text" name="sequence_name"><br><br>
+        <button type="submit" class="btn-solid-3d">Create</button>
+    </form>
+
+
+
+
+
+        </div>
+        <div class="flex-container-internal"><h1>TimerFreak</h1>
+        
+            <!-- Most Used Sequences section -->
+            <div class="most-used-sequences">
+                <h2>Most Used Sequences</h2>
+                {% if most_used_sequences %}
+                <ul>
+                    {% for seq in most_used_sequences %}
+                    <li>
+                        
+                        <a alt="used {{ seq.use_count }} times" href="{{ url_for('redirect_to_timer', sequence_id=seq.id) }}" class="view-sequence-link">
+                        {{ seq.name }} </a>({{ seq.timer_count }} timers, {{ seq.total_duration_display }} total)
+                        
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No sequences used frequently yet. Start some timers!</p>
+                {% endif %}
+            </div>
+        </div>
+    
+    
+        
+    
+    <audio id="previewAudio" src="" preload="auto"></audio>
+
+    <script>
+        // Get the base static URL once using Jinja2
+        const staticBaseUrl = "{{ url_for('static', filename='') }}";
+
+        let timerCount = 1;
+
+        function addTimer() {
+            timerCount++;
+            const timerInputs = document.getElementById("timerInputs");
+            const newTimerForm = document.createElement("div");
+            newTimerForm.className = "timer-form";
+            newTimerForm.innerHTML = `
+                <label>Timer ${timerCount} Name (Optional):</label>
+                <input type="text" name="timer_name[]">
+                <label>Duration:</label>
+                <div class="timer-digits">
+                    <div class="digit-group">
+                        <button type="button" class="digit-button" onclick="incrementDigit(this, 24)">+</button>
+                        <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="0" size="2">
+                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
+                        <span>h</span>
+                    </div>
+                    <div class="digit-group">
+                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
+                        <input type="number" class="digit-input" name="minutes[]" min="0" max="59" value="0" size="2">
+                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
+                        <span>m</span>
+                    </div>
+                    <div class="digit-group">
+                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
+                        <input type="number" class="digit-input" name="seconds[]" min="0" max="59" value="0" size="2">
+                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
+                        <span>s</span>
+                    </div>
+                </div>
+                <label>Color:</label>
+                <input type="color" name="color[]" value="#4caf50">
+                <label>Alarm Sound:</label>
+                <select name="alarm_sound[]">
+                    {% for sound in alarm_sounds %}
+                        <option value="{{ sound }}">{{ sound }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" onclick="previewSound(this)">Preview</button>
+                <div class="validation-message"></div>
+            `;
+            timerInputs.appendChild(newTimerForm);
+        }
+
+        function incrementDigit(button, max) {
+            const input = button.parentNode.querySelector('.digit-input');
+            let value = parseInt(input.value);
+            value = (value + 1) > max ? 0 : (value + 1);
+            input.value = String(value).padStart(2, '0');
+            validateTimerDuration(input.closest('.timer-form')); // Validate after change
+        }
+
+        function decrementDigit(button, min) {
+            const input = button.parentNode.querySelector('.digit-input');
+            let value = parseInt(input.value);
+            value = (value - 1) < min ? max : (value - 1); // Note: Original decrement logic had `max` here, changing to `min` for correct wrap-around
+            input.value = String(value).padStart(2, '0');
+            validateTimerDuration(input.closest('.timer-form')); // Validate after change
+        }
+
+        function previewSound(button) {
+            const select = button.parentNode.querySelector('select');
+            const soundFile = select.value;
+            const audio = document.getElementById("previewAudio");
+            audio.src = staticBaseUrl + soundFile;
+            audio.play().catch(e => console.error("Error playing preview sound:", e));
+        }
+
+        // New validation function
+        function validateTimerDuration(timerFormElement) {
+            const hoursInput = timerFormElement.querySelector('input[name="hours[]"]');
+            const minutesInput = timerFormElement.querySelector('input[name="minutes[]"]');
+            const secondsInput = timerFormElement.querySelector('input[name="seconds[]"]');
+            const validationMessageDiv = timerFormElement.querySelector('.validation-message');
+
+            const hours = parseInt(hoursInput.value || 0);
+            const minutes = parseInt(minutesInput.value || 0);
+            const seconds = parseInt(secondsInput.value || 0);
+
+            const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
+            if (totalSeconds === 0) {
+                validationMessageDiv.textContent = "Duration must be greater than 0.";
+                validationMessageDiv.style.display = 'block';
+                return false;
+            } else {
+                validationMessageDiv.textContent = "";
+                validationMessageDiv.style.display = 'none';
+                return true;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('timerForm').addEventListener('submit', function(event) {
+            let allValid = true;
+            const timerForms = this.querySelectorAll('.timer-form');
+            timerForms.forEach(form => {
+                // If any timer is invalid, `validateTimerDuration` will return false and display a message.
+                // We use `&&=` to accumulate validity.
+                if (!validateTimerDuration(form)) {
+                    allValid = false;
+                }
+            });
+
+            if (!allValid) {
+                event.preventDefault(); // Stop form submission if validation fails
+                alert("Please correct the invalid timer durations."); // Optional: global alert
+            }
+            // If allValid is true, the form will submit normally
+        });
+
+        // Initial validation call for existing timers on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const timerForms = document.querySelectorAll('.timer-form');
+            timerForms.forEach(form => {
+                validateTimerDuration(form); // Run validation on load to display initial messages if any
+            });
+        });
+    </script>
+</body>
+
+</html>

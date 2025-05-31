@@ -1,0 +1,13 @@
+{
+  "name": "TimerFreak",
+  "short_name": "TimerFreak",
+  "start_url": "/timerfreak/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [{
+    "src": "/timerfreak/static/icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}

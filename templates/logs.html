@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timer Logs - {{ sequence_id }}</title>
+</head>
+<body>
+    <h1>Timer Logs for Sequence: {{ sequence_id }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Timer ID</th>
+                <th>Event Type</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.id }}</td>
+                <td>{{ log.timer_id or 'Sequence' }}</td>
+                <td>{{ log.event_type }}</td>
+                <td>{{ log.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">Back to Timer</a>
+</body>
+</html>
