@@ -12,62 +12,77 @@
 <body>
 
     <div class="flex-container">
-        <div class="flex-container-internal"><h1>Create new</h1>
+        <div class="flex-container-internal">
+            <h1>Create new</h1>
 
-<form action="{{ url_for('start_timer') }}" method="post" id="timerForm">
-        
-    
-        <div id="timerInputs">
-            <!-- Initial Timer Form -->
-            <div class="timer-form">
-                <label>Timer 1 Name (Optional):</label>
-                <input type="text" name="timer_name[]">
-                <label>Duration:</label>
-                <div class="timer-digits">
-                    <div class="digit-group">
-                        <button type="button" class="digit-button" onclick="incrementDigit(this, 24)">+</button>
-                        <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="0" size="2">
-                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
-                        <span>h</span>
-                    </div>
-                    <div class="digit-group">
-                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
-                        <input type="number" class="digit-input" name="minutes[]" min="0" max="59" value="0" size="2">
-                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
-                        <span>m</span>
-                    </div>
-                    <div class="digit-group">
-                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
-                        <input type="number" class="digit-input" name="seconds[]" min="0" max="59" value="0" size="2">
-                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
-                        <span>s</span>
+            <form action="{{ url_for('start_timer') }}" method="post" id="timerForm">
+                <div id="timerInputs">
+                    <!-- Initial Timer Form - NO new-timer-form class here. Animation only on addTimer. -->
+                    <div class="timer-form">
+                        <label>Timer 1 Name (Optional):</label>
+                        <input type="text" name="timer_name[]">
+                        <label>Duration:</label>
+                        <div class="timer-digits">
+                            <!-- Hours Group -->
+                            <div class="digit-group">
+                                <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
+                                <div class="input-label-row">
+                                    <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00"
+                                        size="2">
+                                    <span>h</span>
+                                </div>
+                                <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
+                            </div>
+                            <!-- Minutes Group -->
+                            <div class="digit-group">
+                                <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
+                                <div class="input-label-row">
+                                    <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
+                                        value="00" size="2">
+                                    <span>m</span>
+                                </div>
+                                <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
+                            </div>
+                            <!-- Seconds Group -->
+                            <div class="digit-group">
+                                <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
+                                <div class="input-label-row">
+                                    <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
+                                        value="00" size="2">
+                                    <span>s</span>
+                                </div>
+                                <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
+                            </div>
+                        </div>
+                        <a href="#" class="plain-link" onclick="toggleTimerAdvanced(event)">Show Advanced Settings</a>
+                        <div class="timer-advanced-settings" style="display:none;"> <!-- Initially hidden -->
+                            <label>Color:</label>
+                            <input type="color" name="color[]" value="#4caf50">
+                            <label>Alarm Sound:</label>
+                            <select name="alarm_sound[]">
+                                {% for sound in alarm_sounds %}
+                                <option value="{{ sound }}">{{ sound }}</option>
+                                {% endfor %}
+                            </select>
+                            <a href="#" class="btn-solid-3d btn-small" onclick="previewSound(event)">Preview</a>
+                        </div>
+                        <!-- Initially hidden, shown if more than one timer exists -->
+                        <a href="#" class="btn-solid-3d btn-small delete-timer-btn" style="display:none;"
+                            onclick="deleteTimer(event)">Delete</a>
+                        <div class="validation-message" style="display:none;"></div>
+                        <!-- Validation message container -->
                     </div>
                 </div>
-                <label>Color:</label>
-                <input type="color" name="color[]" value="#4caf50">
-                <label>Alarm Sound:</label>
-                <select name="alarm_sound[]">
-                    {% for sound in alarm_sounds %}
-                        <option value="{{ sound }}">{{ sound }}</option>
-                    {% endfor %}
-                </select>
-                <button type="button" onclick="previewSound(this)">Preview</button>
-                <div class="validation-message"></div> <!-- Validation message container -->
-            </div>
+
+                <a href="#" class="btn-solid-3d" onclick="addTimer(event)">+ Add Timer +</a><br>
+                <br><br> <label>Sequence Name (Optional):</label> <input type="text" name="sequence_name"><br><br>
+                <a href="#" class="btn-solid-3d" onclick="submitForm(event)">Create</a>
+            </form>
         </div>
 
-        <button type="button" onclick="addTimer()" class="btn-solid-3d">+ Add Timer +</button><br>
-        <br><br> <label>Sequence Name (Optional):</label>   <input type="text" name="sequence_name"><br><br>
-        <button type="submit" class="btn-solid-3d">Create</button>
-    </form>
+        <div class="flex-container-internal">
+            <h1>TimerFreak</h1>
 
-
-
-
-
-        </div>
-        <div class="flex-container-internal"><h1>TimerFreak</h1>
-        
             <!-- Most Used Sequences section -->
             <div class="most-used-sequences">
                 <h2>Most Used Sequences</h2>
@@ -75,10 +90,9 @@
                 <ul>
                     {% for seq in most_used_sequences %}
                     <li>
-                        
-                        <a alt="used {{ seq.use_count }} times" href="{{ url_for('redirect_to_timer', sequence_id=seq.id) }}" class="view-sequence-link">
-                        {{ seq.name }} </a>({{ seq.timer_count }} timers, {{ seq.total_duration_display }} total)
-                        
+                        <a alt="used {{ seq.use_count }} times"
+                            href="{{ url_for('redirect_to_timer', sequence_id=seq.id) }}" class="view-sequence-link">
+                            {{ seq.name }} </a>({{ seq.timer_count }} timers, {{ seq.total_duration_display }} total)
                     </li>
                     {% endfor %}
                 </ul>
@@ -87,136 +101,250 @@
                 {% endif %}
             </div>
         </div>
-    
-    
-        
-    
-    <audio id="previewAudio" src="" preload="auto"></audio>
 
-    <script>
-        // Get the base static URL once using Jinja2
-        const staticBaseUrl = "{{ url_for('static', filename='') }}";
+        <audio id="previewAudio" src="" preload="auto"></audio>
 
-        let timerCount = 1;
+        <script>
+            // Get the base static URL once using Jinja2
+            const staticBaseUrl = "{{ url_for('static', filename='') }}";
 
-        function addTimer() {
-            timerCount++;
-            const timerInputs = document.getElementById("timerInputs");
-            const newTimerForm = document.createElement("div");
-            newTimerForm.className = "timer-form";
-            newTimerForm.innerHTML = `
+            let timerCount = 1; // Tracks how many timer forms are currently on the page
+
+            // --- Helper for link buttons ---
+            function submitForm(event) {
+                event.preventDefault(); // Prevent default link behavior
+                // We dispatch the submit event so the form's native validation/logic still runs
+                const form = document.getElementById('timerForm');
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+            // --- End of helper ---
+
+            function toggleTimerAdvanced(event) {
+                event.preventDefault();
+                const timerForm = event.target.closest('.timer-form');
+                const advancedSettingsDiv = timerForm.querySelector('.timer-advanced-settings');
+                const link = event.target;
+
+                // Simple display toggle for the advanced settings div
+                if (advancedSettingsDiv.style.display === 'none' || advancedSettingsDiv.style.display === '') {
+                    advancedSettingsDiv.style.display = 'block';
+                    link.textContent = "Hide Advanced Settings";
+                } else {
+                    advancedSettingsDiv.style.display = 'none';
+                    link.textContent = "Show Advanced Settings";
+                }
+            }
+
+
+            function addTimer(event) {
+                event.preventDefault(); // Prevent default link behavior
+
+                const timerForms = document.querySelectorAll('.timer-form');
+                // Check if the last timer form is valid before adding a new one
+                if (timerForms.length > 0 && !validateTimerDuration(timerForms[timerForms.length - 1], true)) {
+                    // If the last timer is invalid, show a message and prevent adding a new one
+                    alert("Please correct the duration of the current timer before adding a new one.");
+                    return;
+                }
+
+                timerCount++;
+                const timerInputs = document.getElementById("timerInputs");
+                const newTimerForm = document.createElement("div");
+                newTimerForm.className = "timer-form new-timer-form"; // Add class for animation
+                newTimerForm.innerHTML = `
                 <label>Timer ${timerCount} Name (Optional):</label>
                 <input type="text" name="timer_name[]">
                 <label>Duration:</label>
                 <div class="timer-digits">
                     <div class="digit-group">
-                        <button type="button" class="digit-button" onclick="incrementDigit(this, 24)">+</button>
-                        <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="0" size="2">
-                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
-                        <span>h</span>
+                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
+                        <div class="input-label-row">
+                            <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00" size="2">
+                            <span>h</span>
+                        </div>
+                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
                     </div>
                     <div class="digit-group">
-                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
-                        <input type="number" class="digit-input" name="minutes[]" min="0" max="59" value="0" size="2">
-                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
-                        <span>m</span>
+                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
+                        <div class="input-label-row">
+                            <input type="number" class="digit-input" name="minutes[]" min="0" max="59" value="00" size="2">
+                            <span>m</span>
+                        </div>
+                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
                     </div>
                     <div class="digit-group">
-                        <button type="button" class="digit-button" onclick="incrementDigit(this, 59)">+</button>
-                        <input type="number" class="digit-input" name="seconds[]" min="0" max="59" value="0" size="2">
-                        <button type="button" class="digit-button" onclick="decrementDigit(this, 0)">-</button>
-                        <span>s</span>
+                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
+                        <div class="input-label-row">
+                            <input type="number" class="digit-input" name="seconds[]" min="0" max="59" value="00" size="2">
+                            <span>s</span>
+                        </div>
+                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
                     </div>
                 </div>
-                <label>Color:</label>
-                <input type="color" name="color[]" value="#4caf50">
-                <label>Alarm Sound:</label>
-                <select name="alarm_sound[]">
-                    {% for sound in alarm_sounds %}
-                        <option value="{{ sound }}">{{ sound }}</option>
-                    {% endfor %}
-                </select>
-                <button type="button" onclick="previewSound(this)">Preview</button>
-                <div class="validation-message"></div>
+                <a href="#" class="plain-link" onclick="toggleTimerAdvanced(event)">Show Advanced Settings</a>
+                <div class="timer-advanced-settings" style="display:none;">
+                    <label>Color:</label>
+                    <input type="color" name="color[]" value="#4caf50">
+                    <label>Alarm Sound:</label>
+                    <select name="alarm_sound[]">
+                        {% for sound in alarm_sounds %}
+                            <option value="{{ sound }}">{{ sound }}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="#" class="btn-solid-3d btn-small" onclick="previewSound(event)">Preview</a>
+                </div>
+                <a href="#" class="btn-solid-3d btn-small delete-timer-btn" onclick="deleteTimer(event)">Delete</a>
+                <div class="validation-message" style="display:none;"></div>
             `;
-            timerInputs.appendChild(newTimerForm);
-        }
+                timerInputs.appendChild(newTimerForm);
 
-        function incrementDigit(button, max) {
-            const input = button.parentNode.querySelector('.digit-input');
-            let value = parseInt(input.value);
-            value = (value + 1) > max ? 0 : (value + 1);
-            input.value = String(value).padStart(2, '0');
-            validateTimerDuration(input.closest('.timer-form')); // Validate after change
-        }
+                // Trigger animation by removing class after a short delay
+                setTimeout(() => {
+                    newTimerForm.classList.remove('new-timer-form');
+                }, 10);
 
-        function decrementDigit(button, min) {
-            const input = button.parentNode.querySelector('.digit-input');
-            let value = parseInt(input.value);
-            value = (value - 1) < min ? max : (value - 1); // Note: Original decrement logic had `max` here, changing to `min` for correct wrap-around
-            input.value = String(value).padStart(2, '0');
-            validateTimerDuration(input.closest('.timer-form')); // Validate after change
-        }
+                // Show delete button for all timers if more than one exists
+                document.querySelectorAll('.delete-timer-btn').forEach(btn => {
+                    btn.style.display = 'inline-block';
+                });
 
-        function previewSound(button) {
-            const select = button.parentNode.querySelector('select');
-            const soundFile = select.value;
-            const audio = document.getElementById("previewAudio");
-            audio.src = staticBaseUrl + soundFile;
-            audio.play().catch(e => console.error("Error playing preview sound:", e));
-        }
-
-        // New validation function
-        function validateTimerDuration(timerFormElement) {
-            const hoursInput = timerFormElement.querySelector('input[name="hours[]"]');
-            const minutesInput = timerFormElement.querySelector('input[name="minutes[]"]');
-            const secondsInput = timerFormElement.querySelector('input[name="seconds[]"]');
-            const validationMessageDiv = timerFormElement.querySelector('.validation-message');
-
-            const hours = parseInt(hoursInput.value || 0);
-            const minutes = parseInt(minutesInput.value || 0);
-            const seconds = parseInt(secondsInput.value || 0);
-
-            const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-
-            if (totalSeconds === 0) {
-                validationMessageDiv.textContent = "Duration must be greater than 0.";
-                validationMessageDiv.style.display = 'block';
-                return false;
-            } else {
-                validationMessageDiv.textContent = "";
-                validationMessageDiv.style.display = 'none';
-                return true;
+                // Validate the newly added timer (which defaults to 00)
+                validateTimerDuration(newTimerForm, false);
             }
-        }
 
-        // Handle form submission
-        document.getElementById('timerForm').addEventListener('submit', function(event) {
-            let allValid = true;
-            const timerForms = this.querySelectorAll('.timer-form');
-            timerForms.forEach(form => {
-                // If any timer is invalid, `validateTimerDuration` will return false and display a message.
-                // We use `&&=` to accumulate validity.
-                if (!validateTimerDuration(form)) {
-                    allValid = false;
+            function deleteTimer(event) {
+                event.preventDefault(); // Prevent default link behavior
+                const timerFormToRemove = event.target.closest('.timer-form');
+                if (timerFormToRemove) {
+                    timerFormToRemove.remove();
+                    timerCount--; // Decrement global count
+                    // Re-index timer labels and update delete button visibility
+                    const remainingTimerForms = document.querySelectorAll('.timer-form');
+                    remainingTimerForms.forEach((form, index) => {
+                        form.querySelector('label').textContent = `Timer ${index + 1} Name (Optional):`;
+                    });
+                    // Hide delete button if only one timer remains (after re-indexing)
+                    if (remainingTimerForms.length === 1) {
+                        const singleTimerDeleteBtn = remainingTimerForms[0].querySelector('.delete-timer-btn');
+                        if (singleTimerDeleteBtn) {
+                            singleTimerDeleteBtn.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            function incrementDigit(event, type) {
+                event.preventDefault();
+                const timerForm = event.target.closest('.timer-form');
+                const input = timerForm.querySelector(`input[name="${type}[]"]`);
+                let value = parseInt(input.value);
+                if (isNaN(value)) value = 0;
+
+                let max = 0;
+                if (type === 'hours') max = 24;
+                else if (type === 'minutes' || type === 'seconds') max = 59;
+
+                value = (value + 1) > max ? 0 : (value + 1);
+                input.value = String(value).padStart(2, '0');
+                validateTimerDuration(timerForm, true);
+            }
+
+            function decrementDigit(event, type) {
+                event.preventDefault();
+                const timerForm = event.target.closest('.timer-form');
+                const input = timerForm.querySelector(`input[name="${type}[]"]`);
+                let value = parseInt(input.value);
+                if (isNaN(value)) value = 0;
+
+                let min = 0;
+                let max = 0;
+                if (type === 'hours') max = 24;
+                else if (type === 'minutes' || type === 'seconds') max = 59;
+
+                value = (value - 1) < min ? max : (value - 1);
+                input.value = String(value).padStart(2, '0');
+                validateTimerDuration(timerForm, true);
+            }
+
+
+            function previewSound(event) {
+                event.preventDefault();
+                const select = event.target.parentNode.querySelector('select');
+                const soundFile = select.value;
+                const audio = document.getElementById("previewAudio");
+                audio.src = staticBaseUrl + soundFile;
+                audio.pause();
+                audio.currentTime = 0;
+                audio.play().catch(e => console.error("Error playing preview sound:", e));
+            }
+
+            function validateTimerDuration(timerFormElement, showError) {
+                const hoursInput = timerFormElement.querySelector('input[name="hours[]"]');
+                const minutesInput = timerFormElement.querySelector('input[name="minutes[]"]');
+                const secondsInput = timerFormElement.querySelector('input[name="seconds[]"]');
+                const validationMessageDiv = timerFormElement.querySelector('.validation-message');
+
+                const hours = parseInt(hoursInput.value || 0);
+                const minutes = parseInt(minutesInput.value || 0);
+                const seconds = parseInt(secondsInput.value || 0);
+
+                const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
+                if (totalSeconds === 0) {
+                    if (showError) {
+                        validationMessageDiv.textContent = "Duration must be greater than 0.";
+                        validationMessageDiv.style.display = 'block';
+                    } else {
+                        validationMessageDiv.textContent = "";
+                        validationMessageDiv.style.display = 'none';
+                    }
+                    return false;
+                } else {
+                    validationMessageDiv.textContent = "";
+                    validationMessageDiv.style.display = 'none';
+                    return true;
+                }
+            }
+
+            document.getElementById('timerForm').addEventListener('submit', function (event) {
+                let allValid = true;
+                const timerForms = this.querySelectorAll('.timer-form');
+                if (timerForms.length === 0) {
+                    alert("Please add at least one timer.");
+                    event.preventDefault();
+                    return;
+                }
+
+                timerForms.forEach(form => {
+                    if (!validateTimerDuration(form, true)) {
+                        allValid = false;
+                    }
+                });
+
+                if (!allValid) {
+                    event.preventDefault();
+                    alert("Please correct the invalid timer durations.");
                 }
             });
 
-            if (!allValid) {
-                event.preventDefault(); // Stop form submission if validation fails
-                alert("Please correct the invalid timer durations."); // Optional: global alert
-            }
-            // If allValid is true, the form will submit normally
-        });
+            document.addEventListener('DOMContentLoaded', function () {
+                const timerForms = document.querySelectorAll('.timer-form');
+                timerForms.forEach((form, index) => {
+                    validateTimerDuration(form, false);
 
-        // Initial validation call for existing timers on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const timerForms = document.querySelectorAll('.timer-form');
-            timerForms.forEach(form => {
-                validateTimerDuration(form); // Run validation on load to display initial messages if any
+                    const deleteBtn = form.querySelector('.delete-timer-btn');
+                    if (deleteBtn) {
+                        deleteBtn.style.display = timerForms.length <= 1 ? 'none' : 'inline-block';
+                    }
+                });
+                timerCount = timerForms.length;
+
+                // NO animation on load for the first timer - remove the 'new-timer-form' class if present
+                if (timerForms.length > 0) {
+                    timerForms[0].classList.remove('new-timer-form');
+                }
             });
-        });
-    </script>
+        </script>
 </body>
 
 </html>
