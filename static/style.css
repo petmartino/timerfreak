@@ -4,12 +4,24 @@ body {
     font-family: 'Courier New', Courier, monospace;
 }
 
-/* Adjust body padding to account for fixed global bar on timer.html only */
-/* This is now removed from style.css and moved into the <style> block of timer.html */
-
-.most-used-sequences ul {
-    margin: 0; padding: 0;
+/* General Layout Containers */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: stretch;
 }
+
+.flex-container-internal {
+    background-color: inherit;
+    /* Inherit from body or parent for theme consistency */
+}
+
+/* Most Used Sequences Section */
+.most-used-sequences ul {
+    margin: 0;
+    padding: 0;
+}
+
 .most-used-sequences ul li {
     display: block;
     list-style-type: none;
@@ -18,11 +30,28 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.most-used-sequences .view-sequence-link {
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
+}
+
+.most-used-sequences .view-sequence-link:hover {
+    text-decoration: underline;
+}
+
+/* Timer Form & Digits */
 .timer-form {
     overflow: hidden;
     /* For animation */
     transition: all 0.3s ease-out;
     /* For animation */
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    /* Default border */
+    border-radius: 5px;
 }
 
 /* Animation for new timers (only applies when `addTimer` is pressed) */
@@ -37,41 +66,37 @@ body {
     /* Hide border during animation */
 }
 
-.timer-form.new-timer-form.show {
-    max-height: 500px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    opacity: 1;
-    border: 1px solid #ccc;
+/* Animation for deleting timers */
+.timer-form.deleting {
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    opacity: 0 !important;
+    border: none !important;
 }
 
-
 .timer-form label {
-    /* display: block;
-    margin-bottom: 0.25rem;*/
+    font-size: 0.9rem;
+    /* Smaller font for labels */
 }
 
 .timer-digits {
     font-family: monospace;
     font-size: 1.5em;
     display: flex;
-    /* Use flexbox for horizontal layout of digit groups */
     justify-content: left;
-    /* Center the groups */
     margin: 0em;
 }
 
 /* Updated .digit-group for vertical stacking of buttons around input */
 .digit-group {
     display: flex;
-    /* Use flexbox for vertical stacking */
     flex-direction: column;
-    /* Stack children vertically */
     align-items: left;
-    /* Center horizontally within the group */
     text-align: left;
     margin: 0 0em;
-    /* Spacing between H, M, S groups */
 }
 
 /* New: container for input and label to keep them horizontal */
@@ -79,26 +104,19 @@ body {
     display: flex;
     align-items: center;
     margin: 0em 0;
-    /* Space above/below for buttons */
 }
 
-/* Style for digit-button (now above/below input) */
 .digit-button {
     width: 1.2em;
-    /* Keep it compact */
     height: 1em;
-    /* Smaller height for compact stacking */
     line-height: .8em;
-    /* Center text vertically */
     font-size: 1.5em;
     padding: 0;
     margin: 0;
-    /* Reset margins */
     border: none;
     background-color: #f0f0f0;
     cursor: pointer;
     display: block;
-    /* Still display as block for stacking */
     text-align: center;
     text-decoration: none;
     color: inherit;
@@ -108,7 +126,6 @@ body {
 .digit-button:active {
     background-color: #ddd;
 }
-
 
 .digit-input {
     width: 2em;
@@ -120,7 +137,6 @@ body {
     background-color: transparent;
     padding: 0;
     margin: 0;
-  
 }
 
 /* Hide arrows from number inputs */
@@ -143,33 +159,19 @@ input[type=number] {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     padding: 5px;
-}
-
-
-.flex-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: stretch;
-}
-
-.flex-container-internal {
-    background-color: white;
-
-
+    border-radius: 3px;
 }
 
 /* General button-like link styling */
 .btn-solid-3d {
     border: 1px solid #0f988e;
     font-family: 'Courier New', Courier, monospace;
-    /* Monospaced font for padding consistency */
     letter-spacing: 1px;
     padding: 0 1em;
     text-align: center;
     display: inline-block;
     height: 30px;
     line-height: 30px;
-    /* Vertically center text */
     font-size: 14px;
     text-transform: uppercase;
     font-weight: bold;
@@ -186,7 +188,6 @@ input[type=number] {
     position: relative;
     box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #0f988e, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
     background: #15ccbe;
-    /* Default color is now assigned to .btn-default */
     color: white;
     text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
     transition: 25ms all;
@@ -204,7 +205,7 @@ input[type=number] {
     box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #0f988e, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
 }
 
-/* Styles for disabled links (using data-disabled attribute) - LIGHT THEME DEFAULT */
+/* Default disabled button style (light theme) */
 .btn-solid-3d[data-disabled="true"],
 .btn-solid-3d.disabled-link {
     cursor: default;
@@ -228,7 +229,7 @@ input[type=number] {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 1), inset 0 1px 20px rgba(0, 0, 0, 0), 0 2px 0 #bbb, 0 0 0 1px white, 0 2px 0 1px white, 0 10px 20px rgba(0, 0, 0, 0);
 }
 
-/* Smaller buttons for Preview/Delete */
+/* Smaller buttons for Preview/Delete/Jump to */
 .btn-solid-3d.btn-small {
     height: 25px;
     line-height: 25px;
@@ -269,23 +270,49 @@ input[type="color"]::-moz-color-swatch {
     border-radius: 3px;
 }
 
+/* Trash button specific styling */
+.delete-timer-btn {
+    color: rgb(231, 95, 95);
+    font-weight: bold;
+    background: transparent;
+    /* No background for dumpster icon */
+    text-decoration: none;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    /* Make emoji larger */
+    float: right;
+    /* Float to the right */
+    opacity: 0;
+    /* Initially hidden */
+    transition: opacity 0.3s ease;
+    /* Fade in/out */
+    padding: 0;
+    line-height: 1;
+    /* Adjust line height for emoji */
+}
 
-.delete-timer-btn { color: rgb(231, 95, 95); 
-    font-weight: bold; background: rgb(255, 249, 249); 
-    text-decoration: none; margin: 0; 
-    
-    }
+.timer-form:hover .delete-timer-btn {
+    opacity: 1;
+    /* Show on hover of the timer form */
+}
 
 
+/* Timer Bar Components */
 .bar-container {
     position: relative;
     background: #ddd;
     margin-bottom: 0.5rem;
     width: 100%;
     min-height: 100px;
+    /* Default height */
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 5px;
+    overflow: hidden;
+    /* Hide overflowing bar during transition */
 }
 
 .bar {
@@ -345,6 +372,7 @@ input[type="color"]::-moz-color-swatch {
     left: 0;
     width: 100%;
     height: 10px;
+    /* Default height */
     z-index: 1000;
 }
 
@@ -355,35 +383,15 @@ input[type="color"]::-moz-color-swatch {
     transition: width 0.05s linear;
 }
 
-
-#debug {
-    overflow-y: hidden;
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-    white-space: pre-wrap;
-    line-height: 1.1;
-    border: none;
-    /* No border */
-    padding: 0;
-    /* No padding */
-    background-color: transparent;
-    /* No background */
-}
+/* Control section styles */
 #controls {
     padding: 1em .5em;
-
 }
-
 
 #controls a,
 #controls input[type="number"] {
     margin: 0.25rem;
     margin-left: 0;
-}
-
-label {
-    font-size: 0.9rem;
 }
 
 .timer-info {
@@ -402,13 +410,16 @@ label {
 }
 
 
-/* Specific styles for loop count input buttons - Left/Right */
+/* Specific styles for loop count input buttons - Horizontal Layout */
 #loopCountGroup {
     display: inline-flex;
+    /* Use inline-flex to keep it on one line */
     align-items: center;
     border: 1px solid #ccc;
     border-radius: 3px;
     padding: 2px;
+    vertical-align: middle;
+    /* Align with label text */
 }
 
 #loopCountGroup .digit-button {
@@ -420,6 +431,10 @@ label {
     padding: 0;
     flex-shrink: 0;
     flex-grow: 0;
+    /* Override digit-group column behavior */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #loopCountGroup input {
@@ -429,7 +444,9 @@ label {
     border: none;
     text-align: center;
     width: 60px;
+    background-color: transparent;
 }
+
 
 /* --- Button Color Classes --- */
 
@@ -469,16 +486,18 @@ label {
     box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #d35400, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
 }
 
-/* Red */
+/* Red (Truer Red) */
 .btn-red {
-    border-color: #c0392b;
-    background: #e74c3c;
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #c0392b, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    border-color: #A00000;
+    /* Darker red border */
+    background: #E00000;
+    /* Brighter red background */
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #A00000, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
     text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
 }
 
 .btn-red:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #c0392b, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #A00000, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
 }
 
 /* Blue */
@@ -505,25 +524,40 @@ label {
     box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #7f8c8d, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
 }
 
-/* New section for advanced settings within timer form (index.html) */
-.timer-advanced-settings table {
-    border-top: 0px dashed #ccc; width: 100%;
-}
-
-
-.timer-advanced-settings table th,
-table td {
-    font-size: 1rem;
-    font-weight: normal;
-    text-align: left;
-    padding: 0;
-    margin: 0;
-    vertical-align: top;
-    text-align: left;
-}
-
-
-#text-bottom
-{
+/* Footer style */
+#text-bottom {
     padding: .5rem;
+    font-size: 0.9rem;
+}
+
+#text-bottom hr {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    border: 0;
+    border-top: 1px solid #eee;
+    /* Light gray line for light theme */
+}
+
+#text-bottom a {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+/* Styles for the advanced controls section on timer.html */
+#advancedControls {
+    padding: 0 .5rem;
+    border: 0px solid #ccc;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.00);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.03s ease-out, opacity 0.3s ease-out, padding 0.03s ease-out;
+}
+
+#advancedControls.show {
+    max-height: 500px;
+    /* Adjust as needed */
+    opacity: 1;
+    padding-bottom: .5rem;
 }

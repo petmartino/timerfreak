@@ -7,7 +7,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <style>
-        body {padding: .5rem;}
+        body {
+            padding: .5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+            background-color: #f9f9f9;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 
@@ -42,6 +68,7 @@
         </tbody>
     </table><br>
     <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">Back </a>
+    {% include 'footer.html' %}
 </body>
 
 </html>

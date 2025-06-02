@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Timer Freak</title>
+    <title>{{ sequence_name if sequence_name else sequence_id }} - TimerFreak</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 
@@ -16,7 +16,12 @@
             /* Account for fixed global bar - Specific to timer.html */
         }
 
-        h1 { font-family: monospace; margin: 0; padding-left: .5rem; font-size: 2rem;}
+        h1 {
+            font-family: monospace;
+            margin: 0;
+            padding-left: .5rem;
+            font-size: 2rem;
+        }
 
         .bar-container {
             background-color: #ddd;
@@ -36,27 +41,6 @@
         .global-bar {
             background-color: yellow;
         }
-
-        /* Styles for the advanced controls section */
-        #advancedControls {
-            padding: 0 .5rem;
-            border: 0px solid #ccc;
-            border-radius: 5px;
-            background-color: rgba(0, 0, 0, 0.00);
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: max-height 0.03s ease-out, opacity 0.3s ease-out, padding 0.03s ease-out;
-        }
-
-        #advancedControls.show {
-            max-height: 500px;
-            opacity: 1;
-            padding-bottom: .5rem;
-        }
-
-        /* Specific styles for loop count input buttons - Left/Right */
-        
 
         /* Custom overlay styling */
         .overlay {
@@ -82,10 +66,6 @@
             margin: 0;
             padding: 0;
         }
-
-        .timer-info {
-            display: flex;
-        }
     </style>
 </head>
 
@@ -100,13 +80,12 @@
     {% endif %}
 
     <div id="controls">
-        <!-- Reordered buttons and added color classes -->
-        <a href="#" class="btn-solid-3d btn-darkgreen" onclick="toggleStart(event)" id="startBtn">⏵ START  </a>
+        <a href="#" class="btn-solid-3d btn-darkgreen" onclick="toggleStart(event)" id="startBtn">⏵ START </a>
         <a href="#" class="btn-solid-3d btn-orange" onclick="togglePause(event)" id="pauseBtn"
-            data-disabled="true">PAUSE  </a>
+            data-disabled="true">PAUSE </a>
         <a href="#" class="btn-solid-3d btn-gray" onclick="toggleAdvanced(event)" id="advancedBtn">ADVANCED</a>
         <a href="#" class="btn-solid-3d btn-gray" onclick="toggleTheme(event)" id="theme-toggle"
-            style="float: right;">DARK MODE</a>
+            style="float: right;">💡</a>
     </div>
 
     <!-- Advanced Controls Section -->
@@ -114,10 +93,10 @@
         <div>
             <label><input type="checkbox" id="loopToggle" onchange="updateLoopSettings()"> Loop Sequence</label>
             <label>Loops:
-                <div class="digit-group" id="loopCountGroup">
+                <div id="loopCountGroup">
                     <a href="#" class="digit-button" onclick="decrementLoopCount(event)">-</a>
-                    <input type="number" id="loopCount" min="1" placeholder="∞" value=""
-                       size="2" onchange="updateLoopSettings()">
+                    <input type="number" id="loopCount" min="1" placeholder="∞" value="" size="2"
+                        onchange="updateLoopSettings()">
                     <a href="#" class="digit-button" onclick="incrementLoopCount(event)">+</a>
                 </div>
             </label>
@@ -132,35 +111,41 @@
     </div>
     <div id="bars"></div>
     <div id="text-bottom">
-
-        <!-- Removed the redundant bar-container div here -->
-
-        <!-- Link to current sequence (static link) -->
         <p>
-            The permanent url for this timer is:<br>
+            The permanent URL for this timer is:<br>
             <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}"
-                style="color: #007bff; text-decoration: underline;">{{ base_url }}{{ url_for('redirect_to_timer', sequence_id=sequence_id) }}</a>
+                style="color: #007bff; text-decoration: underline;">{{ base_url }}{{ url_for('redirect_to_timer',
+                sequence_id=sequence_id) }}</a>
         </p>
-        <div id="debug"></div>
+        <p>
+            To easily access this timer later:
+        <ul>
+            <li><strong>Mobile (Add to Home Screen):</strong> Tap the share icon (iOS) or menu icon (Android) in your
+                browser, then look for "Add to Home Screen" or "Install App". This will create an app-like icon on your
+                device.</li>
+            <li><strong>Desktop (Bookmark):</strong> Press <kbd>Ctrl+D</kbd> (Windows/Linux) or <kbd>Cmd+D</kbd> (macOS)
+                to bookmark this page. You can also drag the URL from the address bar to your bookmarks bar.</li>
+        </ul>
+        </p>
+
+        <!-- No debug div on GUI -->
         <audio id="alarm" src="" preload="auto"></audio>
-        <!-- View Logs at the bottom as a regular link -->
-        
         <div style="margin-top: 20px;">
             <a href="{{ url_for('show_logs', sequence_id=sequence_id) }}"
                 style="color: #007bff; text-decoration: underline;">View Logs</a>
         </div>
 
-
+        {% include 'footer.html' %}
     </div>
+
     <script>
         console.log("timer.html loaded");
         const durations = {{ timers | tojson }};
         const timerNames = {{ timer_names | tojson }};
-        const sequenceName = "{{ sequence_name }}";
         const sequenceId = "{{ sequence_id }}";
         const timerColors = {{ timer_colors | tojson }};
-        const alarmSounds = {{ alarm_sounds | tojson }};
-        const timerAlarmSounds = {{ timer_alarm_sounds | tojson }};
+        const alarmSounds = {{ alarm_sounds | tojson }}; // All available sounds from DB
+        const timerAlarmSounds = {{ timer_alarm_sounds | tojson }}; // Specific sounds for each timer
 
         const staticBaseUrl = "{{ url_for('static', filename='') }}";
 
@@ -168,10 +153,10 @@
         console.log("Timer Names:", timerNames);
         console.log("Sequence ID:", sequenceId);
         console.log("Timer Colors:", timerColors);
-        console.log("Alarm Sounds:", alarmSounds);
-        console.log("Timer Alarm Sounds:", timerAlarmSounds);
+        console.log("Alarm Sounds (available):", alarmSounds);
+        console.log("Timer Alarm Sounds (specific):", timerAlarmSounds);
         const totalDuration = durations.reduce((a, b) => a + b, 0);
-        console.log("Total Duration:", totalDuration);
+        console.log("Total Sequence Duration:", totalDuration);
 
         let current = 0; // Current timer index (0-based)
         let elapsed = 0; // Elapsed time for the current timer
@@ -191,6 +176,38 @@
 
         // Ensure only one ended listener is active at a time for the alarm
         let currentAlarmEndedListener = null;
+
+        // AudioContext for synthesized beeps
+        let audioContext;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Play a quick synthesized beep
+        function playBeep(frequency = 440, duration = 0.05, volume = 0.5) {
+            initAudioContext();
+            if (!audioContext) {
+                console.warn("AudioContext not available.");
+                return;
+            }
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'sine'; // Sine wave for a clean beep
+            oscillator.frequency.value = frequency;
+
+            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration); // Fade out
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
 
         // Helper to set/get disabled state for links
         function setLinkDisabled(linkElement, disabled) {
@@ -213,37 +230,16 @@
         }
 
         // Helper to set button text and class for consistent size
-        // Uses a monospaced font so character count + nbsp padding works.
         function setButtonState(buttonId, text, colorClass) {
             const button = document.getElementById(buttonId);
             if (!button) return;
 
-            // Remove all existing color classes
-            button.classList.remove('btn-default', 'btn-green', 'btn-red', 'btn-orange', 'btn-blue', 'btn-gray', 'btn-darkgreen');
+            // Remove all existing color classes except btn-solid-3d
+            button.className = 'btn-solid-3d';
             // Add the new color class
             button.classList.add(colorClass);
 
-            // Determine the longest possible label for padding
-            let longestLength = 0;
-            switch (buttonId) {
-                case "startBtn": longestLength = Math.max("⏵ START".length, "⏹ STOP".length); break;
-                case "pauseBtn": longestLength = Math.max("⏸ PAUSE".length, "⏵ RESUME".length); break;
-                case "advancedBtn": longestLength = Math.max("ADVANCED".length, "BASIC".length); break;
-                case "theme-toggle": longestLength = Math.max("DARK MODE".length, "LIGHT MODE".length); break;
-                default: break;
-            }
-
-            let paddedText = text;
-            // Pad only if necessary to match the longest label's character count
-            if (longestLength > 0) {
-                const textCleanLength = text.replace(/ /g, ' ').length;
-                const diff = longestLength - textCleanLength;
-                if (diff > 0) {
-                    paddedText = text + ' '.repeat(diff);
-                }
-            }
-
-            button.innerHTML = paddedText;
+            button.innerHTML = text;
         }
 
 
@@ -251,54 +247,68 @@
         function toggleStart(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
+            playBeep(440, 0.05); // High pitch for start
             _toggleStart();
         }
 
         function togglePause(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
+            playBeep(220, 0.05); // Low pitch for other interactions
             _togglePause();
         }
 
         function restartCurrent(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
+            playBeep(220, 0.05); // Low pitch for other interactions
             _restartCurrent();
         }
 
         function restartAll(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
+            playBeep(220, 0.05); // Low pitch for other interactions
             _restartAll();
         }
 
         function toggleAdvanced(event) {
             event.preventDefault();
+            playBeep(220, 0.05); // Low pitch for other interactions
             const advancedControls = document.getElementById("advancedControls");
             const isShowing = advancedControls.classList.contains("show");
 
-            const advancedButtons = advancedControls.querySelectorAll('.btn-solid-3d');
-            advancedButtons.forEach(btn => {
-                setLinkDisabled(btn, isShowing); // Disable if hiding, enable if showing
-            });
-
             setButtonState('advancedBtn', isShowing ? "ADVANCED" : "BASIC", 'btn-gray');
             advancedControls.classList.toggle("show");
+
+            // Toggle disabled state for buttons inside advanced controls
+            const advancedButtons = advancedControls.querySelectorAll('.btn-solid-3d');
+            advancedButtons.forEach(btn => {
+                // Only enable/disable if the sequence is currently running/paused, otherwise leave as-is
+                if (running || paused) {
+                    setLinkDisabled(btn, !advancedControls.classList.contains("show"));
+                } else {
+                    setLinkDisabled(btn, true); // Keep disabled if not running at all
+                }
+            });
         }
 
         function toggleTheme(event) {
             event.preventDefault();
+            playBeep(220, 0.05); // Low pitch for other interactions
             _toggleTheme();
         }
 
         function jumpToTimer(index, event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
+            playBeep(220, 0.05); // Low pitch for other interactions
             _jumpToTimer(index);
         }
 
         function incrementLoopCount(event) {
             event.preventDefault();
+            playBeep(220, 0.05); // Low pitch for other interactions
             const input = document.getElementById("loopCount");
             let value = parseInt(input.value);
             if (isNaN(value) || value < 0) { value = 0; }
@@ -308,6 +318,7 @@
 
         function decrementLoopCount(event) {
             event.preventDefault();
+            playBeep(220, 0.05); // Low pitch for other interactions
             const input = document.getElementById("loopCount");
             let value = parseInt(input.value);
             if (isNaN(value) || value <= 1) {
@@ -429,10 +440,9 @@
                 overlayDiv.appendChild(overlayContentDiv);
                 outer.appendChild(overlayDiv);
 
-                const debugDiv = document.createElement('div');
-                debugDiv.className = "debug-individual";
-                debugDiv.id = `debug-timer-${i}`;
-                outer.appendChild(debugDiv);
+                // Hide overlay by default, show info. Only active timer will show overlay.
+                overlayDiv.style.display = "none";
+                timerInfoDiv.style.display = "flex";
 
                 barsContainer.appendChild(outer);
                 bars.push(outer);
@@ -442,11 +452,11 @@
             for (let i = 0; i < durations.length; i++) {
                 const jumpBtn = document.createElement("a");
                 jumpBtn.href = "#";
-                jumpBtn.className = "btn-solid-3d btn-small btn-default";
+                jumpBtn.className = "btn-solid-3d btn-small btn-default jump-button"; // Added jump-button class
                 const btnText = timerNames[i] ? `Go to ${timerNames[i]}` : `Go to ${i + 1}`;
                 jumpBtn.textContent = btnText;
                 jumpBtn.onclick = (e) => jumpToTimer(i, e);
-                setLinkDisabled(jumpBtn, true);
+                setLinkDisabled(jumpBtn, true); // Initially disabled
                 jump.appendChild(jumpBtn);
             }
         }
@@ -491,12 +501,13 @@
             updateLoopSettings();
 
             // Set button states
-            setButtonState('startBtn', "⏹ STOP", 'btn-red'); // Updated name and color
+            setButtonState('startBtn', "⏹ STOP  ", 'btn-red'); // Updated name and color, padded
             setLinkDisabled(document.getElementById("pauseBtn"), false);
             setLinkDisabled(document.getElementById("restartCurrent"), false);
             setLinkDisabled(document.getElementById("restartAll"), false);
-            // Ensure jump buttons are enabled
+            // Ensure jump buttons are enabled when sequence starts
             document.querySelectorAll(".jump-button").forEach(link => setLinkDisabled(link, false));
+
 
             running = true;
             paused = false;
@@ -505,7 +516,7 @@
             loopIndex = 1;
 
             updateCompletionBar();
-            updateDebug();
+            // updateDebug(); // Debug info removed from GUI
 
             pauseStartTime = null;
             lastFrameTime = performance.now();
@@ -534,14 +545,13 @@
             }
             document.getElementById("globalBar").style.width = "0%";
             // Set button states
-            setButtonState('startBtn', "⏵ START", 'btn-darkgreen'); // Updated name and color
-            setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange'); // Reset Pause text and color
+            setButtonState('startBtn', "⏵ START  ", 'btn-darkgreen'); // Updated name and color, padded
+            setButtonState('pauseBtn', "⏸ PAUSE  ", 'btn-orange'); // Reset Pause text and color, padded
             setLinkDisabled(document.getElementById("pauseBtn"), true);
             setLinkDisabled(document.getElementById("restartCurrent"), true);
             setLinkDisabled(document.getElementById("restartAll"), true);
-            // Ensure jump buttons are disabled
+            // Ensure jump buttons are disabled when sequence stops
             document.querySelectorAll(".jump-button").forEach(link => setLinkDisabled(link, true));
-
 
             const alarm = document.getElementById("alarm");
             if (alarm) {
@@ -554,15 +564,15 @@
                 }
             }
 
-            updateDebug();
+            // updateDebug(); // Debug info removed from GUI
             logActivity('sequence_end');
         }
 
         function _togglePause() {
             paused = !paused;
             // Set button states
-            setButtonState('pauseBtn', paused ? "⏵ RESUME" : "⏸ PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name
-            updateDebug();
+            setButtonState('pauseBtn', paused ? "⏵ RESUME" : "⏸ PAUSE  ", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name, padded
+            // updateDebug(); // Debug info removed from GUI
 
             logActivity(paused ? 'pause_timer' : 'resume_timer', current);
 
@@ -641,14 +651,14 @@
             } else if (!paused && !running) {
                 _toggleStart();
             }
-            updateDebug();
+            // updateDebug(); // Debug info removed from GUI
         }
 
         function _restartAll() {
             logActivity('restart_sequence');
             stopSequence();
             _toggleStart();
-            updateDebug();
+            // updateDebug(); // Debug info removed from GUI
         }
 
         function _jumpToTimer(index) {
@@ -680,13 +690,14 @@
                 logActivity('timer_end', current);
             }
 
+            // Reset all timestamps, then simulate history for previous timers
             resetTimestamps();
             for (let i = 0; i < index; i++) {
-                timestamps[i].start = new Date(new Date().getTime() - (index - i) * 1000).toISOString();
-                timestamps[i].end = new Date(new Date().getTime() - (index - i - 1) * 1000).toISOString();
+                // Approximate start/end times for prior timers, assuming they ran for their full duration
+                timestamps[i].start = new Date(new Date().getTime() - (index - i) * 1000).toISOString(); // Placeholder
+                timestamps[i].end = new Date(new Date().getTime() - (index - i - 1) * 1000).toISOString(); // Placeholder
             }
             timestamps[index].start = new Date().toISOString();
-
 
             globalElapsed = durations.slice(0, index).reduce((a, b) => a + b, 0);
             updateCompletionBar();
@@ -703,7 +714,7 @@
 
             if (!running && !paused) {
                 running = true;
-                setButtonState('startBtn', "⏹ STOP", 'btn-red'); // Update Start/Stop button
+                setButtonState('startBtn', "⏹ STOP  ", 'btn-red'); // Update Start/Stop button
                 setLinkDisabled(document.getElementById("pauseBtn"), false);
                 setLinkDisabled(document.getElementById("restartCurrent"), false);
                 setLinkDisabled(document.getElementById("restartAll"), false);
@@ -721,7 +732,7 @@
                     bars[current].querySelector(".timer-countdown").textContent = `${durations[current]} (${0}%)`;
                 }
             }
-            updateDebug();
+            // updateDebug(); // Debug info removed from GUI
         }
 
         function startTimer(timerIndex) {
@@ -763,6 +774,7 @@
 
 
             if (current >= durations.length) {
+                // This case should ideally not be reached if end of sequence logic is correct
                 stopSequence();
                 return;
             }
@@ -816,7 +828,7 @@
             }
 
             updateCompletionBar();
-            updateDebug();
+            // updateDebug(); // Debug info removed from GUI
 
             if (elapsed >= durations[current]) {
                 timestamps[current].end = new Date().toISOString();
@@ -826,18 +838,18 @@
                 const isLastTimerInSequence = nextTimerIndex >= durations.length;
                 const willLoop = loopEnabled && (!loopLimit || loopIndex < loopLimit);
 
-                playAlarmSound(timerAlarmSounds[current]);
-
-                if (isLastTimerInSequence && !willLoop) {
-                    stopSequence();
-                } else if (nextTimerIndex < durations.length) {
-                    startTimer(nextTimerIndex);
-                } else if (willLoop) {
-                    loopIndex++;
-                    resetTimestamps();
-                    startTimer(0);
-                }
-
+                // Play alarm sound. If it's the last timer and not looping, stop sequence AFTER sound ends.
+                playAlarmSound(timerAlarmSounds[current], () => {
+                    if (isLastTimerInSequence && !willLoop) {
+                        stopSequence();
+                    } else if (nextTimerIndex < durations.length) {
+                        startTimer(nextTimerIndex);
+                    } else if (willLoop) {
+                        loopIndex++;
+                        resetTimestamps();
+                        startTimer(0);
+                    }
+                });
             } else {
                 if (document.visibilityState === 'visible') {
                     animationFrameId = requestAnimationFrame(update);
@@ -846,8 +858,9 @@
         }
 
 
+        // updateDebug function for console logging (removed from GUI)
         function updateDebug() {
-            debugText = durations.map((dur, i) => {
+            let debugText = durations.map((dur, i) => {
                 let state = "Stopped",
                     pct = 0,
                     secs = 0;
@@ -880,11 +893,12 @@
             const globalElapsedFormatted = globalElapsed.toFixed(2);
             const globalProgress = totalDuration > 0 ? (globalElapsed / totalDuration * 100).toFixed(2) : "0.00";
 
-            document.getElementById("debug").textContent =
+            console.log(
                 `Sequence Status: ${sequenceStatus} | ${loopStatus}\n` +
                 `Current Loop: ${loopIndex} of ${loopLimit !== null ? loopLimit : '∞'}\n` +
                 `Global Progress: ${globalElapsedFormatted}s / ${totalDuration.toFixed(2)}s (${globalProgress}%)\n\n` +
-                debugText.join("\n\n");
+                debugText.join("\n\n")
+            );
         }
 
         function updateLoopSettings() {
@@ -904,13 +918,13 @@
                     body {
                         background-color: #333;
                         color: #fff;
-                        padding-top: 10px; 
+                        padding-top: 10px;
                     }
                     .bar-container {
                         background-color: #555;
                     }
                     .global-bar {
-                        background-color: yellow; 
+                        background-color: yellow;
                     }
                     #globalBarContainer {
                         background-color: black;
@@ -918,31 +932,34 @@
                     /* Dark mode specific disabled button style */
                     .btn-solid-3d[data-disabled="true"],
                     .btn-solid-3d.disabled-link {
-                        background: #444; 
-                        color: #777; 
-                        border-color: #666; 
+                        background: #444;
+                        color: #777;
+                        border-color: #666;
                         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #555, 0 0 0 1px #444, 0 3px 0 1px #444, 0 10px 20px rgba(0, 0, 0, 0);
-                        text-shadow: none; 
+                        text-shadow: none;
                     }
                     .btn-solid-3d[data-disabled="true"]:active,
                     .btn-solid-3d.disabled-link:active {
                         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5), inset 0 1px 20px rgba(0, 0, 0, 0), 0 2px 0 #555, 0 0 0 1px #444, 0 2px 0 1px #444, 0 10px 20px rgba(0, 0, 0, 0);
                     }
+                    #text-bottom hr { /* Dark theme footer line */
+                        border-top-color: #444;
+                    }
                 `;
-                setButtonState('theme-toggle', "LIGHT MODE", 'btn-gray');
+                setButtonState('theme-toggle', "🌙", 'btn-gray'); // Moon emoji for dark mode
             } else {
                 // Switch to Light Theme
                 themeStyle.innerHTML = `
                     body {
                         background-color: #fff;
                         color: #000;
-                        padding-top: 10px; 
+                        padding-top: 10px;
                     }
                     .bar-container {
                         background-color: #ddd;
                     }
                     .global-bar {
-                        background-color: yellow; 
+                        background-color: yellow;
                     }
                     #globalBarContainer {
                         background-color: black;
@@ -960,8 +977,11 @@
                     .btn-solid-3d.disabled-link:active {
                         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 1), inset 0 1px 20px rgba(0, 0, 0, 0), 0 2px 0 #bbb, 0 0 0 1px white, 0 2px 0 1px white, 0 10px 20px rgba(0, 0, 0, 0);
                     }
+                    #text-bottom hr { /* Light theme footer line */
+                        border-top-color: #eee;
+                    }
                 `;
-                setButtonState('theme-toggle', "DARK MODE", 'btn-gray');
+                setButtonState('theme-toggle', "💡", 'btn-gray'); // Light bulb emoji for light mode
             }
         }
 
@@ -992,17 +1012,20 @@
             }
         });
 
-        initUI();
-        updateDebug();
-        // Initial setup for advanced controls links to be disabled.
-        document.querySelectorAll("#advancedControls .btn-solid-3d").forEach(link => setLinkDisabled(link, true));
+        document.addEventListener('DOMContentLoaded', () => {
+            initUI();
+            updateDebug(); // Initial console logging
+            // Initial setup for advanced controls links to be disabled.
+            // Advanced controls are initially hidden, so their buttons should be disabled.
+            document.querySelectorAll("#advancedControls .btn-solid-3d").forEach(link => setLinkDisabled(link, true));
 
-        // Set initial states for main buttons with specific colors and padded text
-        setButtonState('startBtn', "⏵ START", 'btn-darkgreen'); // Corrected text and padding
-        setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange'); // Corrected text and padding
-        setButtonState('advancedBtn', "ADVANCED", 'btn-gray');
-        setButtonState('theme-toggle', "DARK MODE", 'btn-gray');
-        setLinkDisabled(document.getElementById("advancedBtn"), false); // Advanced button always enabled
+            // Set initial states for main buttons with specific colors and padded text
+            setButtonState('startBtn', "⏵ START  ", 'btn-darkgreen'); // Corrected text and padding
+            setButtonState('pauseBtn', "⏸ PAUSE  ", 'btn-orange'); // Corrected text and padding
+            setButtonState('advancedBtn', "ADVANCED", 'btn-gray');
+            setButtonState('theme-toggle', "💡", 'btn-gray'); // Initial theme is light, so show light bulb
+            setLinkDisabled(document.getElementById("advancedBtn"), false); // Advanced button always enabled
+        });
     </script>
 </body>
 
