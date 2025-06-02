@@ -7,40 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <style>
-        /* Basic styling for logs */
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .btn-solid-3d {
-            margin-top: 20px;
-            text-decoration: none;
-        }
-
-        /* Style the back link */
+        body {padding: .5rem;}
     </style>
 </head>
 
 <body>
-    <h1>Timer Logs for Sequence: {{ sequence_name_for_logs }}</h1>
+    <h1>Timer Logs for: {{ sequence_name_for_logs }}</h1>
     <table>
         <thead>
             <tr>
@@ -68,8 +40,8 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
-    <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}" class="btn-solid-3d">Back to Timer</a>
+    </table><br>
+    <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">Back </a>
 </body>
 
 </html>

@@ -16,6 +16,8 @@
             /* Account for fixed global bar - Specific to timer.html */
         }
 
+        h1 { font-family: monospace; margin: 0; padding-left: .5rem; font-size: 2rem;}
+
         .bar-container {
             background-color: #ddd;
         }
@@ -37,54 +39,24 @@
 
         /* Styles for the advanced controls section */
         #advancedControls {
-            margin-top: 1rem;
-            padding: 1rem;
-            border: 1px solid #ccc;
+            padding: 0 .5rem;
+            border: 0px solid #ccc;
             border-radius: 5px;
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.00);
             max-height: 0;
             opacity: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
-            padding-top: 0;
-            padding-bottom: 0;
+            transition: max-height 0.03s ease-out, opacity 0.3s ease-out, padding 0.03s ease-out;
         }
 
         #advancedControls.show {
             max-height: 500px;
             opacity: 1;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
+            padding-bottom: .5rem;
         }
 
         /* Specific styles for loop count input buttons - Left/Right */
-        #loopCountGroup {
-            display: inline-flex;
-            align-items: center;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            padding: 2px;
-        }
-
-        #loopCountGroup .digit-button {
-            height: 1.5em;
-            line-height: 1.5em;
-            font-size: 1em;
-            width: 1.5em;
-            margin: 0;
-            padding: 0;
-            flex-shrink: 0;
-            flex-grow: 0;
-        }
-
-        #loopCountGroup input {
-            height: 1.5em;
-            font-size: 1em;
-            vertical-align: middle;
-            border: none;
-            text-align: center;
-            width: 60px;
-        }
+        
 
         /* Custom overlay styling */
         .overlay {
@@ -123,11 +95,13 @@
         <div class="global-bar" id="globalBar"></div>
     </div>
 
+    {% if sequence_name %}
     <h1 id="sequenceName">{{ sequence_name }}</h1>
+    {% endif %}
 
     <div id="controls">
         <!-- Reordered buttons and added color classes -->
-        <a href="#" class="btn-solid-3d btn-default" onclick="toggleStart(event)" id="startBtn">START  </a>
+        <a href="#" class="btn-solid-3d btn-darkgreen" onclick="toggleStart(event)" id="startBtn">⏵ START  </a>
         <a href="#" class="btn-solid-3d btn-orange" onclick="togglePause(event)" id="pauseBtn"
             data-disabled="true">PAUSE  </a>
         <a href="#" class="btn-solid-3d btn-gray" onclick="toggleAdvanced(event)" id="advancedBtn">ADVANCED</a>
@@ -137,47 +111,47 @@
 
     <!-- Advanced Controls Section -->
     <div id="advancedControls">
-        <h3>Advanced Controls</h3>
-        <div style="margin-bottom: 10px;">
+        <div>
             <label><input type="checkbox" id="loopToggle" onchange="updateLoopSettings()"> Loop Sequence</label>
             <label>Loops:
                 <div class="digit-group" id="loopCountGroup">
                     <a href="#" class="digit-button" onclick="decrementLoopCount(event)">-</a>
                     <input type="number" id="loopCount" min="1" placeholder="∞" value=""
-                        style="width: 60px; text-align: center;" onchange="updateLoopSettings()">
+                       size="2" onchange="updateLoopSettings()">
                     <a href="#" class="digit-button" onclick="incrementLoopCount(event)">+</a>
                 </div>
             </label>
         </div>
         <div id="quickControls">
-            <a href="#" class="btn-solid-3d btn-darkgreen" onclick="restartCurrent(event)" id="restartCurrent"
+            <a href="#" class="btn-solid-3d btn-default" onclick="restartCurrent(event)" id="restartCurrent"
                 data-disabled="true">Restart Current</a>
-            <a href="#" class="btn-solid-3d btn-darkgreen" onclick="restartAll(event)" id="restartAll"
+            <a href="#" class="btn-solid-3d btn-default" onclick="restartAll(event)" id="restartAll"
                 data-disabled="true">Restart Sequence</a>
             <div id="jumpButtons" style="margin-top: 10px;"></div>
         </div>
     </div>
-
     <div id="bars"></div>
-    <!-- Removed the redundant bar-container div here -->
+    <div id="text-bottom">
 
-    <!-- Link to current sequence (static link) -->
-    <div style="text-align: center; margin-bottom: 10px;">
-        <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}"
-            style="color: #007bff; text-decoration: underline;">Back to this Sequence</a>
+        <!-- Removed the redundant bar-container div here -->
+
+        <!-- Link to current sequence (static link) -->
+        <p>
+            The permanent url for this timer is:<br>
+            <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}"
+                style="color: #007bff; text-decoration: underline;">{{ base_url }}{{ url_for('redirect_to_timer', sequence_id=sequence_id) }}</a>
+        </p>
+        <div id="debug"></div>
+        <audio id="alarm" src="" preload="auto"></audio>
+        <!-- View Logs at the bottom as a regular link -->
+        
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('show_logs', sequence_id=sequence_id) }}"
+                style="color: #007bff; text-decoration: underline;">View Logs</a>
+        </div>
+
+
     </div>
-
-    <div id="debug"></div>
-    <div id="global-elapsed-time"></div>
-
-    <audio id="alarm" src="" preload="auto"></audio>
-
-    <!-- View Logs at the bottom as a regular link -->
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{{ url_for('show_logs', sequence_id=sequence_id) }}"
-            style="color: #007bff; text-decoration: underline;">View Logs</a>
-    </div>
-
     <script>
         console.log("timer.html loaded");
         const durations = {{ timers | tojson }};
@@ -252,8 +226,8 @@
             // Determine the longest possible label for padding
             let longestLength = 0;
             switch (buttonId) {
-                case "startBtn": longestLength = Math.max("START".length, "STOP".length); break;
-                case "pauseBtn": longestLength = Math.max("PAUSE".length, "RESUME".length); break;
+                case "startBtn": longestLength = Math.max("⏵ START".length, "⏹ STOP".length); break;
+                case "pauseBtn": longestLength = Math.max("⏸ PAUSE".length, "⏵ RESUME".length); break;
                 case "advancedBtn": longestLength = Math.max("ADVANCED".length, "BASIC".length); break;
                 case "theme-toggle": longestLength = Math.max("DARK MODE".length, "LIGHT MODE".length); break;
                 default: break;
@@ -468,7 +442,7 @@
             for (let i = 0; i < durations.length; i++) {
                 const jumpBtn = document.createElement("a");
                 jumpBtn.href = "#";
-                jumpBtn.className = "btn-solid-3d btn-small btn-darkgreen";
+                jumpBtn.className = "btn-solid-3d btn-small btn-default";
                 const btnText = timerNames[i] ? `Go to ${timerNames[i]}` : `Go to ${i + 1}`;
                 jumpBtn.textContent = btnText;
                 jumpBtn.onclick = (e) => jumpToTimer(i, e);
@@ -517,7 +491,7 @@
             updateLoopSettings();
 
             // Set button states
-            setButtonState('startBtn', "STOP", 'btn-red'); // Updated name and color
+            setButtonState('startBtn', "⏹ STOP", 'btn-red'); // Updated name and color
             setLinkDisabled(document.getElementById("pauseBtn"), false);
             setLinkDisabled(document.getElementById("restartCurrent"), false);
             setLinkDisabled(document.getElementById("restartAll"), false);
@@ -560,8 +534,8 @@
             }
             document.getElementById("globalBar").style.width = "0%";
             // Set button states
-            setButtonState('startBtn', "START", 'btn-default'); // Updated name and color
-            setButtonState('pauseBtn', "PAUSE", 'btn-orange'); // Reset Pause text and color
+            setButtonState('startBtn', "⏵ START", 'btn-darkgreen'); // Updated name and color
+            setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange'); // Reset Pause text and color
             setLinkDisabled(document.getElementById("pauseBtn"), true);
             setLinkDisabled(document.getElementById("restartCurrent"), true);
             setLinkDisabled(document.getElementById("restartAll"), true);
@@ -587,7 +561,7 @@
         function _togglePause() {
             paused = !paused;
             // Set button states
-            setButtonState('pauseBtn', paused ? "RESUME" : "PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name
+            setButtonState('pauseBtn', paused ? "⏵ RESUME" : "⏸ PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name
             updateDebug();
 
             logActivity(paused ? 'pause_timer' : 'resume_timer', current);
@@ -729,7 +703,7 @@
 
             if (!running && !paused) {
                 running = true;
-                setButtonState('startBtn', "STOP", 'btn-red'); // Update Start/Stop button
+                setButtonState('startBtn', "⏹ STOP", 'btn-red'); // Update Start/Stop button
                 setLinkDisabled(document.getElementById("pauseBtn"), false);
                 setLinkDisabled(document.getElementById("restartCurrent"), false);
                 setLinkDisabled(document.getElementById("restartAll"), false);
@@ -1024,8 +998,8 @@
         document.querySelectorAll("#advancedControls .btn-solid-3d").forEach(link => setLinkDisabled(link, true));
 
         // Set initial states for main buttons with specific colors and padded text
-        setButtonState('startBtn', "START", 'btn-default'); // Corrected text and padding
-        setButtonState('pauseBtn', "PAUSE", 'btn-orange'); // Corrected text and padding
+        setButtonState('startBtn', "⏵ START", 'btn-darkgreen'); // Corrected text and padding
+        setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange'); // Corrected text and padding
         setButtonState('advancedBtn', "ADVANCED", 'btn-gray');
         setButtonState('theme-toggle', "DARK MODE", 'btn-gray');
         setLinkDisabled(document.getElementById("advancedBtn"), false); // Advanced button always enabled

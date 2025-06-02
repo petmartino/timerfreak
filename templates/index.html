@@ -9,83 +9,90 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 
-<body>
-
+<body style="background-color: #00ffae">
+    <p style="padding: .5rem 1rem">TimerFreak: Timers that run one after another, in sequence. <big>&#x23F1;&#x23F1;&#x23F1;&#x23F1;&#x23F1;&#x23F1;&#x23F1;</big></p> 
     <div class="flex-container">
-        <div class="flex-container-internal">
-            <h1>Create new</h1>
-
+        <div class="flex-container-internal" style="margin: 0rem; padding: 0 1rem 1rem 1rem">
+           
+            <p>Create new:</p>
             <form action="{{ url_for('start_timer') }}" method="post" id="timerForm">
                 <div id="timerInputs">
                     <!-- Initial Timer Form - NO new-timer-form class here. Animation only on addTimer. -->
                     <div class="timer-form">
-                        <label>Timer 1 Name (Optional):</label>
-                        <input type="text" name="timer_name[]">
-                        <label>Duration:</label>
-                        <div class="timer-digits">
-                            <!-- Hours Group -->
-                            <div class="digit-group">
-                                <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
-                                <div class="input-label-row">
-                                    <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00"
-                                        size="2">
-                                    <span>h</span>
-                                </div>
-                                <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
-                            </div>
-                            <!-- Minutes Group -->
-                            <div class="digit-group">
-                                <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
-                                <div class="input-label-row">
-                                    <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
-                                        value="00" size="2">
-                                    <span>m</span>
-                                </div>
-                                <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
-                            </div>
-                            <!-- Seconds Group -->
-                            <div class="digit-group">
-                                <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
-                                <div class="input-label-row">
-                                    <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
-                                        value="00" size="2">
-                                    <span>s</span>
-                                </div>
-                                <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
-                            </div>
-                        </div>
-                        <a href="#" class="plain-link" onclick="toggleTimerAdvanced(event)">Show Advanced Settings</a>
-                        <div class="timer-advanced-settings" style="display:none;"> <!-- Initially hidden -->
-                            <label>Color:</label>
-                            <input type="color" name="color[]" value="#4caf50">
-                            <label>Alarm Sound:</label>
-                            <select name="alarm_sound[]">
-                                {% for sound in alarm_sounds %}
-                                <option value="{{ sound }}">{{ sound }}</option>
-                                {% endfor %}
-                            </select>
-                            <a href="#" class="btn-solid-3d btn-small" onclick="previewSound(event)">Preview</a>
-                        </div>
                         <!-- Initially hidden, shown if more than one timer exists -->
-                        <a href="#" class="btn-solid-3d btn-small delete-timer-btn" style="display:none;"
-                            onclick="deleteTimer(event)">Delete</a>
+                        <label>Timer #1</label>
+                        <div class="flex-container"><div class="flex-container-internal">
+                            
+                            <div class="timer-digits">
+                                <!-- Hours Group -->
+                                <div class="digit-group">
+                                    <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
+                                    <div class="input-label-row">
+                                        <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00"
+                                            size="2">
+                                        <span>h</span>
+                                    </div>
+                                    <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
+                                </div>
+                                <!-- Minutes Group -->
+                                <div class="digit-group">
+                                    <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
+                                    <div class="input-label-row">
+                                        <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
+                                            value="00" size="2">
+                                        <span>m</span>
+                                    </div>
+                                    <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
+                                </div>
+                                <!-- Seconds Group -->
+                                <div class="digit-group">
+                                    <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
+                                    <div class="input-label-row">
+                                        <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
+                                            value="00" size="2">
+                                        <span>s</span>
+                                    </div>
+                                    <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-container-internal"style="">
+                            <textarea  style="margin-bottom: 1.25em;" name="timer_name[]" rows="2" cols="20" placeholder="Name or description (optional)"></textarea>
+                            <table>
+                                <tr>
+                                    <td><input type="color" name="color[]" value="#4caf50"></td>
+                                    <td><select name="alarm_sound[]">
+                                            {% for sound in alarm_sounds %}
+                                            <option value="{{ sound }}">{{ sound }}</option>
+                                            {% endfor %}
+                                        </select> <a href="#" class="" style="text-decoration: none;" onclick="previewSound(event)">&#128266;</a>
+                                    </td>
+                                    <td style="text-align: right;"><a href="#" class="delete-timer-btn" style="display:none;"
+                                            onclick="deleteTimer(event)">🗑️</a></td>
+                                </tr>
+                            
+                                </table>
+                        
+                        </div>
+                    
+                        </div>
                         <div class="validation-message" style="display:none;"></div>
-                        <!-- Validation message container -->
+                        
+
                     </div>
                 </div>
-
-                <a href="#" class="btn-solid-3d" onclick="addTimer(event)">+ Add Timer +</a><br>
-                <br><br> <label>Sequence Name (Optional):</label> <input type="text" name="sequence_name"><br><br>
-                <a href="#" class="btn-solid-3d" onclick="submitForm(event)">Create</a>
+                <br>
+                <a href="#" class="btn-solid-3d btn-default" onclick="addTimer(event)">++ Add Timer ++</a><br>
+                <br><br><input type="text" style="width:100%" name="sequence_name" placeholder="Name your sequence (Optional)"><br><br>
+                <a href="#" class="btn-solid-3d btn-blue" onclick="submitForm(event)">Create</a>
             </form>
         </div>
 
-        <div class="flex-container-internal">
-            <h1>TimerFreak</h1>
-
+        <div class="flex-container-internal" style="margin: 0; padding: 1rem; padding-top: 0;">
+           
             <!-- Most Used Sequences section -->
             <div class="most-used-sequences">
-                <h2>Most Used Sequences</h2>
+                <p>Most used:</p>
                 {% if most_used_sequences %}
                 <ul>
                     {% for seq in most_used_sequences %}
@@ -152,49 +159,68 @@
                 const newTimerForm = document.createElement("div");
                 newTimerForm.className = "timer-form new-timer-form"; // Add class for animation
                 newTimerForm.innerHTML = `
-                <label>Timer ${timerCount} Name (Optional):</label>
-                <input type="text" name="timer_name[]">
-                <label>Duration:</label>
-                <div class="timer-digits">
-                    <div class="digit-group">
-                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
-                        <div class="input-label-row">
-                            <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00" size="2">
-                            <span>h</span>
+                <div style="font-size: 2em; text-align: left; padding-left: 0em; font-weight: bold;">&darr;</div>
+                <label>Timer #${timerCount}</label>
+                         <div class="flex-container"><div class="flex-container-internal">
+                            
+                            <div class="timer-digits">
+                                <!-- Hours Group -->
+                                <div class="digit-group">
+                                    <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
+                                    <div class="input-label-row">
+                                        <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00"
+                                            size="2">
+                                        <span>h</span>
+                                    </div>
+                                    <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
+                                </div>
+                                <!-- Minutes Group -->
+                                <div class="digit-group">
+                                    <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
+                                    <div class="input-label-row">
+                                        <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
+                                            value="00" size="2">
+                                        <span>m</span>
+                                    </div>
+                                    <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
+                                </div>
+                                <!-- Seconds Group -->
+                                <div class="digit-group">
+                                    <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
+                                    <div class="input-label-row">
+                                        <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
+                                            value="00" size="2">
+                                        <span>s</span>
+                                    </div>
+                                    <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
+                                </div>
+                            </div>
                         </div>
-                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
-                    </div>
-                    <div class="digit-group">
-                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
-                        <div class="input-label-row">
-                            <input type="number" class="digit-input" name="minutes[]" min="0" max="59" value="00" size="2">
-                            <span>m</span>
+                        <div class="flex-container-internal"style="margin-left: 1em;">
+                            <textarea  style="margin-bottom: 1.25em;" name="timer_name[]" rows="2" cols="20" placeholder="Name or description (optional)"></textarea>                            
+                            <table>
+                                <tr>
+                                    <td><input type="color" name="color[]" value="#4caf50"></td>
+                                    <td><select name="alarm_sound[]">
+                                            {% for sound in alarm_sounds %}
+                                            <option value="{{ sound }}">{{ sound }}</option>
+                                            {% endfor %}
+                                        </select> <a href="#" class="" style="text-decoration: none;" onclick="previewSound(event)">&#128266;</a>
+                                    </td>
+                                    <td style="text-align: right;"><a href="#" class="delete-timer-btn" style="display:none;"
+                                            onclick="deleteTimer(event)">🗑️</a></td>
+                                </tr>
+                            
+                                </table>
+                        
                         </div>
-                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
-                    </div>
-                    <div class="digit-group">
-                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
-                        <div class="input-label-row">
-                            <input type="number" class="digit-input" name="seconds[]" min="0" max="59" value="00" size="2">
-                            <span>s</span>
+                    
                         </div>
-                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
-                    </div>
-                </div>
-                <a href="#" class="plain-link" onclick="toggleTimerAdvanced(event)">Show Advanced Settings</a>
-                <div class="timer-advanced-settings" style="display:none;">
-                    <label>Color:</label>
-                    <input type="color" name="color[]" value="#4caf50">
-                    <label>Alarm Sound:</label>
-                    <select name="alarm_sound[]">
-                        {% for sound in alarm_sounds %}
-                            <option value="{{ sound }}">{{ sound }}</option>
-                        {% endfor %}
-                    </select>
-                    <a href="#" class="btn-solid-3d btn-small" onclick="previewSound(event)">Preview</a>
-                </div>
-                <a href="#" class="btn-solid-3d btn-small delete-timer-btn" onclick="deleteTimer(event)">Delete</a>
-                <div class="validation-message" style="display:none;"></div>
+                        <div class="validation-message" style="display:none;"></div>
+
+                        
+
+
             `;
                 timerInputs.appendChild(newTimerForm);
 
@@ -221,7 +247,7 @@
                     // Re-index timer labels and update delete button visibility
                     const remainingTimerForms = document.querySelectorAll('.timer-form');
                     remainingTimerForms.forEach((form, index) => {
-                        form.querySelector('label').textContent = `Timer ${index + 1} Name (Optional):`;
+                        form.querySelector('label').textContent = `Timer #${index + 1}`;
                     });
                     // Hide delete button if only one timer remains (after re-indexing)
                     if (remainingTimerForms.length === 1) {

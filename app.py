@@ -220,6 +220,7 @@ def start_timer():
 
 @app.route("/timer/<sequence_id>")
 def show_timer(sequence_id):
+
     sequence = Sequence.query.get_or_404(sequence_id)
     
     # Retrieve timers ensuring they are ordered correctly
@@ -242,7 +243,8 @@ def show_timer(sequence_id):
                            timer_colors=timer_colors, 
                            alarm_sounds=app.config['ALARM_SOUNDS'], # All available sounds
                            timer_alarm_sounds=timer_alarm_sounds, # Specific sounds for each timer
-                           sequence_name_for_logs=sequence_name_for_logs)
+                           sequence_name_for_logs=sequence_name_for_logs,
+                           base_url=request.host)
 
 # --- NEW REDIRECT ROUTE ---
 @app.route("/<string:sequence_id>")

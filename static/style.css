@@ -7,11 +7,18 @@ body {
 /* Adjust body padding to account for fixed global bar on timer.html only */
 /* This is now removed from style.css and moved into the <style> block of timer.html */
 
-
+.most-used-sequences ul {
+    margin: 0; padding: 0;
+}
+.most-used-sequences ul li {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .timer-form {
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    padding: 1rem;
     overflow: hidden;
     /* For animation */
     transition: all 0.3s ease-out;
@@ -40,19 +47,18 @@ body {
 
 
 .timer-form label {
-    display: block;
-    margin-bottom: 0.25rem;
+    /* display: block;
+    margin-bottom: 0.25rem;*/
 }
 
 .timer-digits {
     font-family: monospace;
     font-size: 1.5em;
-    letter-spacing: 0.1em;
     display: flex;
     /* Use flexbox for horizontal layout of digit groups */
-    justify-content: center;
+    justify-content: left;
     /* Center the groups */
-    margin: 0.25em;
+    margin: 0em;
 }
 
 /* Updated .digit-group for vertical stacking of buttons around input */
@@ -61,10 +67,10 @@ body {
     /* Use flexbox for vertical stacking */
     flex-direction: column;
     /* Stack children vertically */
-    align-items: center;
+    align-items: left;
     /* Center horizontally within the group */
-    text-align: center;
-    margin: 0 0.5em;
+    text-align: left;
+    margin: 0 0em;
     /* Spacing between H, M, S groups */
 }
 
@@ -72,19 +78,19 @@ body {
 .input-label-row {
     display: flex;
     align-items: center;
-    margin: 0.25em 0;
+    margin: 0em 0;
     /* Space above/below for buttons */
 }
 
 /* Style for digit-button (now above/below input) */
 .digit-button {
-    width: 2em;
+    width: 1.2em;
     /* Keep it compact */
-    height: 1.2em;
+    height: 1em;
     /* Smaller height for compact stacking */
-    line-height: 1.2em;
+    line-height: .8em;
     /* Center text vertically */
-    font-size: 0.8em;
+    font-size: 1.5em;
     padding: 0;
     margin: 0;
     /* Reset margins */
@@ -107,14 +113,14 @@ body {
 .digit-input {
     width: 2em;
     height: 1.5em;
-    font-size: 1em;
+    font-size: 1.3em;
     font-family: monospace;
     text-align: center;
     border: none;
     background-color: transparent;
     padding: 0;
     margin: 0;
-    -moz-appearance: textfield;
+  
 }
 
 /* Hide arrows from number inputs */
@@ -126,29 +132,29 @@ input[type=number]::-webkit-outer-spin-button {
 
 input[type=number] {
     -moz-appearance: textfield;
+    width: 1.5em;
 }
 
 /* Style for validation messages */
 .validation-message {
-    color: red;
+    color: orangered;
+    background-color: rgb(255, 239, 147);
     font-size: 0.85rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    padding-left: 5px;
+    padding: 5px;
 }
 
 
 .flex-container {
     display: flex;
-    background-color: DodgerBlue;
     flex-wrap: wrap;
     align-content: stretch;
 }
 
 .flex-container-internal {
     background-color: white;
-    margin: 10px;
-    padding: 20px;
+
 
 }
 
@@ -184,10 +190,10 @@ input[type=number] {
     color: white;
     text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
     transition: 25ms all;
-    -webkit-transition: 150ms all;
-    -moz-transition: 150ms all;
-    -o-transition: 150ms all;
-    -ms-transition: 150ms all;
+    -webkit-transition: 25ms all;
+    -moz-transition: 25ms all;
+    -o-transition: 25ms all;
+    -ms-transition: 25ms all;
     text-decoration: none;
     box-sizing: border-box;
     vertical-align: middle;
@@ -228,7 +234,7 @@ input[type=number] {
     line-height: 25px;
     font-size: 12px;
     padding: 0 0.8em;
-    margin-left: 0.5em;
+    margin-right: 0.5em;
 }
 
 /* Color input basic styling */
@@ -236,14 +242,13 @@ input[type="color"] {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    width: 50px;
-    height: 30px;
+    width: 1.5rem;
+    height: 1.5rem;
     border: none;
     background: none;
     padding: 0;
     cursor: pointer;
-    vertical-align: middle;
-    margin: 0.25rem;
+    vertical-align: top;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -263,6 +268,13 @@ input[type="color"]::-moz-color-swatch {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
+
+
+.delete-timer-btn { color: rgb(231, 95, 95); 
+    font-weight: bold; background: rgb(255, 249, 249); 
+    text-decoration: none; margin: 0; 
+    
+    }
 
 
 .bar-container {
@@ -358,10 +370,16 @@ input[type="color"]::-moz-color-swatch {
     background-color: transparent;
     /* No background */
 }
+#controls {
+    padding: 1em .5em;
+
+}
+
 
 #controls a,
 #controls input[type="number"] {
     margin: 0.25rem;
+    margin-left: 0;
 }
 
 label {
@@ -383,43 +401,6 @@ label {
     font-size: 0.8rem;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th,
-td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-#advancedControls {
-    margin-top: 1rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.05);
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-#advancedControls.show {
-    max-height: 500px;
-    opacity: 1;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
 
 /* Specific styles for loop count input buttons - Left/Right */
 #loopCountGroup {
@@ -525,24 +506,24 @@ th {
 }
 
 /* New section for advanced settings within timer form (index.html) */
-.timer-advanced-settings {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed #ccc;
+.timer-advanced-settings table {
+    border-top: 0px dashed #ccc; width: 100%;
 }
 
-/* Style for the "Show/Hide Advanced Settings" link */
-a.plain-link {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 0.9em;
-    color: #007bff;
-    /* Blue link color */
-    text-decoration: underline;
-    cursor: pointer;
+
+.timer-advanced-settings table th,
+table td {
+    font-size: 1rem;
+    font-weight: normal;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
+    text-align: left;
 }
 
-a.plain-link:hover {
-    color: #0056b3;
-    /* Darker blue on hover */
+
+#text-bottom
+{
+    padding: .5rem;
 }
