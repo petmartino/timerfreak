@@ -1,2 +1,43 @@
+# Virtual Environment
 venv/
+.venv/
+env/
+.env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Flask specific (common temporary/local files)
+instance/          # Directory for non-version-controlled config files (e.g., dev settings)
+.flaskenv          # Files for Flask's development environment variables
+.pytest_cache/     # pytest cache directory
+.vscode/           # VS Code specific settings (if you don't want to share them)
+
+# Database files (if using SQLite locally)
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+logs/
+
+# IDE/Editor specific files (adjust for your IDE)
+.idea/             # IntelliJ IDEA specific files
+.DS_Store          # macOS specific
+Thumbs.db          # Windows specific
+*.sublime-project
+*.sublime-workspace
+
+# Sensitive information (example names, adjust to your actual files)
+*.key
+*.pem
+
+# Uploaded files (if your app allows user uploads)
+uploads/
+
+#deploy
 deploy.sh
