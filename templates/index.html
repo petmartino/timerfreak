@@ -157,7 +157,7 @@
                 oscillator.frequency.value = frequency;
 
                 gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
+                //gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
 
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + duration);
@@ -404,7 +404,7 @@
             function updateTotalDuration() {
                 const totalSeconds = calculateTotalDuration();
                 const formattedDuration = formatDuration(totalSeconds);
-                document.getElementById('totalDurationDisplay').textContent = `Total duration: ${formattedDuration}`;
+                document.getElementById('totalDurationDisplay').textContent = `Total: ${formattedDuration}`;
             }
 
 

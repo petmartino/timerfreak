@@ -483,6 +483,13 @@ input[type="color"]::-moz-color-swatch {
     transition: width 0.05s linear;
 }
 
+#sequenceName {
+    margin: 0;
+    margin-top: 1rem;   
+    margin-left: .5rem;
+    padding: 0;
+}
+
 /* Control section styles */
 #controls {
     padding: 1em .5em;
