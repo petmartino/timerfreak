@@ -86,19 +86,19 @@ You can find and modify application-wide defaults in `app.py`:
 
 
 ## TODO YO LOCAL
-- Script deploy
+
 - fix corners en timer "yo"
 - FIX GLITCH ULTIMA CAMPANA. 
 - Sonidos básicos instalar manual
 - Fix playback synth...
-
+- fix stop start resume y 
 AI
 - FIX TOGGLE THEME 
 - Aprender como deployar de local a remoto diario. 
 
 
 ## WHISHLIST 
-
+- MOVER A HTTPS
 - LOGO y FAVICON
 - Alarmas chidas en sonidos.
 - SAY SOMETHING

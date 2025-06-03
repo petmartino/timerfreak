@@ -165,7 +165,7 @@
         }
 
         // Play a quick synthesized beep
-        function playBeep(frequency = 3520, duration = 0.05, volume = 0.1) { // A7 note for higher pitch
+        function playBeep(frequency = 15000, duration = 0.15, volume = 1) { // A7 note for higher pitch
             initAudioContext();
             if (!audioContext) {
                 console.warn("AudioContext not available, cannot play beep.");
@@ -177,11 +177,11 @@
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            oscillator.type = 'sine'; // Sine wave for a clean beep
+            oscillator.type = 'play'; // Sine wave for a clean beep
             oscillator.frequency.value = frequency;
 
             gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration); // Fade out
+            // gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration); // Fade out
 
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + duration);
@@ -231,34 +231,34 @@
         function toggleStart(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
-            playBeep(3520, 0.05); // High pitch for start
+            playBeep(4400, 0.1,.1); // High pitch for start
             _toggleStart();
         }
 
         function togglePause(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(4400, 0.1,.1); // Low pitch for other interactions
             _togglePause();
         }
 
         function restartCurrent(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             _restartCurrent();
         }
 
         function restartAll(event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             _restartAll();
         }
 
         function toggleAdvanced(event) {
             event.preventDefault();
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             const advancedControls = document.getElementById("advancedControls");
 
             // Toggle the 'show' class
@@ -274,20 +274,20 @@
 
         function toggleTheme(event) {
             event.preventDefault();
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             _toggleTheme();
         }
 
         function jumpToTimer(index, event) {
             event.preventDefault();
             if (isLinkDisabled(event.target)) return;
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             _jumpToTimer(index);
         }
 
         function incrementLoopCount(event) {
             event.preventDefault();
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             const input = document.getElementById("loopCount");
             let value = parseInt(input.value);
             if (isNaN(value) || value < 0) { value = 0; }
@@ -297,7 +297,7 @@
 
         function decrementLoopCount(event) {
             event.preventDefault();
-            playBeep(220, 0.05); // Low pitch for other interactions
+            playBeep(880, 0.05,.01); // Low pitch for other interactions
             const input = document.getElementById("loopCount");
             let value = parseInt(input.value);
             if (isNaN(value) || value <= 1) {

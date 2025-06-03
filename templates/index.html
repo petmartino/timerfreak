@@ -10,9 +10,9 @@
 </head>
 
 <body style="background-color: #00ffae">
-    <p style="padding: .5rem 1rem">TimerFreak: Timers that run one after another, in sequence <big>⏱⏱⏱⏱⏱⏱⏱</big></p>
+    <p style="padding: .5rem 1rem">TimerFreak: Timers that run one after another, in sequence <big>⏱⏱⏱⏱</big></p>
     <div class="flex-container">
-        <div class="flex-container-internal" style="min-width: 400px; padding: 1rem;padding-top: 0; ">
+        <div class="flex-container-internal" style="min-width: 375px; padding: 1rem;padding-top: 0; background-color: white;">
 
             <p>Create new:</p>
             <form action="{{ url_for('start_timer') }}" method="post" id="timerForm">
@@ -70,10 +70,10 @@
                                                 {% for sound in available_sounds %}
                                                 <option value="{{ sound.filename }}">{{ sound.name }}</option>
                                                 {% endfor %}
-                                            </select> <a href="#" class="preview-sound-btn"
-                                                onclick="previewSound(event)"></a>
+                                            </select><a href="#" class="preview-sound-btn"
+                                                title="preview sound" onclick="previewSound(event)">🔊</a>
                                         </td>
-                                        <td style="text-align: right;"><a href="#" class="delete-timer-btn"
+                                        <td style="text-align: right;">&nbsp;&nbsp;<a href="#" class="delete-timer-btn"
                                                 title="Delete Timer" onclick="deleteTimer(event)">🗑️</a></td>
                                     </tr>
 
@@ -87,12 +87,12 @@
 
                     </div>
                 </div>
-                <br>
+                
+                
+                <a href="#" class="btn-solid-3d btn-red" onclick="addTimer(event)">++ Add Timer ++</a><br>
                 <!-- Total duration displayed here -->
                 <div id="totalDurationDisplay"></div>
-                <br>
-                <a href="#" class="btn-solid-3d btn-default" onclick="addTimer(event)">++ Add Timer ++</a><br>
-                <br><br><input type="text" style="width:100%" name="sequence_name"
+                <input type="text" style="width:90%" name="sequence_name"
                     placeholder="Name your sequence (optional)"><br><br>
                 <a href="#" class="btn-solid-3d btn-blue" onclick="submitForm(event)">Create</a>
 
@@ -101,7 +101,7 @@
             </form>
         </div>
 
-        <div class="flex-container-internal" style="margin: 0; padding: 1rem; padding-top: 0;">
+        <div class="flex-container-internal" style="background-color: white; padding: 1rem; padding-top: 0;">
 
             <!-- Most Used Sequences section -->
             <div class="most-used-sequences">
@@ -110,7 +110,7 @@
                 <ul>
                     {% for seq in most_used_sequences %}
                     <li>
-                        <a alt="used {{ seq.use_count }} times"
+                        <a title="used {{ seq.use_count }} times"
                             href="{{ url_for('redirect_to_timer', sequence_id=seq.id) }}" class="view-sequence-link">
                             {{ seq.name }} </a> ({{ seq.timer_count }} timers, {{ seq.total_duration_display }} total)
                     </li>
@@ -192,7 +192,7 @@
                 const newTimerForm = document.createElement("div");
                 newTimerForm.className = "timer-form new-timer-form"; // Add class for animation
                 newTimerForm.innerHTML = `
-                <div style="font-size: 2em; text-align: left; padding-left: 0em; font-weight: bold;">↓</div>
+                <div style="display: none; line-height: 30px; font-size: 40px; text-align: center; padding-left: 0em; font-weight: bold;">↓&nbsp;↓&nbsp;↓&nbsp;↓&nbsp;↓&nbsp;↓&nbsp;↓&nbsp;</div>
                 <label>Timer #${timerCount}</label>
                          <div class="flex-container"><div class="flex-container-internal">
 
@@ -238,9 +238,9 @@
                                             {% for sound in available_sounds %}
                                             <option value="{{ sound.filename }}">{{ sound.name }}</option>
                                             {% endfor %}
-                                        </select> <a href="#" class="preview-sound-btn" onclick="previewSound(event)"></a>
+                                        </select><a href="#" title="preview" class="preview-sound-btn" onclick="previewSound(event)">🔊</a>
                                     </td>
-                                    <td style="text-align: right;"><a href="#" class="delete-timer-btn" title="Delete Timer"
+                                    <td style="text-align: right;">&nbsp;&nbsp;<a href="#" class="delete-timer-btn" title="Delete Timer"
                                             onclick="deleteTimer(event)">🗑️</a></td>
                                 </tr>
 

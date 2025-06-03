@@ -79,6 +79,7 @@ body.dark-theme #text-bottom hr {
 .most-used-sequences ul {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .most-used-sequences ul li {
@@ -107,10 +108,10 @@ body.dark-theme #text-bottom hr {
     transition: all 0.3s ease-out;
     /* For animation */
     margin-bottom: 1rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
+    /*    padding: 1rem; */
+    border: 0px solid #ccc;
     /* Default border */
-    border-radius: 5px;
+    /* border-radius: 5px; */
 }
 
 /* Animation for new timers (only applies when `addTimer` is pressed) */
@@ -137,7 +138,7 @@ body.dark-theme #text-bottom hr {
 }
 
 .timer-form label {
-    font-size: 0.9rem;
+    font-size: 1rem;
     /* Smaller font for labels */
 }
 
@@ -263,7 +264,7 @@ input[type=number] {
 
 /* Specific fixed width for START/STOP/PAUSE/RESUME buttons */
 .btn-fixed-width {
-    min-width: 90px;
+    min-width: 100px;
     /* Adjust this value based on longest word ("RESUME") + padding */
     padding: 0 5px;
     /* Add some padding to fill the fixed width nicely */
@@ -365,7 +366,7 @@ input[type="color"]::-moz-color-swatch {
     margin: 0;
     border: none;
     cursor: pointer;
-    font-size: 1.5em;
+    
     /* Make emoji larger */
     float: right;
     /* Float to the right */
@@ -408,7 +409,6 @@ input[type="color"]::-moz-color-swatch {
     /* Ensures its children are laid out by flexbox */
     align-items: center;
     justify-content: center;
-    border-radius: 5px;
     overflow: hidden;
     /* Hide overflowing bar during transition */
     position: relative;
