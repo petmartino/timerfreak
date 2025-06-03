@@ -10,8 +10,7 @@
 </head>
 
 <body style="background-color: #00ffae">
-    <p style="padding: .5rem 1rem">TimerFreak: Timers that run one after another, in sequence
-        <big>&#x23F1;&#x23F1;&#x23F1;&#x23F1;&#x23F1;&#x23F1;&#x23F1;</big></p>
+    <p style="padding: .5rem 1rem">TimerFreak: Timers that run one after another, in sequence <big>⏱⏱⏱⏱⏱⏱⏱</big></p>
     <div class="flex-container">
         <div class="flex-container-internal" style="min-width: 400px; padding: 1rem;padding-top: 0; ">
 
@@ -30,7 +29,7 @@
                                         <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
                                         <div class="input-label-row">
                                             <input type="number" class="digit-input" name="hours[]" min="0" max="24"
-                                                value="00" size="2">
+                                                value="00" size="2" onchange="updateTotalDuration()">
                                             <span>h</span>
                                         </div>
                                         <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
@@ -41,7 +40,7 @@
                                             onclick="incrementDigit(event, 'minutes')">+</a>
                                         <div class="input-label-row">
                                             <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
-                                                value="00" size="2">
+                                                value="00" size="2" onchange="updateTotalDuration()">
                                             <span>m</span>
                                         </div>
                                         <a href="#" class="digit-button"
@@ -53,7 +52,7 @@
                                             onclick="incrementDigit(event, 'seconds')">+</a>
                                         <div class="input-label-row">
                                             <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
-                                                value="00" size="2">
+                                                value="00" size="2" onchange="updateTotalDuration()">
                                             <span>s</span>
                                         </div>
                                         <a href="#" class="digit-button"
@@ -71,8 +70,8 @@
                                                 {% for sound in available_sounds %}
                                                 <option value="{{ sound.filename }}">{{ sound.name }}</option>
                                                 {% endfor %}
-                                            </select> <a href="#" class="" style="text-decoration: none;"
-                                                onclick="previewSound(event)">&#128266;</a>
+                                            </select> <a href="#" class="preview-sound-btn"
+                                                onclick="previewSound(event)"></a>
                                         </td>
                                         <td style="text-align: right;"><a href="#" class="delete-timer-btn"
                                                 title="Delete Timer" onclick="deleteTimer(event)">🗑️</a></td>
@@ -88,6 +87,9 @@
 
                     </div>
                 </div>
+                <br>
+                <!-- Total duration displayed here -->
+                <div id="totalDurationDisplay"></div>
                 <br>
                 <a href="#" class="btn-solid-3d btn-default" onclick="addTimer(event)">++ Add Timer ++</a><br>
                 <br><br><input type="text" style="width:100%" name="sequence_name"
@@ -127,6 +129,7 @@
         <script>
             // Get the base static URL once using Jinja2
             const staticBaseUrl = "{{ url_for('static', filename='') }}";
+
             let timerCount = 1; // Tracks how many timer forms are currently on the page
 
             let audioContext;
@@ -138,7 +141,7 @@
             }
 
             // Play a quick synthesized beep
-            function playBeep(frequency = 440, duration = 0.05, volume = 0.5) {
+            function playBeep(frequency = 3520, duration = 0.05, volume = 0.1) { // A7 note for higher pitch
                 initAudioContext();
                 if (!audioContext) {
                     console.warn("AudioContext not available, cannot play beep.");
@@ -164,7 +167,7 @@
             // --- Helper for link buttons ---
             function submitForm(event) {
                 event.preventDefault(); // Prevent default link behavior
-                playBeep(220, 0.05); // Low pitch beep for form submission
+                // No beep for form submission, as it's the final action
                 // We dispatch the submit event so the form's native validation/logic still runs
                 const form = document.getElementById('timerForm');
                 form.dispatchEvent(new Event('submit', { cancelable: true }));
@@ -174,7 +177,7 @@
 
             function addTimer(event) {
                 event.preventDefault(); // Prevent default link behavior
-                playBeep(220, 0.05); // Low pitch beep for adding timer
+                playBeep(3520, 0.05); // High pitch beep for adding timer
 
                 const timerForms = document.querySelectorAll('.timer-form');
                 // Check if the last timer form is valid before adding a new one
@@ -189,7 +192,7 @@
                 const newTimerForm = document.createElement("div");
                 newTimerForm.className = "timer-form new-timer-form"; // Add class for animation
                 newTimerForm.innerHTML = `
-                <div style="font-size: 2em; text-align: left; padding-left: 0em; font-weight: bold;">&darr;</div>
+                <div style="font-size: 2em; text-align: left; padding-left: 0em; font-weight: bold;">↓</div>
                 <label>Timer #${timerCount}</label>
                          <div class="flex-container"><div class="flex-container-internal">
 
@@ -199,7 +202,7 @@
                                     <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
                                     <div class="input-label-row">
                                         <input type="number" class="digit-input" name="hours[]" min="0" max="24" value="00"
-                                            size="2">
+                                            size="2" onchange="updateTotalDuration()">
                                         <span>h</span>
                                     </div>
                                     <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
@@ -209,7 +212,7 @@
                                     <a href="#" class="digit-button" onclick="incrementDigit(event, 'minutes')">+</a>
                                     <div class="input-label-row">
                                         <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
-                                            value="00" size="2">
+                                            value="00" size="2" onchange="updateTotalDuration()">
                                         <span>m</span>
                                     </div>
                                     <a href="#" class="digit-button" onclick="decrementDigit(event, 'minutes')">-</a>
@@ -219,7 +222,7 @@
                                     <a href="#" class="digit-button" onclick="incrementDigit(event, 'seconds')">+</a>
                                     <div class="input-label-row">
                                         <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
-                                            value="00" size="2">
+                                            value="00" size="2" onchange="updateTotalDuration()">
                                         <span>s</span>
                                     </div>
                                     <a href="#" class="digit-button" onclick="decrementDigit(event, 'seconds')">-</a>
@@ -235,7 +238,7 @@
                                             {% for sound in available_sounds %}
                                             <option value="{{ sound.filename }}">{{ sound.name }}</option>
                                             {% endfor %}
-                                        </select> <a href="#" class="" style="text-decoration: none;" onclick="previewSound(event)">&#128266;</a>
+                                        </select> <a href="#" class="preview-sound-btn" onclick="previewSound(event)"></a>
                                     </td>
                                     <td style="text-align: right;"><a href="#" class="delete-timer-btn" title="Delete Timer"
                                             onclick="deleteTimer(event)">🗑️</a></td>
@@ -255,21 +258,32 @@
                     newTimerForm.classList.remove('new-timer-form');
                 }, 10);
 
-                // Ensure delete button is visible for all timers if more than one exists
-                document.querySelectorAll('.delete-timer-btn').forEach(btn => {
-                    // This will be handled by CSS :hover, but we ensure its initial display is not 'none' from JS.
-                    // The CSS handles showing/hiding on hover based on opacity.
-                    btn.style.display = 'inline-block';
+                // Show delete button for all timers if more than one exists
+                const allTimerForms = document.querySelectorAll('.timer-form');
+                if (allTimerForms.length > 1) { // If there's now more than one timer total
+                    allTimerForms.forEach(form => {
+                        const deleteBtn = form.querySelector('.delete-timer-btn');
+                        if (deleteBtn) {
+                            deleteBtn.style.display = 'inline-block'; // Always display if multiple timers
+                        }
+                    });
+                }
+
+                // Attach onchange listeners to inputs for total duration calculation
+                newTimerForm.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.addEventListener('change', updateTotalDuration);
                 });
+                newTimerForm.querySelector('select[name="alarm_sound[]"]').addEventListener('change', previewSound); // Re-attach listener
+                newTimerForm.querySelector('input[type="color"]').addEventListener('change', updateTotalDuration); // Just in case, though it doesn't affect duration
 
                 // Validate the newly added timer (which defaults to 00)
                 validateTimerDuration(newTimerForm, false);
+                updateTotalDuration(); // Update total duration after adding
             }
 
             function deleteTimer(event) {
                 event.preventDefault(); // Prevent default link behavior
-                playBeep(220, 0.05); // Low pitch beep for deleting timer
-
+                // No beep for delete on index.html
                 const timerFormToRemove = event.target.closest('.timer-form');
                 if (timerFormToRemove) {
                     timerFormToRemove.classList.add('deleting'); // Add class for animation
@@ -277,26 +291,37 @@
                         timerFormToRemove.removeEventListener('transitionend', handler);
                         timerFormToRemove.remove();
                         timerCount--; // Decrement global count
-                        // Re-index timer labels
+
+                        // Re-index timer labels and update delete button visibility
                         const remainingTimerForms = document.querySelectorAll('.timer-form');
                         remainingTimerForms.forEach((form, index) => {
                             form.querySelector('label').textContent = `Timer #${index + 1}`;
                         });
-                        // Hide delete button if only one timer remains
+                        // Hide delete button if only one timer remains (after re-indexing)
                         if (remainingTimerForms.length === 1) {
                             const singleTimerDeleteBtn = remainingTimerForms[0].querySelector('.delete-timer-btn');
                             if (singleTimerDeleteBtn) {
-                                // Handled by CSS on hover now, but ensure it's not hidden by JS if it was previously.
-                                singleTimerDeleteBtn.style.opacity = 0; // Force hidden as per CSS default
+                                singleTimerDeleteBtn.style.display = 'none'; // Hide if only one timer
                             }
                         }
+                        // Ensure delete buttons are shown for all remaining timers if more than one
+                        if (remainingTimerForms.length > 1) {
+                            remainingTimerForms.forEach(form => {
+                                const deleteBtn = form.querySelector('.delete-timer-btn');
+                                if (deleteBtn) {
+                                    deleteBtn.style.display = 'inline-block';
+                                }
+                            });
+                        }
+
+                        updateTotalDuration(); // Update total duration after deleting
                     });
                 }
             }
 
             function incrementDigit(event, type) {
                 event.preventDefault();
-                playBeep(220, 0.05); // Low pitch beep for digit change
+                // No beep for digit changes on index.html
                 const timerForm = event.target.closest('.timer-form');
                 const input = timerForm.querySelector(`input[name="${type}[]"]`);
                 let value = parseInt(input.value);
@@ -309,11 +334,12 @@
                 value = (value + 1) > max ? 0 : (value + 1);
                 input.value = String(value).padStart(2, '0');
                 validateTimerDuration(timerForm, true);
+                updateTotalDuration(); // Update total duration after digit change
             }
 
             function decrementDigit(event, type) {
                 event.preventDefault();
-                playBeep(220, 0.05); // Low pitch beep for digit change
+                // No beep for digit changes on index.html
                 const timerForm = event.target.closest('.timer-form');
                 const input = timerForm.querySelector(`input[name="${type}[]"]`);
                 let value = parseInt(input.value);
@@ -327,12 +353,13 @@
                 value = (value - 1) < min ? max : (value - 1);
                 input.value = String(value).padStart(2, '0');
                 validateTimerDuration(timerForm, true);
+                updateTotalDuration(); // Update total duration after digit change
             }
 
 
             function previewSound(event) {
                 event.preventDefault();
-                playBeep(220, 0.05); // Low pitch beep for preview
+                // No beep for preview on index.html
                 const select = event.target.parentNode.querySelector('select');
                 const soundFile = select.value;
                 const audio = document.getElementById("previewAudio");
@@ -341,6 +368,45 @@
                 audio.currentTime = 0;
                 audio.play().catch(e => console.error("Error playing preview sound:", e));
             }
+
+            function calculateTotalDuration() {
+                let totalSeconds = 0;
+                const timerForms = document.querySelectorAll('.timer-form');
+                timerForms.forEach(form => {
+                    const hoursInput = form.querySelector('input[name="hours[]"]');
+                    const minutesInput = form.querySelector('input[name="minutes[]"]');
+                    const secondsInput = form.querySelector('input[name="seconds[]"]');
+
+                    const hours = parseInt(hoursInput.value || 0);
+                    const minutes = parseInt(minutesInput.value || 0);
+                    const seconds = parseInt(secondsInput.value || 0);
+
+                    totalSeconds += (hours * 3600) + (minutes * 60) + seconds;
+                });
+                return totalSeconds;
+            }
+
+            function formatDuration(totalSeconds) {
+                if (totalSeconds === 0) return "0 seconds";
+
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                let parts = [];
+                if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+                if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+                if (seconds > 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
+
+                return parts.join(', ');
+            }
+
+            function updateTotalDuration() {
+                const totalSeconds = calculateTotalDuration();
+                const formattedDuration = formatDuration(totalSeconds);
+                document.getElementById('totalDurationDisplay').textContent = `Total duration: ${formattedDuration}`;
+            }
+
 
             function validateTimerDuration(timerFormElement, showError) {
                 const hoursInput = timerFormElement.querySelector('input[name="hours[]"]');
@@ -407,17 +473,19 @@
 
                     const deleteBtn = form.querySelector('.delete-timer-btn');
                     if (deleteBtn) {
-                        // The initial visibility is handled by CSS (opacity: 0).
-                        // Only show delete button if more than one timer, and not on hover.
-                        // For the first timer, if it's the only one, keep it hidden.
-                        // If it's not the only one (e.g. 2nd, 3rd timer added), it's visible on hover.
                         if (timerForms.length === 1) {
-                            deleteBtn.style.opacity = 0; // Ensure it's hidden if only one timer
+                            deleteBtn.style.display = 'none'; // Hide if only one timer
                         } else {
-                            // This is now handled by CSS :hover. We don't need JS to set 'inline-block' explicitly.
-                            // Keep the initial opacity as per CSS default.
+                            deleteBtn.style.display = 'inline-block'; // Always display if multiple timers
                         }
                     }
+
+                    // Attach onchange listeners to inputs for total duration calculation
+                    form.querySelectorAll('input[type="number"]').forEach(input => {
+                        input.addEventListener('change', updateTotalDuration);
+                    });
+                    form.querySelector('select[name="alarm_sound[]"]').addEventListener('change', previewSound); // Re-attach listener
+                    form.querySelector('input[type="color"]').addEventListener('change', updateTotalDuration); // Just in case, though it doesn't affect duration
                 });
                 timerCount = timerForms.length;
 
@@ -425,6 +493,8 @@
                 if (timerForms.length > 0) {
                     timerForms[0].classList.remove('new-timer-form');
                 }
+
+                updateTotalDuration(); // Calculate initial total duration
             });
         </script>
 </body>

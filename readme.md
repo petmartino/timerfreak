@@ -85,9 +85,7 @@ You can find and modify application-wide defaults in `app.py`:
 *   **More Visualizations:** Different ways to display timer progress.
 
 
-
-
-WHISHLIST 
+## WHISHLIST 
 
 - LOGO 
 - Alarmas chidas y en base de datos.
@@ -95,3 +93,7 @@ WHISHLIST
 - AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT (max current en DB)
 - ZOOM CURRENT
 - Pueden subir sonidos (y utilizo yo)
+
+## LICENSE
+
+- &copy; Copyright All Rights Reserved by author.

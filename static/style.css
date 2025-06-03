@@ -2,7 +2,43 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Courier New', Courier, monospace;
+    /* Default Light Theme styles */
+    background-color: #fff;
+    color: #000;
+    padding-top: 10px;
+    /* Account for fixed global bar on timer.html */
 }
+
+/* Dark Theme specific overrides - apply this class to the body */
+body.dark-theme {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark-theme .bar-container {
+    background-color: #555;
+}
+
+/* Dark mode disabled button style */
+body.dark-theme .btn-solid-3d[data-disabled="true"],
+body.dark-theme .btn-solid-3d.disabled-link {
+    background: #444;
+    color: #777;
+    border-color: #666;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #555, 0 0 0 1px #444, 0 3px 0 1px #444, 0 10px 20px rgba(0, 0, 0, 0);
+    text-shadow: none;
+}
+
+body.dark-theme .btn-solid-3d[data-disabled="true"]:active,
+body.dark-theme .btn-solid-3d.disabled-link:active {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5), inset 0 1px 20px rgba(0, 0, 0, 0), 0 2px 0 #555, 0 0 0 1px #444, 0 2px 0 1px #444, 0 10px 20px rgba(0, 0, 0, 0);
+}
+
+body.dark-theme #text-bottom hr {
+    /* Dark theme footer line */
+    border-top-color: #444;
+}
+
 
 /* General Layout Containers */
 .flex-container {
@@ -15,6 +51,29 @@ body {
     background-color: inherit;
     /* Inherit from body or parent for theme consistency */
 }
+
+/* Honeypot field - must be hidden */
+.honeypot-field {
+    position: absolute !important;
+    /* Use !important to ensure override */
+    left: -9999px !important;
+    /* Move far off-screen */
+    top: -9999px !important;
+    /* Move far off-screen */
+    width: 1px !important;
+    /* Minimal width */
+    height: 1px !important;
+    /* Minimal height */
+    overflow: hidden !important;
+    /* Hide content */
+    opacity: 0 !important;
+    /* Make invisible */
+    pointer-events: none !important;
+    /* Prevent interaction */
+    visibility: hidden !important;
+    /* Ensure it's never visible */
+}
+
 
 /* Most Used Sequences Section */
 .most-used-sequences ul {
@@ -94,12 +153,13 @@ body {
 .digit-group {
     display: flex;
     flex-direction: column;
+    /* Stack children vertically */
     align-items: left;
     text-align: left;
     margin: 0 0em;
 }
 
-/* New: container for input and label to keep them horizontal */
+/* Container for input and label to keep them horizontal */
 .input-label-row {
     display: flex;
     align-items: center;
@@ -168,6 +228,7 @@ input[type=number] {
     font-family: 'Courier New', Courier, monospace;
     letter-spacing: 1px;
     padding: 0 1em;
+    /* Default padding for multi-character buttons */
     text-align: center;
     display: inline-block;
     height: 30px;
@@ -199,6 +260,30 @@ input[type=number] {
     box-sizing: border-box;
     vertical-align: middle;
 }
+
+/* Specific fixed width for START/STOP/PAUSE/RESUME buttons */
+.btn-fixed-width {
+    min-width: 90px;
+    /* Adjust this value based on longest word ("RESUME") + padding */
+    padding: 0 5px;
+    /* Add some padding to fill the fixed width nicely */
+    box-sizing: border-box;
+}
+
+/* Special styling for single-character/emoji buttons to make them square */
+.btn-solid-3d.emoji-btn {
+    padding: 0;
+    /* Remove horizontal padding */
+    width: 30px;
+    /* Make width equal to height */
+    overflow: hidden;
+    /* Hide potential overflow if emoji is large */
+    display: inline-flex;
+    /* Use flexbox to center content */
+    justify-content: center;
+    align-items: center;
+}
+
 
 .btn-solid-3d:active {
     transform: translateY(3px);
@@ -284,35 +369,50 @@ input[type="color"]::-moz-color-swatch {
     /* Make emoji larger */
     float: right;
     /* Float to the right */
-    opacity: 0;
-    /* Initially hidden */
+    /* opacity: 0; */
+    /* Removed, visibility managed by JS display property now */
     transition: opacity 0.3s ease;
     /* Fade in/out */
     padding: 0;
     line-height: 1;
     /* Adjust line height for emoji */
+    display: none;
+    /* Initially hidden, managed by JS */
 }
 
-.timer-form:hover .delete-timer-btn {
-    opacity: 1;
-    /* Show on hover of the timer form */
+/* Preview sound icon */
+.preview-sound-btn {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1.2em;
+    /* Adjust size of speaker icon */
+    margin-left: 5px;
+    /* Spacing from select dropdown */
 }
+
+
+/* .timer-form:hover .delete-timer-btn { */
+/* opacity: 1; */
+/* Removed, managed by JS display property now */
+/* } */
 
 
 /* Timer Bar Components */
 .bar-container {
-    position: relative;
     background: #ddd;
     margin-bottom: 0.5rem;
     width: 100%;
     min-height: 100px;
     /* Default height */
     display: flex;
+    /* Ensures its children are laid out by flexbox */
     align-items: center;
     justify-content: center;
     border-radius: 5px;
     overflow: hidden;
     /* Hide overflowing bar during transition */
+    position: relative;
+    /* Keep position relative for absolute children */
 }
 
 .bar {
@@ -560,4 +660,13 @@ input[type="color"]::-moz-color-swatch {
     /* Adjust as needed */
     opacity: 1;
     padding-bottom: .5rem;
+}
+
+/* Styles for total duration display on index.html */
+#totalDurationDisplay {
+    margin-top: 1em;
+    /* Adjusted position */
+    margin-bottom: 1em;
+    font-weight: bold;
+    color: #333;
 }
