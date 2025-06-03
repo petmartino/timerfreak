@@ -69,16 +69,17 @@ It's built to be straightforward and effective, helping you focus on the task at
     Open your browser to `http://127.0.0.1:5001/`
 
 ## TODO YO LOCAL
-Setear alguna forma de revisar la database local / remota y que funcione.
 
 AI
 - Aprender a hacer un upgrade en DB agregando temas por ejemplo.
 - DISABLE SOUNDS ON INDEX
 - FIX GLITCH ULTIMA CAMPANA. 
 - Buscar una licencia
+- Display timer duration instead of 0 at the begining on all timers. 
 
 
-## WHISHLIST 
+## WHISHLIST
+- Extra bar with lines on segment finalization 
 - Visitors logging and statistics
 - MOVER A HTTPS
 - LOGO y FAVICON
