@@ -68,43 +68,24 @@ It's built to be straightforward and effective, helping you focus on the task at
     ```
     Open your browser to `http://127.0.0.1:5001/`
 
-## Configuration Defaults
-
-You can find and modify application-wide defaults in `app.py`:
-
-*   `DEFAULT_TIMER_COLOR`: The default hexadecimal color code for new timers.
-*   `DEFAULT_ALARM_SOUND_FILENAME`: The default filename for the alarm sound.
-*   ... (add more configuration variables as needed)
-
-## Future Enhancements (Wishlist)
-
-*   **Custom Sound Uploads:** Allow users to upload their own alarm sounds.
-*   **Sequence Import/Export:** Functionality to share sequences via file.
-*   **Accessibility Improvements:** Enhanced support for screen readers and keyboard navigation.
-*   **User Accounts:** To save and manage personal sequences.
-*   **More Visualizations:** Different ways to display timer progress.
-
-
 ## TODO YO LOCAL
+Setear alguna forma de revisar la database local / remota y que funcione.
 
-- fix corners en timer "yo"
-- FIX GLITCH ULTIMA CAMPANA. 
-- Sonidos básicos instalar manual
-- Fix playback synth...
-- fix stop start resume y 
 AI
-- FIX TOGGLE THEME 
-- Aprender como deployar de local a remoto diario. 
+- Aprender a hacer un upgrade en DB agregando temas por ejemplo.
+- DISABLE SOUNDS ON INDEX
+- FIX GLITCH ULTIMA CAMPANA. 
+- Buscar una licencia
 
 
 ## WHISHLIST 
+- Visitors logging and statistics
 - MOVER A HTTPS
 - LOGO y FAVICON
-- Alarmas chidas en sonidos.
+- Alarmas chidas (custom) en sonidos.
 - SAY SOMETHING
-- AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT (max current en DB)
-- ZOOM CURRENT
-- Pueden subir sonidos (y utilizo yo)
+- AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT
+- ¿Custom sounds?
 
 ## LICENSE
 
