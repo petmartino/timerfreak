@@ -85,10 +85,22 @@ You can find and modify application-wide defaults in `app.py`:
 *   **More Visualizations:** Different ways to display timer progress.
 
 
+## TODO YO LOCAL
+- Script deploy
+- fix corners en timer "yo"
+- FIX GLITCH ULTIMA CAMPANA. 
+- Sonidos básicos instalar manual
+- Fix playback synth...
+
+AI
+- FIX TOGGLE THEME 
+- Aprender como deployar de local a remoto diario. 
+
+
 ## WHISHLIST 
 
-- LOGO 
-- Alarmas chidas y en base de datos.
+- LOGO y FAVICON
+- Alarmas chidas en sonidos.
 - SAY SOMETHING
 - AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT (max current en DB)
 - ZOOM CURRENT
