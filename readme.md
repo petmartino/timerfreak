@@ -75,7 +75,7 @@ AI
 - DISABLE SOUNDS ON INDEX
 - FIX GLITCH ULTIMA CAMPANA. 
 - Buscar una licencia
-- Display timer duration instead of 0 at the begining on all timers. 
+- Display timer duration instead of 0 at the begining on all timers. (Stop should reset this to this position)
 
 
 ## WHISHLIST
