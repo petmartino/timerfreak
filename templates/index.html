@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>TimerFreak</title>
@@ -10,95 +9,17 @@
 </head>
 
 <body style="background-color: #00ffae">
-    <div id="debugOutput"
-        style="background-color: lightyellow; border: 1px solid orange; padding: 5px; margin: 5px; font-size: 0.8em; white-space: pre-wrap; word-break: break-all;">
+    <div id="debugOutput" style="background-color: lightyellow; border: 1px solid orange; padding: 5px; margin: 5px; font-size: 0.8em; white-space: pre-wrap; word-break: break-all;">
         Debug Log:
     </div>
     <p style="padding: .5rem 1rem">TimerFreak: Timers that run one after another, in sequence <big>⏱⏱⏱⏱</big></p>
     <div class="flex-container">
-        <div class="flex-container-internal"
-            style="min-width: 375px; padding: 1rem;padding-top: 0; background-color: white;">
+        <div class="flex-container-internal" style="min-width: 375px; padding: 1rem;padding-top: 0; background-color: white;">
 
             <p>Create new:</p>
             <form action="/timer" method="post" id="timerForm">
                 <div id="timerInputs">
-                    <!-- Initial Timer Form -->
-                    <div class="timer-form">
-                        <label>Timer #1</label>
-                        <div class="flex-container">
-                            <div class="flex-container-internal">
-
-                                <div class="timer-digits">
-                                    <!-- Hours Group -->
-                                    <div class="digit-group">
-                                        <a href="#" class="digit-button" onclick="incrementDigit(event, 'hours')">+</a>
-                                        <div class="input-label-row">
-                                            <input type="number" class="digit-input" name="hours[]" min="0" max="24"
-                                                value="00" size="2" onchange="updateTotalDuration()">
-                                            <span>h</span>
-                                        </div>
-                                        <a href="#" class="digit-button" onclick="decrementDigit(event, 'hours')">-</a>
-                                    </div>
-                                    <!-- Minutes Group -->
-                                    <div class="digit-group">
-                                        <a href="#" class="digit-button"
-                                            onclick="incrementDigit(event, 'minutes')">+</a>
-                                        <div class="input-label-row">
-                                            <input type="number" class="digit-input" name="minutes[]" min="0" max="59"
-                                                value="00" size="2" onchange="updateTotalDuration()">
-                                            <span>m</span>
-                                        </div>
-                                        <a href="#" class="digit-button"
-                                            onclick="decrementDigit(event, 'minutes')">-</a>
-                                    </div>
-                                    <!-- Seconds Group -->
-                                    <div class="digit-group">
-                                        <a href="#" class="digit-button"
-                                            onclick="incrementDigit(event, 'seconds')">+</a>
-                                        <div class="input-label-row">
-                                            <input type="number" class="digit-input" name="seconds[]" min="0" max="59"
-                                                value="00" size="2" onchange="updateTotalDuration()">
-                                            <span>s</span>
-                                        </div>
-                                        <a href="#" class="digit-button"
-                                            onclick="decrementDigit(event, 'seconds')">-</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex-container-internal" style="margin-left: 1em">
-                                <textarea style="margin-bottom: 1.25em;" name="timer_name[]" rows="2" cols="23"
-                                    placeholder="Name or description (optional)"></textarea>
-                                <table>
-                                    <tr>
-                                        <td><input type="color" name="color[]" value="#4caf50"></td>
-                                        <td><select name="alarm_sound[]">
-
-                                                <option value="alarm.mp3">Alarm</option>
-
-                                                <option value="beep.mp3">Beep</option>
-
-                                                <option value="bell.mp3">Bell</option>
-
-                                                <option value="chime.mp3">Chime</option>
-
-                                                <option value="ding.mp3">Ding</option>
-
-                                            </select><a href="#" class="preview-sound-btn" title="preview sound"
-                                                onclick="previewSound(event)">🔊</a>
-                                        </td>
-                                        <td style="text-align: right;">  <a href="#" class="delete-timer-btn"
-                                                title="Delete Timer" onclick="deleteTimer(event)">🗑️</a></td>
-                                    </tr>
-
-                                </table>
-
-                            </div>
-
-                        </div>
-                        <div class="validation-message" style="display:none;"></div>
-
-
-                    </div>
+                    <!-- ... existing timer inputs ... -->
                 </div>
 
 
@@ -107,37 +28,19 @@
                 <div id="totalDurationDisplay"></div>
                 <input type="text" style="width:90%" name="sequence_name"
                     placeholder="Name your sequence (optional)"><br><br>
-                <a href="#" class="btn-solid-3d btn-blue" onclick="submitForm(event)">Create</a>
+
+                <!-- REPLACE THIS LINE: -->
+                <!-- <a href="#" class="btn-solid-3d btn-blue" onclick="submitForm(event)">Create</a> -->
+
+                <!-- WITH THIS: -->
+                <button type="submit" class="btn-solid-3d btn-blue">Create</button>
 
                 <!-- Honeypot field for bot detection -->
                 <input type="text" name="website" id="website" class="honeypot-field" tabindex="-1" autocomplete="off">
             </form>
         </div>
 
-        <div class="flex-container-internal" style="background-color: white; padding: 1rem; padding-top: 0;">
-
-            <!-- Most Used Sequences section -->
-            <div class="most-used-sequences">
-                <p>Most used:</p>
-
-                <ul>
-
-                    <li>
-                        <a title="used 2 times" href="/Rvh2KFftbC8" class="view-sequence-link">
-                            Unnamed Sequence </a> (2 timers, 1m 3s total)
-                    </li>
-
-                </ul>
-
-            </div>
-        </div>
-
-        <audio id="previewAudio" src="" preload="auto"></audio>
-
-
-        <div style="margin: 1em; width: 100%; clear:both;text-align: left; margin-top: 1em; ">
-            © 2025 - <a href="/">TimerFreak</a> / <a href="/about">About</a>
-        </div>
+        <!-- ... rest of your HTML ... -->
 
         <script>
             // Debugging helper function
@@ -184,23 +87,24 @@
                 oscillator.stop(audioContext.currentTime + duration);
             }
 
-            // --- Helper for link buttons ---
+            // --- Remove the submitForm function entirely as it's no longer needed ---
+            /*
             function submitForm(event) {
                 appendDebugLog("submitForm: Function called.");
-                event.preventDefault(); // KEEP THIS LINE - It's needed for the <a> tag
+                event.preventDefault();
                 appendDebugLog("submitForm: Default link behavior prevented for <a>.");
 
                 const form = document.getElementById('timerForm');
                 if (form) {
                     appendDebugLog("submitForm: Attempting to dispatch 'submit' event on the form.");
-                    // The 'submit' event dispatched here will trigger the form's event listener
                     form.dispatchEvent(new Event('submit', { cancelable: true }));
                     appendDebugLog("submitForm: 'submit' event dispatched. Check form listener logs.");
                 } else {
                     appendDebugLog("submitForm: ERROR - Form not found!");
                 }
             }
-            // --- End of helper ---
+            */
+            // --- End removal ---
 
 
             function addTimer(event) {
@@ -389,7 +293,7 @@
                 audio.src = staticBaseUrl + soundFile;
                 audio.pause();
                 audio.currentTime = 0;
-                audio.play().catch(e => appendDebugLog("Error playing preview sound: " + e.message)); // Use appendDebugLog
+                audio.play().catch(e => appendDebugLog("Error playing preview sound: " + e.message));
             }
 
             function calculateTotalDuration() {
@@ -494,6 +398,9 @@
                 } else {
                     appendDebugLog("All timers are valid. Form will now submit naturally.");
                     // No event.preventDefault() here, allowing the form to submit naturally
+                    // Add a final log before actual submission
+                    appendDebugLog("Attempting native form submission...");
+                    // The form will attempt to submit now.
                 }
             });
 
