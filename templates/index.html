@@ -120,15 +120,21 @@
 
             <!-- Most Used Sequences section -->
             <div class="most-used-sequences">
-                <p>Most used ts:</p>
+                <p>Most used:</p>
 
                 <ul>
-
+                    <!-- START OF CHANGES -->
+                    {% for seq in most_used_sequences %}
                     <li>
-                        <a title="used 2 times" href="/Rvh2KFftbC8" class="view-sequence-link">
-                            Unnamed Sequence </a> (2 timers, 1m 3s total)
+                        <a title="used {{ seq.use_count }} time{% if seq.use_count != 1 %}s{% endif %}"
+                            href="/{{ seq.id }}" class="view-sequence-link">
+                            {{ seq.name if seq.name else 'Unnamed Sequence' }} </a> ({{ seq.timer_count }} timer{% if
+                        seq.timer_count != 1 %}s{% endif %}, {{ seq.total_duration_display }} total)
                     </li>
-
+                    {% else %}
+                    <li>No sequences used yet. Create one!</li>
+                    {% endfor %}
+                    <!-- END OF CHANGES -->
                 </ul>
 
             </div>
