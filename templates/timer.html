@@ -725,7 +725,7 @@
 
             if (!running && !paused) {
                 running = true;
-                setButtonState('startBtn', "⏹︎ STOP", 'btn-red'); // Update Start/Stop button, NO  
+                setButtonState('startBtn', "STOP", 'btn-red'); // Update Start/Stop button, NO  
                 setLinkDisabled(document.getElementById("pauseBtn"), false);
                 setLinkDisabled(document.getElementById("restartCurrent"), false);
                 setLinkDisabled(document.getElementById("restartAll"), false);
@@ -1069,7 +1069,7 @@
 
             // Set initial states for main buttons with specific colors and fixed width
             // Note: `btn-fixed-width` class added to style.css to ensure these have minimum width
-            setButtonState('startBtn', "⏵ START", 'btn-darkgreen');
+            setButtonState('startBtn', "START", 'btn-darkgreen');
             setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange');
             setButtonState('advancedBtn', "⚙️", 'btn-gray');
             setButtonState('theme-toggle', "💡", 'btn-gray');
