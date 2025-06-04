@@ -116,9 +116,9 @@
                 style="color: #007bff; text-decoration: underline;">View Logs</a>
         </div>
 
-        {% include 'footer.html' %}
+       
     </div>
-
+    {% include 'footer.html' %}
     <script>
         console.log("timer.html loaded");
         const durations = {{ timers | tojson }};

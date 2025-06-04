@@ -135,15 +135,19 @@ def index():
     ).group_by(Timer.sequence_id).subquery()
 
     # Main query: Join Sequence with the subqueries
+    # Main query: Join Sequence with the subqueries
+    # In your app.py, inside the index() function:
+
+    # Main query: Join Sequence with the subqueries
     most_used_sequences_query = db.session.query(
         Sequence.id,
         Sequence.name,
         sequence_start_counts.c.start_count, # Count of starts for this sequence
         sequence_timer_info.c.timer_count,   # Count of timers in this sequence
         sequence_timer_info.c.total_sequence_duration # Sum of durations in this sequence
-    ).join(sequence_start_counts, Sequence.id == sequence_start_counts.c.sequence_id)\
+    ).outerjoin(sequence_start_counts, Sequence.id == sequence_start_counts.c.sequence_id)\
     .outerjoin(sequence_timer_info, Sequence.id == sequence_timer_info.c.sequence_id)\
-    .order_by(sequence_start_counts.c.start_count.desc())\
+    .order_by(sequence_start_counts.c.start_count.desc().nulls_last())\
     .limit(35) # Get top 35 most used sequences
 
     most_used_sequences_raw = most_used_sequences_query.all()
@@ -151,6 +155,7 @@ def index():
     most_used_sequences = []
     for seq in most_used_sequences_raw:
         total_seconds = seq.total_sequence_duration if seq.total_sequence_duration is not None else 0
+        start_count = seq.start_count if seq.start_count is not None else 0 # THIS LINE IS IMPORTANT TOO
 
         hours = total_seconds // 3600
         minutes = (total_seconds % 3600) // 60
@@ -170,7 +175,7 @@ def index():
         most_used_sequences.append({
             'id': seq.id,
             'name': seq.name if seq.name else f'Unnamed Sequence',
-            'use_count': seq.start_count,
+            'use_count': start_count,
             'timer_count': seq.timer_count if seq.timer_count is not None else 0,
             'total_duration_display': duration_display.strip()
         })

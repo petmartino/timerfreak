@@ -38,7 +38,13 @@ body.dark-theme #text-bottom hr {
     /* Dark theme footer line */
     border-top-color: #444;
 }
-
+#footer{
+        margin: .5em;
+        width: 100%;
+        clear: both;
+        text-align: left;
+        margin-top: 1em;
+}
 
 /* General Layout Containers */
 .flex-container {
@@ -489,6 +495,8 @@ input[type="color"]::-moz-color-swatch {
     margin-left: .5rem;
     padding: 0;
 }
+
+
 
 /* Control section styles */
 #controls {
