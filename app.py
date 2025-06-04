@@ -33,7 +33,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 
 # --- Application Defaults & Configuration ---
 # You can change these values to set default behaviors.
-DEFAULT_TIMER_COLOR = "#4caf50" # Default color for new timers (a green shade)
+DEFAULT_TIMER_COLOR = "#0cd413" # Default color for new timers (a green shade)
 DEFAULT_ALARM_SOUND_FILENAME = "alarm.mp3" # Default sound for new timers
 # You can add more defaults here, e.g., DEFAULT_BAR_HEIGHT = "100px"
 
