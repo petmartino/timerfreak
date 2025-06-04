@@ -6,7 +6,6 @@
     <title>TimerFreak</title>
     <link rel="manifest" href="/static/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/style.css" />
 </head>
 
@@ -72,7 +71,7 @@
                                     placeholder="Name or description (optional)"></textarea>
                                 <table>
                                     <tr>
-                                        <td><input type="color" name="color[]" value="#4caf50"></td>
+                                        <td><input type="color" name="color[]" value="#00ffae"></td>
                                         <td><select name="alarm_sound[]">
 
                                                 <option value="alarm.mp3">Alarm</option>
@@ -144,9 +143,7 @@
         <audio id="previewAudio" src="" preload="auto"></audio>
 
 
-        <div style="margin: 1em; width: 100%; clear:both;text-align: left; margin-top: 1em; ">
-            © 2025 - <a href="/">TimerFreak</a> / <a href="/about">About</a>
-        </div>
+        {% include  'footer.html' %}
 
         <script>
             // Debugging helper function
@@ -198,7 +195,7 @@
 
             function addTimer(event) {
                 event.preventDefault();
-                playBeep(3520, 0.05);
+                //playBeep(3520, 0.05);
 
                 const timerForms = document.querySelectorAll('.timer-form');
                 if (timerForms.length > 0 && !validateTimerDuration(timerForms[timerForms.length - 1], true)) {
@@ -252,7 +249,7 @@
                             <textarea  style="margin-bottom: 1.25em;" name="timer_name[]" rows="2" cols="24" placeholder="Name or description (optional)"></textarea>
                             <table>
                                 <tr>
-                                    <td><input type="color" name="color[]" value="#4caf50"></td>
+                                    <td><input type="color" name="color[]" value="#00ffae"></td>
                                     <td><select name="alarm_sound[]">
 
                                             <option value="alarm.mp3">Alarm</option>
@@ -340,6 +337,7 @@
 
             function incrementDigit(event, type) {
                 event.preventDefault();
+                playBeep(3520, 0.05, .02);
                 const timerForm = event.target.closest('.timer-form');
                 const input = timerForm.querySelector(`input[name="${type}[]"]`);
                 let value = parseInt(input.value);
@@ -357,6 +355,7 @@
 
             function decrementDigit(event, type) {
                 event.preventDefault();
+                playBeep(3520, 0.05, .02);
                 const timerForm = event.target.closest('.timer-form');
                 const input = timerForm.querySelector(`input[name="${type}[]"]`);
                 let value = parseInt(input.value);

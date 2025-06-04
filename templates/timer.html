@@ -57,8 +57,7 @@
     {% endif %}
 
     <div id="controls">
-        <a href="#" class="btn-solid-3d btn-darkgreen btn-fixed-width" onclick="toggleStart(event)" id="startBtn">⏵
-            START</a>
+        <a href="#" class="btn-solid-3d btn-darkgreen btn-fixed-width" onclick="toggleStart(event)" id="startBtn">START</a>
         <a href="#" class="btn-solid-3d btn-orange btn-fixed-width" onclick="togglePause(event)" id="pauseBtn"
             data-disabled="true">PAUSE</a>
         <a href="#" class="btn-solid-3d btn-gray emoji-btn" onclick="toggleAdvanced(event)" id="advancedBtn">⚙️</a>
@@ -111,10 +110,7 @@
         <audio id="backgroundAlarm" src="{{ url_for('static', filename='silence.mp3') }}" loop preload="auto"
             volume="0"></audio>
 
-        <div style="margin-top: 20px;">
-            <a href="{{ url_for('show_logs', sequence_id=sequence_id) }}"
-                style="color: #007bff; text-decoration: underline;">View Logs</a>
-        </div>
+        
 
        
     </div>
@@ -491,7 +487,7 @@
             }
 
             // Set button states
-            setButtonState('startBtn', "⏹ STOP", 'btn-red'); // Updated name and color, NO  
+            setButtonState('startBtn', "STOP", 'btn-red'); // Updated name and color, NO  
             setLinkDisabled(document.getElementById("pauseBtn"), false);
             setLinkDisabled(document.getElementById("restartCurrent"), false);
             setLinkDisabled(document.getElementById("restartAll"), false);
@@ -563,8 +559,8 @@
             }
             document.getElementById("globalBar").style.width = "0%";
             // Set button states
-            setButtonState('startBtn', "⏵ START", 'btn-darkgreen'); // Updated name and color, NO  
-            setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange'); // Reset Pause text and color, NO  
+            setButtonState('startBtn', "START", 'btn-darkgreen'); // Updated name and color, NO  
+            setButtonState('pauseBtn', "PAUSE", 'btn-orange'); // Reset Pause text and color, NO  
             setLinkDisabled(document.getElementById("pauseBtn"), true);
             setLinkDisabled(document.getElementById("restartCurrent"), true);
             setLinkDisabled(document.getElementById("restartAll"), true);
@@ -585,7 +581,7 @@
         function _togglePause() {
             paused = !paused;
             // Set button states
-            setButtonState('pauseBtn', paused ? "⏵︎ RESUME" : "⏸︎ PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name, NO  
+            setButtonState('pauseBtn', paused ? "RESUME" : "PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name, NO  
             // updateDebug(); // Debug info removed from GUI
 
             logActivity(paused ? 'pause_timer' : 'resume_timer', current);
@@ -1018,10 +1014,10 @@
 
             if (isLight) {
                 bodyElement.classList.add('dark-theme');
-                setButtonState('theme-toggle', "🌙", 'btn-gray'); // Moon emoji for dark mode
+                setButtonState('theme-toggle', "☀️", 'btn-gray'); // Moon emoji for dark mode
             } else {
                 bodyElement.classList.remove('dark-theme');
-                setButtonState('theme-toggle', "💡", 'btn-gray'); // Light bulb emoji for light mode
+                setButtonState('theme-toggle', "🌙", 'btn-gray'); // Light bulb emoji for light mode
             }
         }
 
@@ -1070,9 +1066,9 @@
             // Set initial states for main buttons with specific colors and fixed width
             // Note: `btn-fixed-width` class added to style.css to ensure these have minimum width
             setButtonState('startBtn', "START", 'btn-darkgreen');
-            setButtonState('pauseBtn', "⏸ PAUSE", 'btn-orange');
+            setButtonState('pauseBtn', "PAUSE", 'btn-orange');
             setButtonState('advancedBtn', "⚙️", 'btn-gray');
-            setButtonState('theme-toggle', "💡", 'btn-gray');
+            setButtonState('theme-toggle', "🌙", 'btn-gray');
             setLinkDisabled(document.getElementById("advancedBtn"), false); // Advanced button always enabled
 
             // Initial play of background silent audio (user interaction might be needed on first load)

@@ -68,26 +68,25 @@ It's built to be straightforward and effective, helping you focus on the task at
     ```
     Open your browser to `http://127.0.0.1:5001/`
 
-## TODO YO LOCAL
 
-AI
-- Aprender a hacer un upgrade en DB agregando temas por ejemplo.
-- DISABLE SOUNDS ON INDEX
+# YO 
+- Alarmas chidas (custom) en sonidos.
+- LOGO y FAVICON
+- MOVER A HTTPS
+- Fix bottom timer.html (mobile/desktop instructions)
+
+# AI
 - FIX GLITCH ULTIMA CAMPANA. 
 - Buscar una licencia
 - Display timer duration instead of 0 at the begining on all timers. (Stop should reset this to this position)
-
+- Include Default color on index.html and default size on timer.html
 
 ## WHISHLIST
 - Extra bar with lines on segment finalization 
-- Visitors logging and statistics
-- MOVER A HTTPS
-- LOGO y FAVICON
-- Alarmas chidas (custom) en sonidos.
+- Visitors logging and statistics w/o cookies
 - SAY SOMETHING
 - AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT
 - ¿Custom sounds?
 
 ## LICENSE
-
 - &copy; Copyright All Rights Reserved by author.
