@@ -45,6 +45,7 @@ class Sequence(db.Model):
     id = db.Column(String(20), primary_key=True)
     name = db.Column(String(100))
     theme = db.Column(String(50), nullable=True) 
+    featured = db.Column(Integer, default=0, nullable=False) 
     created_at = db.Column(DateTime(timezone=False), server_default=func.now())
     # Order by timer_order to ensure consistency
     timers = relationship('Timer', backref='sequence', cascade="all, delete-orphan", order_by="Timer.timer_order")
