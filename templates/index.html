@@ -166,7 +166,7 @@
 
             // --- Helper for link buttons ---
             function submitForm(event) {
-                event.preventDefault(); // Prevent default link behavior
+                //event.preventDefault(); // Prevent default link behavior
                 // No beep for form submission, as it's the final action
                 // We dispatch the submit event so the form's native validation/logic still runs
                 const form = document.getElementById('timerForm');
@@ -445,25 +445,32 @@
                     return; // Stop further processing
                 }
 
-
                 let allValid = true;
                 const timerForms = this.querySelectorAll('.timer-form');
+
+                // Check if there are any timers at all
                 if (timerForms.length === 0) {
                     alert("Please add at least one timer.");
                     event.preventDefault();
                     return;
                 }
 
+                // Validate each timer
                 timerForms.forEach(form => {
+                    // We pass true to showError so validation messages are visible
                     if (!validateTimerDuration(form, true)) {
                         allValid = false;
                     }
                 });
 
+                // If not all timers are valid, prevent submission and alert
                 if (!allValid) {
-                    event.preventDefault();
-                    alert("Please correct the invalid timer durations.");
+                    event.preventDefault(); // <--- KEEP THIS LINE
+                    alert("Please correct the invalid timer durations (must be greater than 0).");
+                    return; // Stop form submission
                 }
+
+                // If all checks pass, the form will submit normally (no preventDefault here)
             });
 
             document.addEventListener('DOMContentLoaded', function () {
