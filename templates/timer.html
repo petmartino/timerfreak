@@ -585,7 +585,7 @@
         function _togglePause() {
             paused = !paused;
             // Set button states
-            setButtonState('pauseBtn', paused ? "⏵ RESUME" : "⏸ PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name, NO  
+            setButtonState('pauseBtn', paused ? "⏵︎ RESUME" : "⏸︎ PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name, NO  
             // updateDebug(); // Debug info removed from GUI
 
             logActivity(paused ? 'pause_timer' : 'resume_timer', current);
@@ -725,7 +725,7 @@
 
             if (!running && !paused) {
                 running = true;
-                setButtonState('startBtn', "⏹ STOP", 'btn-red'); // Update Start/Stop button, NO  
+                setButtonState('startBtn', "⏹︎ STOP", 'btn-red'); // Update Start/Stop button, NO  
                 setLinkDisabled(document.getElementById("pauseBtn"), false);
                 setLinkDisabled(document.getElementById("restartCurrent"), false);
                 setLinkDisabled(document.getElementById("restartAll"), false);
