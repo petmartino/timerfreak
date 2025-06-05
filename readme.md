@@ -69,6 +69,21 @@ It's built to be straightforward and effective, helping you focus on the task at
     Open your browser to `http://127.0.0.1:5001/`
 
 
+# Thanks to
+Spacial thanks and aknowledgment to creators of audio files: 
+
+- Large Wind Chime - iainmccurdy
+- CHIMES - SamuelGremaud
+- Chime C#.wav - wormletter
+- 4-tone chime WESTMINSTER - mpaol2023
+- Bells 1.wav - gevaroy
+- Applause & cheer - peridactyloptrix
+- Explosion.mp3 - WaveAdventurer
+- notification1-freesound.wav - Thoribass
+- Alarm Door Chime 2.wav - kwahmah_02
+- Dorrbell_Chimes_001_48Hz_24bit - Helmer88
+
+
 # YO 
 - Alarmas chidas (custom) en sonidos.
 - LOGO y FAVICON

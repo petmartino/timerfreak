@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/static/style.css" />
 </head>
 
+<!-- Body background color reverted to original -->
+
 <body style="background-color: #00ffae">
     <!-- Debugging output div - can be removed after deployment is stable -->
     <div id="debugOutput"
@@ -71,20 +73,21 @@
                                     placeholder="Name or description (optional)"></textarea>
                                 <table>
                                     <tr>
-                                        <td><input type="color" name="color[]" value="#00ffae"></td>
-                                        <td><select name="alarm_sound[]">
-
-                                                <option value="alarm.mp3">Alarm</option>
-
-                                                <option value="beep.mp3">Beep</option>
-
-                                                <option value="bell.mp3">Bell</option>
-
-                                                <option value="chime.mp3">Chime</option>
-
-                                                <option value="ding.mp3">Ding</option>
-
-                                            </select><a href="#" class="preview-sound-btn" title="preview sound"
+                                        <!-- Color picker value from app.py constant -->
+                                        <td><input type="color" name="color[]" value="{{ DEFAULT_TIMER_COLOR }}"></td>
+                                        <td>
+                                            <select name="alarm_sound[]">
+                                                <!-- Populate dropdown from available_sounds and select default -->
+                                                {% for sound_obj in available_sounds %}
+                                                <option value="{{ sound_obj.filename }}" {% if
+                                                    sound_obj.filename==DEFAULT_ALARM_SOUND_FILENAME %}selected{% endif
+                                                    %}>
+                                                    {{ sound_obj.name }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            <!-- Preview button remains separate -->
+                                            <a href="#" class="preview-sound-btn" title="preview sound"
                                                 onclick="previewSound(event)">🔊</a>
                                         </td>
                                         <td style="text-align: right;">  <a href="#" class="delete-timer-btn"
@@ -123,7 +126,6 @@
                 <p>Most used:</p>
 
                 <ul>
-                    <!-- START OF CHANGES -->
                     {% for seq in most_used_sequences %}
                     <li>
                         <a title="used {{ seq.use_count }} time{% if seq.use_count != 1 %}s{% endif %}"
@@ -134,7 +136,6 @@
                     {% else %}
                     <li>No sequences used yet. Create one!</li>
                     {% endfor %}
-                    <!-- END OF CHANGES -->
                 </ul>
 
             </div>
@@ -143,7 +144,7 @@
         <audio id="previewAudio" src="" preload="auto"></audio>
 
 
-        {% include  'footer.html' %}
+        {% include 'footer.html' %}
 
         <script>
             // Debugging helper function
@@ -190,8 +191,20 @@
                 oscillator.stop(audioContext.currentTime + duration);
             }
 
-            // The submitForm function is removed as the button now natively submits the form.
+            // Pass sound data and default color from Jinja2 to JavaScript
+            const allSoundsData = {{ available_sounds | tojson }};
+            const defaultAlarmSoundFilename = "{{ DEFAULT_ALARM_SOUND_FILENAME }}"; // Now comes from DB query
+            const defaultTimerColor = "{{ DEFAULT_TIMER_COLOR }}";
 
+            // Helper function to generate sound options HTML
+            function generateSoundOptionsHtml(selectedFilename) {
+                let optionsHtml = '';
+                allSoundsData.forEach(sound => {
+                    const isSelected = sound.filename === selectedFilename ? 'selected' : '';
+                    optionsHtml += `<option value="${sound.filename}" ${isSelected}>${sound.name}</option>`;
+                });
+                return optionsHtml;
+            }
 
             function addTimer(event) {
                 event.preventDefault();
@@ -207,6 +220,10 @@
                 const timerInputs = document.getElementById("timerInputs");
                 const newTimerForm = document.createElement("div");
                 newTimerForm.className = "timer-form new-timer-form";
+
+                // Generate the sound options for the new timer
+                const soundOptionsHtmlForNewTimer = generateSoundOptionsHtml(defaultAlarmSoundFilename);
+
                 newTimerForm.innerHTML = `
                 <div style="display: none; line-height: 30px; font-size: 40px; text-align: center; padding-left: 0em; font-weight: bold;">↓ ↓ ↓ ↓ ↓ ↓ ↓ </div>
                 <label>Timer #${timerCount}</label>
@@ -249,20 +266,14 @@
                             <textarea  style="margin-bottom: 1.25em;" name="timer_name[]" rows="2" cols="24" placeholder="Name or description (optional)"></textarea>
                             <table>
                                 <tr>
-                                    <td><input type="color" name="color[]" value="#00ffae"></td>
-                                    <td><select name="alarm_sound[]">
-
-                                            <option value="alarm.mp3">Alarm</option>
-
-                                            <option value="beep.mp3">Beep</option>
-
-                                            <option value="bell.mp3">Bell</option>
-
-                                            <option value="chime.mp3">Chime</option>
-
-                                            <option value="ding.mp3">Ding</option>
-
-                                        </select><a href="#" title="preview" class="preview-sound-btn" onclick="previewSound(event)">🔊</a>
+                                    <!-- Use defaultTimerColor for new timers -->
+                                    <td><input type="color" name="color[]" value="${defaultTimerColor}"></td>
+                                    <td>
+                                        <select name="alarm_sound[]">
+                                            <!-- Populate options dynamically with JavaScript -->
+                                            ${soundOptionsHtmlForNewTimer}
+                                        </select>
+                                        <a href="#" title="preview" class="preview-sound-btn" onclick="previewSound(event)">🔊</a>
                                     </td>
                                     <td style="text-align: right;">  <a href="#" class="delete-timer-btn" title="Delete Timer"
                                             onclick="deleteTimer(event)">🗑️</a></td>
@@ -294,7 +305,8 @@
                 newTimerForm.querySelectorAll('input[type="number"]').forEach(input => {
                     input.addEventListener('change', updateTotalDuration);
                 });
-                newTimerForm.querySelector('select[name="alarm_sound[]"]').addEventListener('change', previewSound);
+                // --- REMOVED: No preview on select change for new timers ---
+                // newTimerForm.querySelector('select[name="alarm_sound[]"]').addEventListener('change', previewSound);
                 newTimerForm.querySelector('input[type="color"]').addEventListener('change', updateTotalDuration);
 
                 validateTimerDuration(newTimerForm, false);
@@ -508,7 +520,8 @@
                     form.querySelectorAll('input[type="number"]').forEach(input => {
                         input.addEventListener('change', updateTotalDuration);
                     });
-                    form.querySelector('select[name="alarm_sound[]"]').addEventListener('change', previewSound);
+                    // --- REMOVED: No preview on select change for initial timer ---
+                    // form.querySelector('select[name="alarm_sound[]"]').addEventListener('change', previewSound);
                     form.querySelector('input[type="color"]').addEventListener('change', updateTotalDuration);
                 });
                 timerCount = timerForms.length;

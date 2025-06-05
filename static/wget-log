@@ -1,23 +1,0 @@
---2025-05-26 23:22:45--  http://soundbible.com/grab.php?id=1496
-Resolving soundbible.com (soundbible.com)... 169.47.128.197
-Connecting to soundbible.com (soundbible.com)|169.47.128.197|:80... connected.
-HTTP request sent, awaiting response... 301 Moved Permanently
-Location: https://soundbible.com/grab.php?id=1496 [following]
---2025-05-26 23:22:45--  https://soundbible.com/grab.php?id=1496
-Connecting to soundbible.com (soundbible.com)|169.47.128.197|:443... connected.
-HTTP request sent, awaiting response... 301 Moved Permanently
-Location: http://soundbible.com [following]
---2025-05-26 23:22:46--  http://soundbible.com/
-Connecting to soundbible.com (soundbible.com)|169.47.128.197|:80... connected.
-HTTP request sent, awaiting response... 301 Moved Permanently
-Location: https://soundbible.com/ [following]
---2025-05-26 23:22:46--  https://soundbible.com/
-Connecting to soundbible.com (soundbible.com)|169.47.128.197|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: unspecified [text/html]
-Saving to: ‘grab.php?id=1496’
-
-grab.php?id=1496                         [<=>                                                                   ]       0  --.-KB/s               grab.php?id=1496                         [ <=>                                                                  ]  33.49K  --.-KB/s    in 0.03s   
-
-2025-05-26 23:22:46 (1.04 MB/s) - ‘grab.php?id=1496’ saved [34294]
-
