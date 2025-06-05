@@ -38,12 +38,12 @@ body.dark-theme #text-bottom hr {
     /* Dark theme footer line */
     border-top-color: #444;
 }
+
 #footer{
-        margin: .5em;
         width: 100%;
         clear: both;
         text-align: left;
-        margin-top: 1em;
+        padding: .5rem 1rem
 }
 
 /* General Layout Containers */
