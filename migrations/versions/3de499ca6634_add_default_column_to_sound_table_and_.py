@@ -27,9 +27,9 @@ def upgrade():
 
     # --- MANUAL ADDITION START: Set 'Single Beep' as default ---
     # 1. Set all existing 'default' values to 0 (non-default)
-    op.execute("UPDATE sound SET default = 0;")
+    op.execute("UPDATE sound SET 'default' = 0;")
     # 2. Then, set the 'default' column to 1 for the 'beep.mp3' sound
-    op.execute("UPDATE sound SET default = 1 WHERE filename = 'beep.mp3';")
+    op.execute("UPDATE sound SET 'default' = 1 WHERE filename = 'beep.mp3';")
     # --- MANUAL ADDITION END ---
 
 def downgrade():
