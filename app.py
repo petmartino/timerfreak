@@ -1,3 +1,10 @@
+"""
+TimerFreak Flask Application
+Copyright (c) 2025 - Pet Martino
+
+This software is licensed under the MIT License.
+See the LICENSE file for more details.
+"""
 from flask import Flask, render_template, request, redirect, url_for, jsonify, g
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
@@ -8,6 +15,8 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from flask_migrate import Migrate
 from datetime import datetime, timedelta
+from __version__ import __version__ as APP_VERSION 
+
 
 class ScriptNameMiddleware:
     def __init__(self, app):
@@ -93,9 +102,12 @@ class CounterLog(db.Model):
 with app.app_context():
     db.create_all()
 
+
+
+
 @app.context_processor
 def inject_global_data():
-    return dict(current_year=datetime.now().year)
+    return dict(current_year=datetime.now().year, app_version=APP_VERSION)
 
 @app.route("/")
 def index():

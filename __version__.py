@@ -1,0 +1,1 @@
+__version__ = "0.1.0" # Start with 0.1.0 or 1.0.0

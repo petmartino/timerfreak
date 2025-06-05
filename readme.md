@@ -83,25 +83,32 @@ Spacial thanks and aknowledgment to creators of audio files:
 - Alarm Door Chime 2.wav - kwahmah_02
 - Dorrbell_Chimes_001_48Hz_24bit - Helmer88
 
-
 # YO 
-- Alarmas chidas (custom) en sonidos.
-- LOGO y FAVICON
+INDEX CON RESUMEN
+
 - MOVER A HTTPS
 - Fix bottom timer.html (mobile/desktop instructions)
+- Boxig BELL
 
 # AI
-- FIX GLITCH ULTIMA CAMPANA. 
-- Buscar una licencia
+- FIX GLITCH ULTIMA CAMPANA con un nuevo evento. 
 - Display timer duration instead of 0 at the begining on all timers. (Stop should reset this to this position)
-- Include Default color on index.html and default size on timer.html
+- Columna visits en sequence con updates en timer. 
 
-## WHISHLIST
+
+
+
+# V.1
 - Extra bar with lines on segment finalization 
 - Visitors logging and statistics w/o cookies
-- SAY SOMETHING
 - AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT
-- ¿Custom sounds?
+
+# V.2
+- Pasar a otra base de datos
+- Users can upload sounds
+- SAY SOMETHING
+
+
 
 ## LICENSE
 - &copy; Copyright All Rights Reserved by author.
