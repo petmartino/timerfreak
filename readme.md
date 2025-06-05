@@ -87,9 +87,7 @@ Special thanks and aknowledgment to creators of audio files:
 - Dorrbell_Chimes_001_48Hz_24bit - Helmer88
 
 # V 0.1 YO 
-- Fix bottom timer.html (mobile/desktop instructions)
-- Fix about
-- POPULATE ONLINE, 
+- POPULATE ONLINE, USAR UNA SEMANA.
 
 # V.0.2
 YO - Fix ancho de pantalla real a 370px 
