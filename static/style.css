@@ -53,6 +53,7 @@ body.dark-theme #text-bottom hr {
 
 .about-text p {
     line-height: 2em;
+ 
 }
 /* General Layout Containers */
 .flex-container {
@@ -659,11 +660,11 @@ input[type="color"]::-moz-color-swatch {
 
 #text-bottom p {
     line-height: 2em;
+    color: gray;
 }
 
 
 #text-bottom a {
-    color: #007bff;
     font-weight: bold;
     text-decoration: underline;
 }
