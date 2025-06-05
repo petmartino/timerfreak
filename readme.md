@@ -91,7 +91,8 @@ Special thanks and aknowledgment to creators of audio files:
 
 # V.0.2
 YO - Fix ancho de pantalla real a 370px 
-- FIX GLITCH ULTIMA CAMPANA con un nuevo evento. 
+- Mejorar las  barras con mini bordes
+- FIX GLITCH ULTIMA CAMPANA en desktop (con un nuevo evento). 
 - Display timer duration instead of 0 at the begining on all timers. (Stop should reset this to this position)
 - Columnas visits, completions en sequence con updates en timer load. 
 - Rename button jump correcto (go to 1 no go to timer 1). 
@@ -106,12 +107,12 @@ YO - Fix ancho de pantalla real a 370px
 - Publicar el link  
 
 # V.2
+- Loops y tema tentativamente desde creación, 
 - Crear un logo para about
 - Pasar a otra base de datos
 - Users can upload sounds
 - SAY SOMETHING
-
-
+- ¿Temas? 
 
 ## LICENSE
 - &copy; Copyright All Rights Reserved by author.
