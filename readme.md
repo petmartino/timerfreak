@@ -87,8 +87,6 @@ Special thanks and aknowledgment to creators of audio files:
 - Alarm Door Chime 2.wav - kwahmah_02
 - Dorrbell_Chimes_001_48Hz_24bit - Helmer88
 
-# V 0.1 
-- POPULATE ONLINE Y USAR HASTA JUNIO 10, documentar bugs...
 
 # V.0.2
 YO - Fix ancho de pantalla real a 370px 
@@ -99,23 +97,29 @@ YO - Fix ancho de pantalla real a 370px
 - Rename button jump correcto (go to 1 no go to timer 1). 
 - Query utilizando la lógica rapida, y dejar el query actual comentado para mi. 
 - Resumen de los más usados así Boxing 8x3min rounds with 1 minute break ⏱x16 32min  
+- Browse all (básico con )
+
 
 # V.1
 - MAXIMIZE CURRENT
 - AUTOCOMPACT-EXPAND 
 - Extra bar with lines on segment finalization 
 - Visitors logging and statistics w/o cookies
+- Loop counter/indicator
+- Browse all
 
 # MINI MARKETING 
 - Publicar el link  
 
 # V.2
+- Base
 - Loops y tema tentativamente desde creación, 
 - Crear un logo para about
 - Pasar a otra base de datos
-- Users can upload sounds
-- SAY SOMETHING
+- ¿Users can upload sounds?
+- ¿SAY SOMETHING?
 - ¿Temas? 
+- Create a copy to modify, (clone and modify)
 
 ## LICENSE
 - &copy; Copyright All Rights Reserved by author.

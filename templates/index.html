@@ -141,8 +141,7 @@
                     <li>
                         <a title="used {{ seq.use_count }} time{% if seq.use_count != 1 %}s{% endif %}"
                             href="/{{ seq.id }}" class="view-sequence-link">
-                            {{ seq.name if seq.name else 'Unnamed Sequence' }} </a> ({{ seq.timer_count }} timer{% if
-                        seq.timer_count != 1 %}s{% endif %}, {{ seq.total_duration_display }} total)
+                            {{ seq.name if seq.name else 'No Name' }} </a> ⏱x{{ seq.timer_count }} {{ seq.total_duration_display }}
                     </li>
                     {% else %}
                     <li>No sequences used yet. Create one!</li>
