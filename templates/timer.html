@@ -6,7 +6,17 @@
     <title>{{ sequence_name if sequence_name else sequence_id }} - TimerFreak</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-
+    <!-- Add this entire block inside your <head> section -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest"> <!-- Or /static/manifest.json -->
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Traditional favicon.ico (optional if you have many PNGs, but good for broad support) -->
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <style id="theme-style">
         /* Theme-specific styles ONLY. Other body/layout styles are in style.css */
         /*
@@ -91,12 +101,12 @@
         
                         <div ><a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">{{ base_url }}{{ url_for('redirect_to_timer',
                 sequence_id=sequence_id) }}</a></div>
-                <br>&nbsp; &#8627; This is the permanent URL for this timer. To easily access this timer later <strong>Add to Home Screen (on Mobile)</strong> by tapping the share icon (iOS) or menu icon (Android) in your
+                <p>&nbsp; &#8627; This is the permanent URL for this timer. To easily access this timer later <strong>Add to Home Screen (on Mobile)</strong> by tapping the share icon (iOS) or menu icon (Android) in your
                 browser, then look for "Add to Home Screen" or "Install App". This will create an app-like icon on your
                 device. <strong>On Desktop</strong>, press <kbd>Ctrl+D</kbd> (Windows/Linux) or <kbd>Cmd+D</kbd> (macOS)
                 to bookmark this page. You can also drag the URL from the address bar to your bookmarks bar.
         
-        </p>
+                </p>
 
         <audio id="alarm" src="" preload="auto"></audio>
         <!-- Background audio element for keeping audio engine alive -->

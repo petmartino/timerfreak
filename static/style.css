@@ -46,6 +46,14 @@ body.dark-theme #text-bottom hr {
         padding: .5rem 1rem
 }
 
+.about-text {
+    padding: .5rem 1rem;
+        background-color: white;
+    }
+
+.about-text p {
+    line-height: 2em;
+}
 /* General Layout Containers */
 .flex-container {
     display: flex;
@@ -646,6 +654,11 @@ input[type="color"]::-moz-color-swatch {
 /* Footer style */
 #text-bottom {
     padding: 2.5rem;
+    
+}
+
+#text-bottom p {
+    line-height: 2em;
 }
 
 
