@@ -330,6 +330,11 @@ input[type=number] {
     margin-right: 0.5em;
 }
 
+
+#jumpButtons a {
+    margin-top: 10px;
+}
+
 /* Color input basic styling */
 input[type="color"] {
     -webkit-appearance: none;
@@ -391,9 +396,8 @@ input[type="color"]::-moz-color-swatch {
 .preview-sound-btn {
     text-decoration: none;
     color: inherit;
-    font-size: 1.2em;
     /* Adjust size of speaker icon */
-    margin-left: 5px;
+    /* margin-left: 5px; */
     /* Spacing from select dropdown */
 }
 
