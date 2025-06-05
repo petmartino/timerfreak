@@ -641,20 +641,13 @@ input[type="color"]::-moz-color-swatch {
 
 /* Footer style */
 #text-bottom {
-    padding: .5rem;
-    font-size: 0.9rem;
+    padding: 2.5rem;
 }
 
-#text-bottom hr {
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
-    border: 0;
-    border-top: 1px solid #eee;
-    /* Light gray line for light theme */
-}
 
 #text-bottom a {
     color: #007bff;
+    font-weight: bold;
     text-decoration: underline;
 }
 

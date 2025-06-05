@@ -69,8 +69,11 @@ It's built to be straightforward and effective, helping you focus on the task at
     Open your browser to `http://127.0.0.1:5001/`
 
 
-# Thanks to
-Spacial thanks and aknowledgment to creators of audio files: 
+# License
+Software is released under the MIT license, refer to file LICENSE for more information. 
+
+# Special thanks to audio file authors
+Special thanks and aknowledgment to creators of audio files: 
 
 - Large Wind Chime - iainmccurdy
 - CHIMES - SamuelGremaud
@@ -83,27 +86,29 @@ Spacial thanks and aknowledgment to creators of audio files:
 - Alarm Door Chime 2.wav - kwahmah_02
 - Dorrbell_Chimes_001_48Hz_24bit - Helmer88
 
-# YO 
-INDEX CON RESUMEN
-
-- MOVER A HTTPS
+# V 0.1 YO 
 - Fix bottom timer.html (mobile/desktop instructions)
-- Boxig BELL
+- Fix about
+- POPULATE ONLINE, 
 
-# AI
+# V.0.2
+YO - Fix ancho de pantalla real a 370px 
 - FIX GLITCH ULTIMA CAMPANA con un nuevo evento. 
 - Display timer duration instead of 0 at the begining on all timers. (Stop should reset this to this position)
-- Columna visits en sequence con updates en timer. 
-
+- Columnas visits, completions en sequence con updates en timer load. 
+- Rename button jump correcto (go to 1 no go to timer 1). 
+- Resumen de los más usados así Boxing 8x3min rounds with 1 minute break ⏱x16 32min  
 
 
 
 # V.1
+- AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT
 - Extra bar with lines on segment finalization 
 - Visitors logging and statistics w/o cookies
-- AUTOCOMPACT-EXPAND y MAXIMIZE CURRENT
+
 
 # V.2
+- Crear un logo para about
 - Pasar a otra base de datos
 - Users can upload sounds
 - SAY SOMETHING

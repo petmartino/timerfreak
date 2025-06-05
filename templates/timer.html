@@ -88,21 +88,14 @@
     </div>
     <div id="bars"></div>
     <div id="text-bottom">
-        <p>
-            The permanent URL for this timer is:<br>
-            <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}"
-                style="color: #007bff; text-decoration: underline;">{{ base_url }}{{ url_for('redirect_to_timer',
-                sequence_id=sequence_id) }}</a>
-        </p>
-        <p>
-            To easily access this timer later:
-        <ul>
-            <li><strong>Mobile (Add to Home Screen):</strong> Tap the share icon (iOS) or menu icon (Android) in your
+        
+                        <div ><a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">{{ base_url }}{{ url_for('redirect_to_timer',
+                sequence_id=sequence_id) }}</a></div>
+                <br>&nbsp; &#8627; This is the permanent URL for this timer. To easily access this timer later <strong>Add to Home Screen (on Mobile)</strong> by tapping the share icon (iOS) or menu icon (Android) in your
                 browser, then look for "Add to Home Screen" or "Install App". This will create an app-like icon on your
-                device.</li>
-            <li><strong>Desktop (Bookmark):</strong> Press <kbd>Ctrl+D</kbd> (Windows/Linux) or <kbd>Cmd+D</kbd> (macOS)
-                to bookmark this page. You can also drag the URL from the address bar to your bookmarks bar.</li>
-        </ul>
+                device. <strong>On Desktop</strong>, press <kbd>Ctrl+D</kbd> (Windows/Linux) or <kbd>Cmd+D</kbd> (macOS)
+                to bookmark this page. You can also drag the URL from the address bar to your bookmarks bar.
+        
         </p>
 
         <audio id="alarm" src="" preload="auto"></audio>
