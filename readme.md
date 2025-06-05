@@ -1,6 +1,6 @@
 
 # TimerFreak - Your Custom Sequence Timer
-
+![TimerFreak](https://timerfreak.xyz/static/logotimerfreak.png "TimerFreak")
 TimerFreak is a simple yet powerful web application designed to help you manage timed sequences. 
 Whether you're following a workout routine, a cooking recipe, or any activity that requires a series of timed steps, 
 TimerFreak ensures you stay on track with visual progress bars and custom alarms for each segment.
