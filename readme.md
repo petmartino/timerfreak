@@ -88,19 +88,21 @@ Special thanks and aknowledgment to creators of audio files:
 - Dorrbell_Chimes_001_48Hz_24bit - Helmer88
 
 
-# V.0.2
+# V.0.2.1
+TESTS
+
 YO - Fix ancho de pantalla real a 370px 
-- Mejorar las  barras con mini bordes
+YO - Mejorar las  barras con mini bordes
 - FIX GLITCH ULTIMA CAMPANA en desktop (con un nuevo evento). 
-- Display timer duration instead of 0 at the begining on all timers. (Stop should reset this to this position)
-- Columnas visits, completions, en sequence con updates en timer load. 
+- Display timer duration compact (04:30).
+- Display total duration at bottom
+- Columnas visits, completions, en sequence con updates en timer load, finished. 
 - Rename button jump correcto (go to 1 no go to timer 1). 
 - Query utilizando la lógica rapida, y dejar el query actual comentado para mi. 
-- Resumen de los más usados así Boxing 8x3min rounds with 1 minute break ⏱x16 32min  
-- Browse all (básico con )
 
 
-# V.1
+
+# V.1.0.0
 - MAXIMIZE CURRENT
 - AUTOCOMPACT-EXPAND 
 - Extra bar with lines on segment finalization 
@@ -112,14 +114,15 @@ YO - Fix ancho de pantalla real a 370px
 - Publicar el link  
 
 # V.2
-- Base
-- Loops y tema tentativamente desde creación, 
+- Looping, vueltas, y tema desde creación,
+- Looping en gui. 
+- ORDENAR
 - Crear un logo para about
-- Pasar a otra base de datos
+- Update db para que tenga url (current id) y id es autoincrement
+- Create a copy to modify, (clone and modify)
 - ¿Users can upload sounds?
 - ¿SAY SOMETHING?
 - ¿Temas? 
-- Create a copy to modify, (clone and modify)
 
 ## LICENSE
 - &copy; Copyright All Rights Reserved by author.
