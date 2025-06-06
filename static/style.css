@@ -7,9 +7,7 @@ body {
     /* Ensures this is CSS-controlled */
     color: #000;
     padding-top: 10px;
-    padding-left: 0.5rem;
-    /* Overall page padding for small screens */
-    padding-right: 0.5rem;
+    /*padding-left: 0.5rem;*/
     box-sizing: border-box;
     /* Includes padding in element's total width */
 }
@@ -126,7 +124,7 @@ body.dark-theme #text-bottom hr {
     background-color: white;
     width: 100%; /* Default to full width for mobile */
     max-width: 480px; /* Max width on mobile if you want content not to spread too wide */
-    margin: 0 auto 1rem auto; /* Center the block on page, add margin at bottom */
+   /* margin: 0 auto 1rem auto; /* Center the block on page, add margin at bottom */
     box-sizing: border-box;
     /* Reapply padding that was on the inline style in the original HTML */
     padding: 1rem;
@@ -181,15 +179,15 @@ body.dark-theme #text-bottom hr {
 textarea[name="timer_name[]"] {
     width: 100%;            /* Fill 100% of its parent's (flex-grow:1) width */
     max-width: 100%;        /* Ensures it doesn't break out of bounds */
-    min-height: 2.5em;      /* Maintains a reasonable height */
+    min-height: 2em;      /* Maintains a reasonable height */
     height: auto;           /* Allows natural height based on content */
     resize: vertical;       /* User can only resize vertically */
     box-sizing: border-box; /* Includes padding and border in width */
-    margin-bottom: 1em;     /* Adjust as needed */
     padding: .5em;          /* Good practice for input fields */
     border: 1px solid #ccc;
-    border-radius: 3px;
-    font-family: 'Courier New', Courier, monospace;
+    border-radius: 2px;
+    font-size: .9em;
+    
 }
 
 /* Ensure the table inside the second flex-item also takes full width */
@@ -332,8 +330,6 @@ textarea[name="timer_name[]"] {
     /* User can only resize vertically */
     box-sizing: border-box;
     /* Includes padding and border in width */
-    margin-bottom: 1em;
-    /* Adjust as needed */
     padding: .5em;
     /* Good practice for input fields */
     border: 1px solid #ccc;
@@ -401,13 +397,10 @@ textarea[name="timer_name[]"] {
 .timer-form {
     overflow: hidden;
     /* For animation */
+    padding-bottom: 1rem;
     transition: all 0.3s ease-out;
     /* For animation */
-    margin-bottom: 1rem;
-    /*    padding: 1rem; */
-    border: 0px solid #ccc;
-    /* Default border */
-    /* border-radius: 5px; */
+    
 }
 
 /* Animation for new timers (only applies when `addTimer` is pressed) */
