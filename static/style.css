@@ -32,7 +32,12 @@ body.dark-theme {
 
 body.dark-theme .bar-container {
     background-color: #555;
+    
 }
+body.dark-theme .bar-container {
+background: #4f4f4f linear-gradient(#494949, #474747 20%, #494949 80%, #4f4f4f);
+}
+
 
 body.dark-theme .btn-solid-3d[data-disabled="true"],
 body.dark-theme .btn-solid-3d.disabled-link {
@@ -578,7 +583,7 @@ input[type="color"]::-moz-color-swatch {
 /* ========================================= */
 
 .bar-container {
-    background: #ddd;
+    background: #ddd linear-gradient(#d6d6d6, #dddddd 20%, #dddddd 80%,#d6d6d6);
     margin-bottom: 0.5rem;
     width: 100%;
     min-height: 100px;
@@ -587,6 +592,8 @@ input[type="color"]::-moz-color-swatch {
     justify-content: center;
     overflow: hidden;
     position: relative;
+    border-top: 1px solid rgba(192, 192, 192, 0.5);
+    border-bottom: 1px solid rgba(192, 192, 192, 0.5);
 }
 
 .bar {
@@ -623,6 +630,7 @@ input[type="color"]::-moz-color-swatch {
     text-align: center;
     font-size: 1.2rem;
     text-shadow: 2px 2px 4px #000000;
+    box-shadow: 0px 4px 0px #0000001d;
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -5,6 +5,7 @@ Copyright (c) 2025 - Pet Martino
 This software is licensed under the MIT License.
 See the LICENSE file for more details.
 """
+from pytz import timezone as pytz_timezone
 from flask import Flask, render_template, request, redirect, url_for, jsonify, g
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
@@ -14,7 +15,7 @@ from sqlalchemy import DateTime, Integer, String, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from flask_migrate import Migrate
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from __version__ import __version__ as APP_VERSION 
 
 
@@ -49,13 +50,14 @@ FALLBACK_ALARM_SOUND_FILENAME = "alarm.mp3"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Define the models
 class Sequence(db.Model):
     id = db.Column(String(20), primary_key=True)
     name = db.Column(String(100))
-    theme = db.Column(String(50), nullable=True) 
-    featured = db.Column(Integer, default=0, nullable=False) 
-    created_at = db.Column(DateTime(timezone=False), server_default=func.now())
+    theme = db.Column(String(50), nullable=True)
+    featured = db.Column(Integer, default=0, nullable=False)
+    # Change 1: timezone=True tells SQLAlchemy to treat it as timezone-aware
+    # Change 2: default=lambda: datetime.now(timezone.utc) makes Python generate UTC timestamp
+    created_at = db.Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     timers = relationship('Timer', backref='sequence', cascade="all, delete-orphan", order_by="Timer.timer_order")
 
     def __repr__(self):
@@ -93,12 +95,14 @@ class CounterLog(db.Model):
     sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False)
     timer_order = db.Column(Integer, nullable=True)
     event_type = db.Column(String(50), nullable=False)
-    timestamp = db.Column(DateTime(timezone=False), server_default=func.now())
+    # Change 1: timezone=True
+    # Change 2: default=lambda: datetime.now(timezone.utc)
+    timestamp = db.Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     sequence_rel = relationship('Sequence', backref='logs')
 
     def __repr__(self):
         return f'<CounterLog {self.id} - {self.event_type} - Seq: {self.sequence_id} - Timer: {self.timer_order}>'
-
+    
 with app.app_context():
     db.create_all()
 
@@ -340,20 +344,41 @@ def show_logs(sequence_id):
                      .filter(CounterLog.sequence_id == sequence_id)\
                      .order_by(CounterLog.timestamp).all()
 
+    @app.route("/logs/<sequence_id>")
+def show_logs(sequence_id):
+    sequence = Sequence.query.get_or_404(sequence_id)
+
+    logs_raw = db.session.query(CounterLog, Timer)\
+                     .outerjoin(Timer, (CounterLog.sequence_id == Timer.sequence_id) & (CounterLog.timer_order == Timer.timer_order))\
+                     .filter(CounterLog.sequence_id == sequence_id)\
+                     .order_by(CounterLog.timestamp).all()
+
     logs_formatted = []
+    # Define the target display timezone (e.g., America/Chicago for CDT/CST)
+    # You can make this configurable if users need to choose their timezone.
+    display_timezone = pytz_timezone('America/Chicago') # Use 'America/New_York' for EDT/EST etc.
+
     for log_entry, timer_info in logs_raw:
+        # log_entry.timestamp is now a UTC-aware datetime object
+        utc_timestamp = log_entry.timestamp
+
+        # Convert to the desired display timezone
+        display_timestamp = utc_timestamp.astimezone(display_timezone)
+
         log_dict = {
             'id': log_entry.id,
             'sequence_id': log_entry.sequence_id,
             'timer_order': log_entry.timer_order,
             'event_type': log_entry.event_type,
-            'timestamp': log_entry.timestamp,
+            # Pass the converted timestamp to the template
+            'timestamp': display_timestamp,
             'timer_name': timer_info.timer_name if timer_info else None
         }
         logs_formatted.append(log_dict)
 
     sequence_name_display = sequence.name if sequence.name else f"Sequence {sequence_id}"
     return render_template("logs.html", logs=logs_formatted, sequence_id=sequence_id, sequence_name_for_logs=sequence_name_display)
+
 
 @app.route("/about")
 def about():
