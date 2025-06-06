@@ -92,6 +92,8 @@ Special thanks and aknowledgment to creators of audio files:
 
 # V.0.2.1
 YO - Mejorar las  barras con mini bordes y tentativamente con algun shade. 
+- base de datos con timestamps mios
+
 
 # V.0.2.2.
 
@@ -174,6 +176,9 @@ YO - Mejorar las  barras con mini bordes y tentativamente con algun shade.
 - ¿Users can upload sounds?
 - ¿SAY SOMETHING?
 - ¿Temas? 
+
+
+sudo journalctl -k --priority=err --since "2 days ago" | grep -i "oom"
 
 ## LICENSE
 - &copy; Copyright All Rights Reserved by author.
