@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    padding: 10px 0.5rem;
+    padding: 0;
     /* Overall page padding for small screens, accounting for global bar */
     font-family: 'Courier New', Courier, monospace;
     background-color: #00ffae;
@@ -746,7 +746,7 @@ input[type="color"]::-moz-color-swatch {
 
 #text-bottom {
     /* Top/bottom padding from default HTML/Jinja */
-    padding: 2.5rem 0;
+    padding: 2.5rem;
     /* Remove horizontal padding here as body covers it */
 }
 

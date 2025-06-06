@@ -102,10 +102,104 @@ YO - Mejorar las  barras con mini bordes y tentativamente con algun shade.
 - Columnas visits, completions, en sequence con updates en timer load, finished. 
 - Rename button jump correcto (go to 1 no go to timer 1). 
 - Query utilizando la lógica rapida, y dejar el query actual comentado para mi. 
+- El botón de install que no salga como popup
 
+# # V.1.0.0 MINI MARKETING 
 
+### **Marketing Assets: Visual Content Ideas**
 
-# V.1.0.0
+**I. High-Impact Animated GIFs (10-30 seconds, looping, no sound):**
+
+1.  **"Quick Setup & Go":**
+    *   Show user quickly setting up a simple "5 min Work, 1 min Rest" timer (digits flying in).
+    *   Brief flash of the running timer with colored bar filling.
+    *   End with the "Ding!" (sound indicated by animation, no actual sound).
+
+2.  **"Daily Grind Helper":**
+    *   Seamless transition showing setup of:
+        *   "Deep Work" timer.
+        *   "Quick Chores" timer.
+        *   "Workout Round" timer.
+    *   Minimal text overlays on screen.
+
+3.  **"From Blank to Brilliance":**
+    *   Starts on an empty timer form.
+    *   Digits, name, color, sound selection change rapidly/magically into a custom routine (e.g., "Study Focus", "Yoga Flow").
+    *   Quick "Create!" button press and transition to running timer.
+
+4.  **"Routine Mastered":**
+    *   Show a longer sequence being created (e.g., 4 Pomodoro cycles).
+    *   Quick scroll/fast-forward through sections, highlight "Total Duration."
+    *   Hint at auto-looping (if enabled) but keep it concise.
+
+5.  **"Colorful Control":**
+    *   Rapid-fire animation showcasing diverse sequences with their vibrant custom colors and suggestive alarm sounds.
+    *   Visually engaging with splashes of color corresponding to alarms.
+
+**II. Short (15-45 second) Video with Music/Narration (for social media/landing pages):**
+
+1.  **"Solve My Day" Narrated Journey:**
+    *   **Intro:** "Tired of distractions? Struggling to stay on track?"
+    *   **Problem/Solution:** "Meet TimerFreak: Custom timers, visual progress, satisfying alerts." (Show clean UI, user interacting.)
+    *   **Use Cases:** Rapid cuts: "Workout? Check. Study? Check. Mindfulness? Check." (Visually switch between different timer types/sequences running).
+    *   **Call to Action:** "TimerFreak.xyz - Get Started. Stay Focused." (Clear URL display).
+
+2.  **"Feature Showcase" (Silent with text overlays or light music):**
+    *   Showcases creation form (digits, name, color, sound options).
+    *   Shows a running timer (progress bar, countdown).
+    *   Briefly highlights "Add Timer" (multiple timers) feature.
+    *   Highlights "Most Used" list as a quick starting point.
+    *   Optional: Flash "Add to Home Screen" instructions.
+
+Here's the concise strategic placement for maximizing TimerFreak's exposure:
+
+*   **Website Homepage (TimerFreak.xyz):**
+    *   **Hero Section:** Embed best GIF/short video demo.
+    *   **Direct Access:** Make "Create New" form instantly visible.
+    *   **Social Proof:** Prominently display "Most Used Sequences" section.
+    *   **Call to Action:** Clear "Create" button for new timers.
+    *   **PWA Promo:** Explicit, easily discoverable "Add to Home Screen" instructions (tooltip on first visit, or a small persistent banner on mobile).
+
+*   **Product Hunt (Launch):**
+    *   **Launch Day:** Dedicate full attention to launch.
+    *   **Product Page:** Utilize all visual assets (images, GIFs, video).
+    *   **Engagement:** Actively respond to comments/questions.
+    *   **Community:** Announce launch within your network to encourage upvotes/comments.
+
+*   **Reddit (Targeted Niche Subreddits):**
+    *   **Curated Posts:** Craft unique, value-driven posts for `/r/productivity`, `/r/ADHD`, `/r/bodyweightfitness`, `/r/meditation`, `/r/students`, `/r/simpleliving`, `/r/homeorganization`.
+    *   **Visuals:** Include the most relevant GIF/screenshot for each community.
+    *   **Authenticity:** Position as "I built this..." or "Thought this might help..." – avoid overt sales.
+
+*   **Hacker News ("Show HN" or "Launch HN"):**
+    *   **Post Content:** Write a concise, technical/problem-solving narrative explaining *why* and *how* you built it, not just *what* it is.
+    *   **Engage:** Be present to respond to comments and questions quickly.
+
+*   **Twitter / X:**
+    *   **Daily/Weekly:** Consistent posts using varied GIFs, screenshots, short tips on using timers for productivity/wellness.
+    *   **Hashtags:** `#TimerFreak #Productivity #WorkoutTimer #StudyHacks #Meditation #WebDev #BuildInPublic #FreeTools`.
+    *   **Engagement:** Tag relevant accounts, respond to trending discussions related to time management.
+
+*   **LinkedIn:**
+    *   **Post:** Share announcement, link, and visual.
+    *   **Network:** Encourage professional contacts to share.
+    *   **Groups:** Share in relevant professional or hobby groups (e.g., project management, fitness coaching).
+
+*   **Instagram / TikTok (Visual Focus):**
+    *   **Short Videos/Reels:** Show timers in action with popular background music.
+    *   **Visual Cues:** Highlight the color changes and progress bars.
+    *   **Before/After:** Show a chaotic vs. organized workflow thanks to TimerFreak.
+    *   **Hashtags:** `#timerapp #focus #dailyroutine #lifehacks #productivitytools #fitnessmotivation`.
+
+*   **Email Signatures:**
+    *   Add a subtle link to TimerFreak.xyz with a quick benefit statement (e.g., "Manage Your Time Better with TimerFreak.xyz").
+
+*   **Online Blogs/Forums/Directories (Guest Posting / Submissions):**
+    *   **Research:** Find popular blogs listing productivity tools, open-source projects, web utilities.
+    *   **Outreach:** Politely suggest TimerFreak for inclusion.
+    *   **Submissions:** Submit to relevant free web tool directories (e.g., Alternativeto.net, Chrome Web Store if applicable, similar simple app lists).
+
+# V.1.0.1
 - MAXIMIZE CURRENT
 - AUTOCOMPACT-EXPAND 
 - Extra bar with lines on segment finalization 
@@ -113,8 +207,6 @@ YO - Mejorar las  barras con mini bordes y tentativamente con algun shade.
 - Loop counter/indicator
 - Browse all
 
-# MINI MARKETING 
-- Publicar el link  
 
 # V.2
 - Looping, vueltas, y tema desde creación,
