@@ -19,8 +19,12 @@ from datetime import datetime, timedelta, timezone
 from __version__ import __version__ as APP_VERSION 
 
 
-# app.py
+## app.py
+
+from datetime import datetime, timedelta, timezone # Ensure timezone is imported
+from pytz import timezone as pytz_timezone # Ensure this is imported for display
 from sqlalchemy.types import TypeDecorator, DateTime # NEW IMPORT
+from dateutil import parser # Add this import if not already there, for robust parsing in process_result_value
 
 class UTCDateTime(TypeDecorator):
     """
@@ -29,46 +33,85 @@ class UTCDateTime(TypeDecorator):
     and returns timezone-aware UTC datetime objects in Python.
     """
     impl = DateTime
-    cache_ok = True # For SQLAlchemy 1.4+ / 2.0, allows caching of this type.
+    cache_ok = True
 
     def process_bind_param(self, value, dialect):
+        """
+        Processes the Python datetime object before sending it to the database.
+        Converts aware datetimes to naive UTC datetimes.
+        """
+        print(f"DEBUG: process_bind_param - input value: {value}, type: {type(value)}")
         if value is None:
-            return value
+            return value # If value is None (e.g., if column is nullable and not set), return None.
+
         if value.tzinfo is None:
-            # If naive, assume it's UTC. This applies if you manually create naive datetime objects
-            # before assigning. For default=lambda: datetime.now(timezone.utc), it will be aware.
-            return value.strftime('%Y-%m-%d %H:%M:%S.%f')
-        # If aware, convert to UTC and then remove tzinfo for storage in DB
-        return value.astimezone(timezone.utc).replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S.%f')
+            # If the datetime object is naive, we assume it's already in UTC.
+            # We return it directly, and the underlying DateTime impl will format it.
+            naive_utc_dt = value
+            print(f"DEBUG: process_bind_param - input naive (assumed UTC): {naive_utc_dt}")
+        else:
+            # If the datetime object is timezone-aware, convert it to UTC and remove tzinfo.
+            # This creates a naive datetime that represents UTC.
+            naive_utc_dt = value.astimezone(timezone.utc).replace(tzinfo=None)
+            print(f"DEBUG: process_bind_param - converted to naive UTC: {naive_utc_dt}")
+        
+        # This is the CRUCIAL CHANGE: Return the datetime object, not a string.
+        # The `self.impl` (SQLAlchemy's built-in DateTime type) will handle the final string conversion for SQLite.
+        return naive_utc_dt
 
     def process_result_value(self, value, dialect):
+        """
+        Processes the string value retrieved from the database.
+        Converts it into a timezone-aware UTC datetime object.
+        """
+        print(f"DEBUG: process_result_value - raw value from DB: {value}, type: {type(value)}")
         if value is None:
             return value
-        # Parse the stored string into a naive datetime object
-        # The stored string can be from CURRENT_TIMESTAMP (naive) or Python's default (naive after storage)
+
+        dt = None
         if isinstance(value, str):
-            dt = datetime.strptime(value.split('.')[0], '%Y-%m-%d %H:%M:%S') # Handle potential microseconds
-            if '.' in value: # Add microseconds back if present
-                try:
-                    microseconds = int(value.split('.')[1])
-                    dt = dt.replace(microsecond=microseconds)
-                except ValueError:
-                    pass # Ignore if microseconds part is malformed
-        elif isinstance(value, datetime):
-            dt = value # Already a datetime object (e.g., from func.now() directly returning one)
-        else:
-            # Fallback for unexpected types, attempt to parse anyway
+            # Attempt to parse with microseconds first
             try:
-                dt = parser.parse(str(value)) # Requires dateutil.parser, but safer for odd cases
-            except Exception:
-                return value # Return as is if parsing fails
+                dt = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+            except ValueError:
+                # Fallback to parsing without microseconds if not found
+                try:
+                    dt = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                except ValueError:
+                    # If still fails, use dateutil.parser as a last resort for robustness
+                    try:
+                        dt = parser.parse(value)
+                        print(f"DEBUG: process_result_value - parsed with dateutil.parser: {dt}")
+                    except Exception as e:
+                        print(f"ERROR: process_result_value - failed to parse string '{value}': {e}")
+                        # If parsing fails, return original value to avoid crashing, though it's not ideal.
+                        return value
+        elif isinstance(value, datetime):
+            # If the value is already a datetime object (unlikely for SQLite strings)
+            dt = value
+            print(f"DEBUG: process_result_value - value is already datetime object: {dt}")
+        else:
+            # Handle any other unexpected types (e.g., int, float, etc.) by attempting to parse its string rep
+            try:
+                dt = parser.parse(str(value))
+                print(f"DEBUG: process_result_value - parsed from non-string/datetime: {dt}")
+            except Exception as e:
+                print(f"ERROR: process_result_value - failed to parse non-string/datetime value '{value}': {e}")
+                return value # Return original value if parsing truly fails
 
-        # Explicitly attach UTC timezone to make it timezone-aware
-        return dt.replace(tzinfo=timezone.utc)
-
-# Ensure dateutil.parser is available if you uncomment the fallback in process_result_value
-# pip install python-dateutil
-
+        # Attach UTC timezone info to the parsed naive datetime object
+        if dt and dt.tzinfo is None:
+            aware_dt = dt.replace(tzinfo=timezone.utc)
+            print(f"DEBUG: process_result_value - successfully attached UTC: {aware_dt}")
+            return aware_dt
+        elif dt: # If it's already timezone-aware (shouldn't happen for SQLite typically)
+            print(f"DEBUG: process_result_value - dt is already timezone-aware: {dt}")
+            return dt
+        
+        # Fallback if parsing results in None or a non-datetime object unexpectedly
+        print(f"DEBUG: process_result_value - returned original value as final fallback: {value}")
+        return value
+    
 class ScriptNameMiddleware:
     def __init__(self, app):
         self.app = app
