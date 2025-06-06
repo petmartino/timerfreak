@@ -1,18 +1,30 @@
+/* ========================================= */
+/* BASE & GLOBAL STYLES                      */
+/* ========================================= */
+
 body {
     margin: 0;
-    padding: 0;
-    /* Remove top padding as `padding-top` handles it */
+    padding: 10px 0.5rem;
+    /* Overall page padding for small screens, accounting for global bar */
     font-family: 'Courier New', Courier, monospace;
     background-color: #00ffae;
-    /* Ensures this is CSS-controlled */
+    /* Default Light Theme Background */
     color: #000;
-    padding-top: 10px;
-    /*padding-left: 0.5rem;*/
     box-sizing: border-box;
-    /* Includes padding in element's total width */
+    /* Crucial for responsive sizing */
 }
 
-/* Dark Theme specific overrides - apply this class to the body */
+.app-title {
+    /* For the main "TimerFreak: Timers..." paragraph */
+    margin-top: .5rem;
+    padding: 0 0.5rem;
+    /* Matches body's side padding */
+}
+
+/* ========================================= */
+/* DARK THEME OVERRIDES                      */
+/* ========================================= */
+
 body.dark-theme {
     background-color: #333;
     color: #fff;
@@ -22,7 +34,6 @@ body.dark-theme .bar-container {
     background-color: #555;
 }
 
-/* Dark mode disabled button style */
 body.dark-theme .btn-solid-3d[data-disabled="true"],
 body.dark-theme .btn-solid-3d.disabled-link {
     background: #444;
@@ -38,372 +49,69 @@ body.dark-theme .btn-solid-3d.disabled-link:active {
 }
 
 body.dark-theme #text-bottom hr {
-    /* Dark theme footer line */
     border-top-color: #444;
 }
 
-#footer{
-        width: 100%;
-        clear: both;
-        text-align: left;
-        padding: .5rem 1rem
-}
+/* ========================================= */
+/* GENERAL LAYOUT & UTILITIES                */
+/* ========================================= */
 
-.about-text {
-    padding: .5rem 1rem;
-        background-color: white;
-    }
-
-.about-text p {
-    line-height: 2em;
- 
-}
-/* General Layout Containers */
 .flex-container {
     display: flex;
     flex-wrap: wrap;
+    /* Allows main sections to wrap */
     align-content: stretch;
 }
 
 .flex-container-internal {
     background-color: inherit;
     /* Inherit from body or parent for theme consistency */
-}
-
-/* Honeypot field - must be hidden */
-.honeypot-field {
-    position: absolute !important;
-    /* Use !important to ensure override */
-    left: -9999px !important;
-    /* Move far off-screen */
-    top: -9999px !important;
-    /* Move far off-screen */
-    width: 1px !important;
-    /* Minimal width */
-    height: 1px !important;
-    /* Minimal height */
-    overflow: hidden !important;
-    /* Hide content */
-    opacity: 0 !important;
-    /* Make invisible */
-    pointer-events: none !important;
-    /* Prevent interaction */
-    visibility: hidden !important;
-    /* Ensure it's never visible */
-}
-
-
-/* Most Used Sequences Section */
-.most-used-sequences ul {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.most-used-sequences ul li {
-    display: block;
-    list-style-type: none;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.most-used-sequences .view-sequence-link {
-    text-decoration: none;
-    color: inherit;
-    font-weight: bold;
-}
-
-.most-used-sequences .view-sequence-link:hover {
-    text-decoration: underline;
-}
-/* This is a new helper class you introduced for the main layout columns. */
-/* Ensure it's correctly used on the main .flex-container-internal divs in index.html */
-.flex-container-main-content {
-    background-color: white;
-    width: 100%; /* Default to full width for mobile */
-    max-width: 480px; /* Max width on mobile if you want content not to spread too wide */
-   /* margin: 0 auto 1rem auto; /* Center the block on page, add margin at bottom */
     box-sizing: border-box;
-    /* Reapply padding that was on the inline style in the original HTML */
-    padding: 1rem;
-    padding-top: 0; /* Adjust as per your original inline for these specific sections */
-    min-width: unset; /* Prevent content from forcing too large a width */
+    /* Generic for flex items, specific padding handled by subclasses */
 }
 
-/* Adjust `flex-container-internal` to ensure consistent box-sizing and padding */
-.flex-container-internal {
-    background-color: inherit;
-    box-sizing: border-box; /* Critical for consistent sizing in flex contexts */
-    /* Remove padding: 1rem; padding-top: 0; here as it is applied more specifically by flex-container-main-content now.
-       If some other .flex-container-internal elements *should* have padding: 1rem then you may need to apply a new class to them or explicitly. */
-}
-
-
-/* CRITICAL FIX FOR THE TIMER FORM LAYOUT */
-/* Target the flex container directly inside a `.timer-form` element. */
-.timer-form > .flex-container {
-    flex-direction: row;    /* Force horizontal layout ALWAYS for these two internal divs */
-    flex-wrap: nowrap;      /* ABSOLUTELY CRUCIAL: Prevent wrapping to a new line */
-    align-items: flex-start; /* Align content at the top of the flex container */
-    gap: 1em;               /* Space between the digit group and the textarea/table group */
-    width: 100%;            /* Ensure the flex container itself fills available width */
-}
-
-/* Adjust the first child (the digits section) */
-.timer-form > .flex-container > .flex-container-internal:first-child {
-    flex-shrink: 0;         /* Prevent this section from shrinking */
-    flex-grow: 0;           /* Prevent this section from growing */
-    width: fit-content;     /* Let the content (digits) determine this width */
-    margin-left: 0 !important; /* Override potential inline or inherited margin */
-    padding: 0;             /* Remove internal padding from this container itself if desired to be tight to content, otherwise manage with care */
-    /* If you want the content (digits) to have internal padding, add a child div and style that */
-}
-
-/* Ensure timer digits are left-aligned inside their flexible container */
-.timer-digits {
-    justify-content: flex-start; /* Left-align the digits themselves */
-    margin: 0; /* Clear any lingering margins */
-}
-
-
-/* Adjust the second child (the textarea/table section) */
-.timer-form > .flex-container > .flex-container-internal:last-child {
-    flex-grow: 1;           /* Allow this container to take up all remaining space */
-    min-width: 0;           /* IMPORTANT: Allow it to shrink if needed (prevents overflow on small screens) */
-    padding: 0;             /* Remove internal padding from this container if desired */
-}
-
-/* Ensure the textarea within its container fills all available width */
-textarea[name="timer_name[]"] {
-    width: 100%;            /* Fill 100% of its parent's (flex-grow:1) width */
-    max-width: 100%;        /* Ensures it doesn't break out of bounds */
-    min-height: 2em;      /* Maintains a reasonable height */
-    height: auto;           /* Allows natural height based on content */
-    resize: vertical;       /* User can only resize vertically */
-    box-sizing: border-box; /* Includes padding and border in width */
-    padding: .5em;          /* Good practice for input fields */
-    border: 1px solid #ccc;
-    border-radius: 2px;
-    font-size: .9em;
-    
-}
-
-/* Ensure the table inside the second flex-item also takes full width */
-.timer-form > .flex-container > .flex-container-internal:last-child table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Responsive Media Queries Adjustments (if any further fine-tuning is needed based on new defaults) */
-
-/* Apply common padding to footer and about sections */
-#footer, .about-text {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    box-sizing: border-box;
-}
-
-/* Media Query for larger screens (e.g., 768px and up) */
-@media (min-width: 768px) {
-    /* Increase overall page padding on larger screens */
-    body {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    #footer, .about-text {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    /* Main flex containers can now go side-by-side */
-    .flex-container {
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        /* `flex-wrap: wrap;` can remain here if you want THESE top-level blocks to wrap on smaller overall screens */
-    }
-
-    .flex-container-main-content {
-        width: 48%; /* Roughly half width for each main block */
-        margin: 0 1% 1rem 1%; /* Margin between blocks and at the bottom */
-        min-width: 350px; /* Prevent them from becoming too narrow */
-        max-width: unset; /* Override potential smaller max-width */
-    }
-
-    /* The .timer-form > .flex-container remains `flex-direction: row` and `flex-wrap: nowrap` */
-    /* no need to redeclare it here as it is universal now. */
-}
-
-
-##############
-/* This is a new helper class you introduced for the main layout columns. */
-/* Ensure it's correctly used on the main .flex-container-internal divs in index.html */
+/* For the main content blocks (Create New Timer & Most Used Sequences) */
 .flex-container-main-content {
     background-color: white;
     width: 100%;
     /* Default to full width for mobile */
     max-width: 480px;
-    /* Max width on mobile if you want content not to spread too wide */
+    /* Optional: limit width on larger mobile devices for readability */
     margin: 0 auto 1rem auto;
-    /* Center the block on page, add margin at bottom */
-    box-sizing: border-box;
-    /* Reapply padding that was on the inline style in the original HTML */
+    /* Center block, add margin below */
     padding: 1rem;
     padding-top: 0;
-    /* Adjust as per your original inline for these specific sections */
     min-width: unset;
-    /* Prevent content from forcing too large a width */
 }
 
-/* Adjust `flex-container-internal` to ensure consistent box-sizing and padding */
-.flex-container-internal {
-    background-color: inherit;
-    box-sizing: border-box;
-    /* Critical for consistent sizing in flex contexts */
-    /* Remove padding: 1rem; padding-top: 0; here as it is applied more specifically by flex-container-main-content now.
-       If some other .flex-container-internal elements *should* have padding: 1rem then you may need to apply a new class to them or explicitly. */
+/* Honeypot field - must be hidden */
+.honeypot-field {
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
 }
 
+/* ========================================= */
+/* FORM: CREATE NEW TIMER                    */
+/* ========================================= */
 
-/* CRITICAL FIX FOR THE TIMER FORM LAYOUT */
-/* Target the flex container directly inside a `.timer-form` element. */
-.timer-form>.flex-container {
-    flex-direction: row;
-    /* Force horizontal layout ALWAYS for these two internal divs */
-    flex-wrap: nowrap;
-    /* ABSOLUTELY CRUCIAL: Prevent wrapping to a new line */
-    align-items: flex-start;
-    /* Align content at the top of the flex container */
-    gap: 1em;
-    /* Space between the digit group and the textarea/table group */
-    width: 100%;
-    /* Ensure the flex container itself fills available width */
-}
-
-/* Adjust the first child (the digits section) */
-.timer-form>.flex-container>.flex-container-internal:first-child {
-    flex-shrink: 0;
-    /* Prevent this section from shrinking */
-    flex-grow: 0;
-    /* Prevent this section from growing */
-    width: fit-content;
-    /* Let the content (digits) determine this width */
-    margin-left: 0 !important;
-    /* Override potential inline or inherited margin */
-    padding: 0;
-    /* Remove internal padding from this container itself if desired to be tight to content, otherwise manage with care */
-    /* If you want the content (digits) to have internal padding, add a child div and style that */
-}
-
-/* Ensure timer digits are left-aligned inside their flexible container */
-.timer-digits {
-    justify-content: flex-start;
-    /* Left-align the digits themselves */
-    margin: 0;
-    /* Clear any lingering margins */
-}
-
-
-/* Adjust the second child (the textarea/table section) */
-.timer-form>.flex-container>.flex-container-internal:last-child {
-    flex-grow: 1;
-    /* Allow this container to take up all remaining space */
-    min-width: 0;
-    /* IMPORTANT: Allow it to shrink if needed (prevents overflow on small screens) */
-    padding: 0;
-    /* Remove internal padding from this container if desired */
-}
-
-/* Ensure the textarea within its container fills all available width */
-textarea[name="timer_name[]"] {
-    width: 100%;
-    /* Fill 100% of its parent's (flex-grow:1) width */
-    max-width: 100%;
-    /* Ensures it doesn't break out of bounds */
-    min-height: 2.5em;
-    /* Maintains a reasonable height */
-    height: auto;
-    /* Allows natural height based on content */
-    resize: vertical;
-    /* User can only resize vertically */
-    box-sizing: border-box;
-    /* Includes padding and border in width */
-    padding: .5em;
-    /* Good practice for input fields */
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-/* Ensure the table inside the second flex-item also takes full width */
-.timer-form>.flex-container>.flex-container-internal:last-child table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Responsive Media Queries Adjustments (if any further fine-tuning is needed based on new defaults) */
-
-/* Apply common padding to footer and about sections */
-#footer,
-.about-text {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    box-sizing: border-box;
-}
-
-/* Media Query for larger screens (e.g., 768px and up) */
-@media (min-width: 768px) {
-
-    /* Increase overall page padding on larger screens */
-    body {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    #footer,
-    .about-text {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    /* Main flex containers can now go side-by-side */
-    .flex-container {
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        /* `flex-wrap: wrap;` can remain here if you want THESE top-level blocks to wrap on smaller overall screens */
-    }
-
-    .flex-container-main-content {
-        width: 48%;
-        /* Roughly half width for each main block */
-        margin: 0 1% 1rem 1%;
-        /* Margin between blocks and at the bottom */
-        min-width: 350px;
-        /* Prevent them from becoming too narrow */
-        max-width: unset;
-        /* Override potential smaller max-width */
-    }
-
-    /* The .timer-form > .flex-container remains `flex-direction: row` and `flex-wrap: nowrap` */
-    /* no need to redeclare it here as it is universal now. */
-}
-######################
-
-
-/* Timer Form & Digits */
 .timer-form {
     overflow: hidden;
     /* For animation */
-    padding-bottom: 1rem;
     transition: all 0.3s ease-out;
     /* For animation */
-    
+    margin-bottom: 1rem;
+    border: 0px solid #ccc;
+    /* Default border */
 }
 
-/* Animation for new timers (only applies when `addTimer` is pressed) */
+/* Animation for new timers (applies when `addTimer` is pressed) */
 .timer-form.new-timer-form {
     max-height: 0;
     padding-top: 0;
@@ -412,7 +120,6 @@ textarea[name="timer_name[]"] {
     margin-bottom: 0;
     opacity: 0;
     border: none;
-    /* Hide border during animation */
 }
 
 /* Animation for deleting timers */
@@ -428,32 +135,63 @@ textarea[name="timer_name[]"] {
 
 .timer-form label {
     font-size: 1rem;
-    /* Smaller font for labels */
 }
 
+/* Specific flex container inside each timer-form for digits and textarea/table */
+.timer-form>.flex-container {
+    flex-direction: row;
+    /* Force horizontal layout ALWAYS for these two internal divs */
+    flex-wrap: nowrap;
+    /* CRITICAL: Prevent wrapping to a new line */
+    align-items: flex-start;
+    /* Align content at the top */
+    gap: 1em;
+    /* Space between the digit group and the textarea/table group */
+    width: 100%;
+    /* Ensure the flex container itself fills available width */
+}
+
+/* First child of `.timer-form > .flex-container` (the digits section) */
+.timer-form>.flex-container>.flex-container-internal:first-child {
+    flex-shrink: 0;
+    /* Prevent from shrinking */
+    flex-grow: 0;
+    /* Prevent from growing */
+    width: fit-content;
+    /* Content determines width */
+    margin-left: 0 !important;
+    /* Override potential inherited/inline margin */
+    padding: 0;
+    /* Remove internal padding from this container */
+}
+
+/* Ensure timer digits are left-aligned inside their flexible container */
 .timer-digits {
+    display: flex;
+    /* Inherited but good to be explicit here */
+    justify-content: flex-start;
+    /* Align digits left */
     font-family: monospace;
     font-size: 1.5em;
-    display: flex;
-    justify-content: left;
-    margin: 0em;
+    margin: 0;
+    /* Clear lingering margins */
 }
 
-/* Updated .digit-group for vertical stacking of buttons around input */
 .digit-group {
     display: flex;
     flex-direction: column;
-    /* Stack children vertically */
-    align-items: left;
-    text-align: left;
-    margin: 0 0em;
+    /* Stack buttons vertically */
+    align-items: center;
+    /* Center input and labels horizontally */
+    text-align: center;
+    margin: 0;
+    /* Clear internal group margins */
 }
 
-/* Container for input and label to keep them horizontal */
 .input-label-row {
     display: flex;
     align-items: center;
-    margin: 0em 0;
+    margin: 0;
 }
 
 .digit-button {
@@ -499,26 +237,73 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
     width: 1.5em;
+    /* Specific width to manage visual size */
 }
 
-/* Style for validation messages */
-.validation-message {
-    color: orangered;
-    background-color: rgb(255, 239, 147);
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding: 5px;
+/* Second child of `.timer-form > .flex-container` (the textarea/table section) */
+.timer-form>.flex-container>.flex-container-internal:last-child {
+    flex-grow: 1;
+    /* Allows this container to take all remaining space */
+    min-width: 0;
+    /* Allows it to shrink if needed (prevents overflow on small screens) */
+    padding: 0;
+    /* Remove internal padding from this container */
+}
+
+textarea[name="timer_name[]"] {
+    width: 100%;
+    /* Fill 100% of its parent's (flex-grow:1) width */
+    max-width: 100%;
+    /* Ensures it doesn't break out of bounds */
+    min-height: 2em;
+    /* Maintains a reasonable height */
+    height: auto;
+    /* Allows natural height based on content */
+    resize: vertical;
+    /* User can only resize vertically */
+    box-sizing: border-box;
+    /* Includes padding and border in width */
+    margin-bottom: 1em;
+    /* Add space below textarea */
+    padding: .5em;
+    /* Consistent padding inside input */
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    /* Slight adjustment from original */
+    font-size: .9em;
+    /* Slight adjustment from original */
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.timer-form>.flex-container>.flex-container-internal:last-child table {
+    width: 100%;
+    /* Make the table take full width */
+    border-collapse: collapse;
+    /* Cleaner table rendering */
+}
+
+input[type="text"][name="sequence_name"] {
+    /* Main sequence name input */
+    width: 100%;
+    /* Make it fill its parent */
+    box-sizing: border-box;
+    /* Include padding and border in the width */
+    margin-top: 1rem;
+    padding: .5em;
+    border: 1px solid #ccc;
     border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
-/* General button-like link styling */
+/* ========================================= */
+/* BUTTONS & CONTROLS                        */
+/* ========================================= */
+
 .btn-solid-3d {
     border: 1px solid #0f988e;
     font-family: 'Courier New', Courier, monospace;
     letter-spacing: 1px;
     padding: 0 1em;
-    /* Default padding for multi-character buttons */
     text-align: center;
     display: inline-block;
     height: 30px;
@@ -535,6 +320,7 @@ input[type=number] {
     user-select: none;
     cursor: pointer;
     top: -3px;
+    /* Simulates depth */
     transform: translateY(0px);
     position: relative;
     box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #0f988e, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
@@ -542,45 +328,19 @@ input[type=number] {
     color: white;
     text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
     transition: 25ms all;
-    -webkit-transition: 25ms all;
-    -moz-transition: 25ms all;
-    -o-transition: 25ms all;
-    -ms-transition: 25ms all;
-    text-decoration: none;
     box-sizing: border-box;
     vertical-align: middle;
-}
-
-/* Specific fixed width for START/STOP/PAUSE/RESUME buttons */
-.btn-fixed-width {
-    min-width: 100px;
-    /* Adjust this value based on longest word ("RESUME") + padding */
-    padding: 0 5px;
-    /* Add some padding to fill the fixed width nicely */
-    box-sizing: border-box;
-}
-
-/* Special styling for single-character/emoji buttons to make them square */
-.btn-solid-3d.emoji-btn {
-    padding: 0;
-    /* Remove horizontal padding */
-    width: 30px;
-    /* Make width equal to height */
-    overflow: hidden;
-    /* Hide potential overflow if emoji is large */
-    display: inline-flex;
-    /* Use flexbox to center content */
-    justify-content: center;
-    align-items: center;
+    text-decoration: none;
 }
 
 
 .btn-solid-3d:active {
     transform: translateY(3px);
+    /* Simulates press down */
     box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #0f988e, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
 }
 
-/* Default disabled button style (light theme) */
+/* Disabled button state */
 .btn-solid-3d[data-disabled="true"],
 .btn-solid-3d.disabled-link {
     cursor: default;
@@ -591,20 +351,32 @@ input[type=number] {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 1), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #bbb, 0 0 0 1px white, 0 3px 0 1px white, 0 10px 20px rgba(0, 0, 0, 0);
     top: -3px;
     transition: none;
-    -webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
-    -ms-transition: none;
     pointer-events: none;
+    /* Disable interaction entirely */
 }
 
 .btn-solid-3d[data-disabled="true"]:active,
 .btn-solid-3d.disabled-link:active {
     transform: translateY(0px);
+    /* Stays put when "pressed" while disabled */
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 1), inset 0 1px 20px rgba(0, 0, 0, 0), 0 2px 0 #bbb, 0 0 0 1px white, 0 2px 0 1px white, 0 10px 20px rgba(0, 0, 0, 0);
 }
 
-/* Smaller buttons for Preview/Delete/Jump to */
+/* Button size modifiers */
+.btn-fixed-width {
+    min-width: 100px;
+    padding: 0 5px;
+}
+
+.btn-solid-3d.emoji-btn {
+    padding: 0;
+    width: 30px;
+    overflow: hidden;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .btn-solid-3d.btn-small {
     height: 25px;
     line-height: 25px;
@@ -613,12 +385,37 @@ input[type=number] {
     margin-right: 0.5em;
 }
 
-
-#jumpButtons a {
-    margin-top: 10px;
+/* Preview / Delete buttons (Specific icon-like buttons) */
+.preview-sound-btn,
+.delete-timer-btn {
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    /* For better emoji alignment */
+    cursor: pointer;
+    vertical-align: middle;
 }
 
-/* Color input basic styling */
+.preview-sound-btn {
+    color: inherit;
+}
+
+/* Keep original color */
+.delete-timer-btn {
+    color: rgb(231, 95, 95);
+    /* Specific red for delete */
+    font-weight: bold;
+    float: right;
+    /* Stays to the right */
+    display: none;
+    /* Controlled by JS, as original code does */
+    transition: opacity 0.3s ease;
+}
+
+/* Color Input Styling */
 input[type="color"] {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -629,8 +426,10 @@ input[type="color"] {
     background: none;
     padding: 0;
     margin: 0;
+    /* Remove default browser margin */
     cursor: pointer;
-    vertical-align: top;
+    vertical-align: middle;
+    /* Align better with other form elements */
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -651,62 +450,135 @@ input[type="color"]::-moz-color-swatch {
     border-radius: 3px;
 }
 
-/* Trash button specific styling */
-.delete-timer-btn {
-    color: rgb(231, 95, 95);
-    font-weight: bold;
-    background: transparent;
-    /* No background for dumpster icon */
-    text-decoration: none;
+/* Control section styles (on timer.html usually) */
+#controls {
+    padding: 1em 0.5rem;
+    /* Consistent side padding with body */
+}
+
+#controls a,
+#controls input[type="number"] {
+    margin: 0.25rem 0;
+    /* Vertically stack but horizontally clear */
+}
+
+/* Specific styles for loop count input buttons */
+#loopCountGroup {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px;
+    vertical-align: middle;
+}
+
+#loopCountGroup .digit-button {
+    height: 1.5em;
+    line-height: 1.5em;
+    font-size: 1em;
+    width: 1.5em;
     margin: 0;
-    border: none;
-    cursor: pointer;
-    
-    /* Make emoji larger */
-    float: right;
-    /* Float to the right */
-    /* opacity: 0; */
-    /* Removed, visibility managed by JS display property now */
-    transition: opacity 0.3s ease;
-    /* Fade in/out */
     padding: 0;
-    line-height: 1;
-    /* Adjust line height for emoji */
-    display: none;
-    /* Initially hidden, managed by JS */
+    flex-shrink: 0;
+    flex-grow: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Preview sound icon */
-.preview-sound-btn {
-    text-decoration: none;
-    color: inherit;
-    /* Adjust size of speaker icon */
-    /* margin-left: 5px; */
-    /* Spacing from select dropdown */
+#loopCountGroup input {
+    height: 1.5em;
+    font-size: 1em;
+    vertical-align: middle;
+    border: none;
+    text-align: center;
+    width: 60px;
+    background-color: transparent;
 }
 
 
-/* .timer-form:hover .delete-timer-btn { */
-/* opacity: 1; */
-/* Removed, managed by JS display property now */
-/* } */
+/* --- BUTTON COLOR PALETTE --- */
+.btn-default {
+    border-color: #0f988e;
+    background: #15ccbe;
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #0f988e, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+
+.btn-default:active {
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #0f988e, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.btn-darkgreen {
+    border-color: #27ae60;
+    background: #2ecc71;
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #27ae60, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+
+.btn-darkgreen:active {
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #27ae60, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.btn-orange {
+    border-color: #d35400;
+    background: #e67e22;
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #d35400, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+
+.btn-orange:active {
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #d35400, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.btn-red {
+    border-color: #A00000;
+    background: #E00000;
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #A00000, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+
+.btn-red:active {
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #A00000, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.btn-blue {
+    border-color: #2980b9;
+    background: #3498db;
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #2980b9, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+
+.btn-blue:active {
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #2980b9, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.btn-gray {
+    border-color: #7f8c8d;
+    background: #95a5a6;
+    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #7f8c8d, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+
+.btn-gray:active {
+    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #7f8c8d, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
 
 
-/* Timer Bar Components */
+/* ========================================= */
+/* TIMER DISPLAY (ON timer.html)             */
+/* ========================================= */
+
 .bar-container {
     background: #ddd;
     margin-bottom: 0.5rem;
     width: 100%;
     min-height: 100px;
-    /* Default height */
     display: flex;
-    /* Ensures its children are laid out by flexbox */
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    /* Hide overflowing bar during transition */
     position: relative;
-    /* Keep position relative for absolute children */
 }
 
 .bar {
@@ -727,6 +599,7 @@ input[type="color"]::-moz-color-swatch {
     width: 100%;
     height: 100%;
     pointer-events: none;
+    /* Allows clicks to pass through */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -758,45 +631,6 @@ input[type="color"]::-moz-color-swatch {
     margin-bottom: 0.25rem;
 }
 
-/* Global bar fixed position and color */
-#globalBarContainer {
-    background-color: black;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    /* Default height */
-    z-index: 1000;
-}
-
-.global-bar {
-    background-color: yellow;
-    height: 100%;
-    width: 0%;
-    transition: width 0.05s linear;
-}
-
-#sequenceName {
-    margin: 0;
-    margin-top: 1rem;   
-    margin-left: .5rem;
-    padding: 0;
-}
-
-
-
-/* Control section styles */
-#controls {
-    padding: 1em .5em;
-}
-
-#controls a,
-#controls input[type="number"] {
-    margin: 0.25rem;
-    margin-left: 0;
-}
-
 .timer-info {
     color: #888;
     font-size: 0.9rem;
@@ -812,125 +646,100 @@ input[type="color"]::-moz-color-swatch {
     font-size: 0.8rem;
 }
 
+/* ========================================= */
+/* GLOBAL ELEMENTS & UTILITIES               */
+/* ========================================= */
 
-/* Specific styles for loop count input buttons - Horizontal Layout */
-#loopCountGroup {
-    display: inline-flex;
-    /* Use inline-flex to keep it on one line */
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    padding: 2px;
-    vertical-align: middle;
-    /* Align with label text */
+#globalBarContainer {
+    background-color: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    z-index: 1000;
 }
 
-#loopCountGroup .digit-button {
-    height: 1.5em;
-    line-height: 1.5em;
-    font-size: 1em;
-    width: 1.5em;
+.global-bar {
+    background-color: yellow;
+    height: 100%;
+    width: 0%;
+    transition: width 0.05s linear;
+}
+
+#sequenceName {
+    margin: 0;
+    margin-top: 1rem;
+    margin-left: 0.5rem;
+    /* Consistent with overall body padding */
+    padding: 0;
+}
+
+#totalDurationDisplay {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* ========================================= */
+/* MOST USED SEQUENCES                       */
+/* ========================================= */
+
+.most-used-sequences ul {
     margin: 0;
     padding: 0;
-    flex-shrink: 0;
-    flex-grow: 0;
-    /* Override digit-group column behavior */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow: hidden;
 }
 
-#loopCountGroup input {
-    height: 1.5em;
-    font-size: 1em;
-    vertical-align: middle;
-    border: none;
-    text-align: center;
-    width: 60px;
-    background-color: transparent;
+.most-used-sequences ul li {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-
-/* --- Button Color Classes --- */
-
-/* Default Button Color (Original Green) */
-.btn-default {
-    border-color: #0f988e;
-    background: #15ccbe;
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #0f988e, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+.most-used-sequences .view-sequence-link {
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
 }
 
-.btn-default:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #0f988e, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+.most-used-sequences .view-sequence-link:hover {
+    text-decoration: underline;
 }
 
-/* Green (now explicitly Dark Green) */
-.btn-darkgreen {
-    border-color: #27ae60;
-    background: #2ecc71;
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #27ae60, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+/* ========================================= */
+/* FOOTER & ABOUT PAGE                       */
+/* ========================================= */
+
+#footer {
+    width: 100%;
+    clear: both;
+    text-align: left;
+    /* Side padding applied via body, so just top/bottom here */
+    padding-top: .5rem;
+    padding-bottom: .5rem;
 }
 
-.btn-darkgreen:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #27ae60, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+.about-text {
+    background-color: white;
+    /* Stays white for readability */
+    /* Side padding applied via body/media query */
+    padding-top: .5rem;
+    padding-bottom: .5rem;
 }
 
-/* Orange */
-.btn-orange {
-    border-color: #d35400;
-    background: #e67e22;
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #d35400, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+.about-text p {
+    line-height: 2em;
 }
 
-.btn-orange:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #d35400, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
-}
-
-/* Red (Truer Red) */
-.btn-red {
-    border-color: #A00000;
-    /* Darker red border */
-    background: #E00000;
-    /* Brighter red background */
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #A00000, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
-}
-
-.btn-red:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #A00000, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
-}
-
-/* Blue */
-.btn-blue {
-    border-color: #2980b9;
-    background: #3498db;
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #2980b9, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
-}
-
-.btn-blue:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #2980b9, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
-}
-
-/* Gray */
-.btn-gray {
-    border-color: #7f8c8d;
-    background: #95a5a6;
-    box-shadow: inset 0 30px 30px -15px rgba(255, 255, 255, .1), inset 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 20px rgba(0, 0, 0, 0), 0 3px 0 #7f8c8d, 0 3px 2px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, .1);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
-}
-
-.btn-gray:active {
-    box-shadow: inset 0 16px 2px -15px rgba(0, 0, 0, 0), inset 0 0 0 1px rgba(255, 255, 255, .15), inset 0 1px 20px rgba(0, 0, 0, .1), 0 0 0 #7f8c8d, 0 0 0 2px rgba(255, 255, 255, .5), 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
-}
-
-/* Footer style */
 #text-bottom {
-    padding: 2.5rem;
-    
+    /* Top/bottom padding from default HTML/Jinja */
+    padding: 2.5rem 0;
+    /* Remove horizontal padding here as body covers it */
 }
 
 #text-bottom p {
@@ -938,18 +747,22 @@ input[type="color"]::-moz-color-swatch {
     color: gray;
 }
 
-
 #text-bottom a {
     font-weight: bold;
     text-decoration: underline;
 }
 
-/* Styles for the advanced controls section on timer.html */
+/* ========================================= */
+/* ADVANCED CONTROLS (timer.html)            */
+/* ========================================= */
+
 #advancedControls {
-    padding: 0 .5rem;
+    padding: 0;
+    /* Base padding set here, adjusted when visible */
     border: 0px solid #ccc;
     border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.00);
+    /* Nearly transparent */
     max-height: 0;
     opacity: 0;
     overflow: hidden;
@@ -958,16 +771,66 @@ input[type="color"]::-moz-color-swatch {
 
 #advancedControls.show {
     max-height: 500px;
-    /* Adjust as needed */
+    /* Sufficient height to show content */
     opacity: 1;
-    padding-bottom: .5rem;
+    padding: 0.5rem;
+    /* Apply padding when shown */
 }
 
-/* Styles for total duration display on index.html */
-#totalDurationDisplay {
-    margin-top: 1em;
-    /* Adjusted position */
-    margin-bottom: 1em;
-    font-weight: bold;
-    color: #333;
+#jumpButtons a {
+    margin-top: 10px;
+    /* Space between jump buttons */
+}
+
+
+/* ========================================= */
+/* MEDIA QUERIES (Responsiveness)            */
+/* ========================================= */
+
+/* Tablet & Up (768px and up) */
+@media (min-width: 768px) {
+    body {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .app-title {
+        padding: 0 1rem;
+    }
+
+    /* Main layout columns: side-by-side */
+    .flex-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .flex-container-main-content {
+        width: 48%;
+        /* Roughly half width for each main block */
+        margin: 0 1% 1rem 1%;
+        /* Margin between blocks and at the bottom */
+        min-width: 350px;
+        /* Prevent blocks from becoming too narrow */
+        max-width: unset;
+        /* Remove previous mobile max-width limit */
+    }
+
+    #footer,
+    .about-text {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    #controls {
+        padding: 1em 1rem;
+    }
+}
+
+/* Desktop & Up (1024px and up) */
+@media (min-width: 1024px) {
+    .flex-container-main-content {
+        max-width: 550px;
+        /* Cap max width for aesthetics on very large screens */
+    }
 }
