@@ -344,15 +344,6 @@ def show_logs(sequence_id):
                      .filter(CounterLog.sequence_id == sequence_id)\
                      .order_by(CounterLog.timestamp).all()
 
-    @app.route("/logs/<sequence_id>")
-def show_logs(sequence_id):
-    sequence = Sequence.query.get_or_404(sequence_id)
-
-    logs_raw = db.session.query(CounterLog, Timer)\
-                     .outerjoin(Timer, (CounterLog.sequence_id == Timer.sequence_id) & (CounterLog.timer_order == Timer.timer_order))\
-                     .filter(CounterLog.sequence_id == sequence_id)\
-                     .order_by(CounterLog.timestamp).all()
-
     logs_formatted = []
     # Define the target display timezone (e.g., America/Chicago for CDT/CST)
     # You can make this configurable if users need to choose their timezone.
@@ -378,8 +369,6 @@ def show_logs(sequence_id):
 
     sequence_name_display = sequence.name if sequence.name else f"Sequence {sequence_id}"
     return render_template("logs.html", logs=logs_formatted, sequence_id=sequence_id, sequence_name_for_logs=sequence_name_display)
-
-
 @app.route("/about")
 def about():
     return render_template("about.html")
