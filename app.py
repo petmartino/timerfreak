@@ -349,9 +349,14 @@ def show_logs(sequence_id):
     # You can make this configurable if users need to choose their timezone.
     display_timezone = pytz_timezone('America/Chicago') # Use 'America/New_York' for EDT/EST etc.
 
+    # In app.py, inside show_logs function:
     for log_entry, timer_info in logs_raw:
-        # log_entry.timestamp is now a UTC-aware datetime object
         utc_timestamp = log_entry.timestamp
+        print(f"DEBUG: Retrieved timestamp (utc_timestamp): {utc_timestamp}")
+        print(f"DEBUG: Type of utc_timestamp: {type(utc_timestamp)}")
+        print(f"DEBUG: tzinfo of utc_timestamp: {utc_timestamp.tzinfo}")
+        print(f"DEBUG: utcoffset of utc_timestamp: {utc_timestamp.utcoffset()}")
+
 
         # Convert to the desired display timezone
         display_timestamp = utc_timestamp.astimezone(display_timezone)

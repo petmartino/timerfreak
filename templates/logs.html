@@ -62,7 +62,7 @@
                     {% endif %}
                 </td>
                 <td>{{ log.event_type }}</td>
-                <td>{{ log.timestamp }}</td>
+                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S %Z') }}</td>
             </tr>
             {% endfor %}
         </tbody>
