@@ -19,6 +19,56 @@ from datetime import datetime, timedelta, timezone
 from __version__ import __version__ as APP_VERSION 
 
 
+# app.py
+from sqlalchemy.types import TypeDecorator, DateTime # NEW IMPORT
+
+class UTCDateTime(TypeDecorator):
+    """
+    A DateTime type that handles timezone conversion for SQLite.
+    Stores naive UTC datetime objects in the database,
+    and returns timezone-aware UTC datetime objects in Python.
+    """
+    impl = DateTime
+    cache_ok = True # For SQLAlchemy 1.4+ / 2.0, allows caching of this type.
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return value
+        if value.tzinfo is None:
+            # If naive, assume it's UTC. This applies if you manually create naive datetime objects
+            # before assigning. For default=lambda: datetime.now(timezone.utc), it will be aware.
+            return value.strftime('%Y-%m-%d %H:%M:%S.%f')
+        # If aware, convert to UTC and then remove tzinfo for storage in DB
+        return value.astimezone(timezone.utc).replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S.%f')
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return value
+        # Parse the stored string into a naive datetime object
+        # The stored string can be from CURRENT_TIMESTAMP (naive) or Python's default (naive after storage)
+        if isinstance(value, str):
+            dt = datetime.strptime(value.split('.')[0], '%Y-%m-%d %H:%M:%S') # Handle potential microseconds
+            if '.' in value: # Add microseconds back if present
+                try:
+                    microseconds = int(value.split('.')[1])
+                    dt = dt.replace(microsecond=microseconds)
+                except ValueError:
+                    pass # Ignore if microseconds part is malformed
+        elif isinstance(value, datetime):
+            dt = value # Already a datetime object (e.g., from func.now() directly returning one)
+        else:
+            # Fallback for unexpected types, attempt to parse anyway
+            try:
+                dt = parser.parse(str(value)) # Requires dateutil.parser, but safer for odd cases
+            except Exception:
+                return value # Return as is if parsing fails
+
+        # Explicitly attach UTC timezone to make it timezone-aware
+        return dt.replace(tzinfo=timezone.utc)
+
+# Ensure dateutil.parser is available if you uncomment the fallback in process_result_value
+# pip install python-dateutil
+
 class ScriptNameMiddleware:
     def __init__(self, app):
         self.app = app
@@ -57,7 +107,7 @@ class Sequence(db.Model):
     featured = db.Column(Integer, default=0, nullable=False)
     # Change 1: timezone=True tells SQLAlchemy to treat it as timezone-aware
     # Change 2: default=lambda: datetime.now(timezone.utc) makes Python generate UTC timestamp
-    created_at = db.Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     timers = relationship('Timer', backref='sequence', cascade="all, delete-orphan", order_by="Timer.timer_order")
 
     def __repr__(self):
@@ -97,7 +147,7 @@ class CounterLog(db.Model):
     event_type = db.Column(String(50), nullable=False)
     # Change 1: timezone=True
     # Change 2: default=lambda: datetime.now(timezone.utc)
-    timestamp = db.Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    timestamp = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     sequence_rel = relationship('Sequence', backref='logs')
 
     def __repr__(self):
