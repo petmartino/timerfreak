@@ -89,9 +89,6 @@ Special thanks and aknowledgment to creators of audio files:
 
 
 # V.0.2.1
-TESTS
-
-YO - FIX MOBIL
 YO - Mejorar las  barras con mini bordes y tentativamente con algun shade. 
 
 # V.0.2.2.
@@ -136,35 +133,6 @@ YO - Mejorar las  barras con mini bordes y tentativamente con algun shade.
     *   Rapid-fire animation showcasing diverse sequences with their vibrant custom colors and suggestive alarm sounds.
     *   Visually engaging with splashes of color corresponding to alarms.
 
-**II. Short (15-45 second) Video with Music/Narration (for social media/landing pages):**
-
-1.  **"Solve My Day" Narrated Journey:**
-    *   **Intro:** "Tired of distractions? Struggling to stay on track?"
-    *   **Problem/Solution:** "Meet TimerFreak: Custom timers, visual progress, satisfying alerts." (Show clean UI, user interacting.)
-    *   **Use Cases:** Rapid cuts: "Workout? Check. Study? Check. Mindfulness? Check." (Visually switch between different timer types/sequences running).
-    *   **Call to Action:** "TimerFreak.xyz - Get Started. Stay Focused." (Clear URL display).
-
-2.  **"Feature Showcase" (Silent with text overlays or light music):**
-    *   Showcases creation form (digits, name, color, sound options).
-    *   Shows a running timer (progress bar, countdown).
-    *   Briefly highlights "Add Timer" (multiple timers) feature.
-    *   Highlights "Most Used" list as a quick starting point.
-    *   Optional: Flash "Add to Home Screen" instructions.
-
-Here's the concise strategic placement for maximizing TimerFreak's exposure:
-
-*   **Website Homepage (TimerFreak.xyz):**
-    *   **Hero Section:** Embed best GIF/short video demo.
-    *   **Direct Access:** Make "Create New" form instantly visible.
-    *   **Social Proof:** Prominently display "Most Used Sequences" section.
-    *   **Call to Action:** Clear "Create" button for new timers.
-    *   **PWA Promo:** Explicit, easily discoverable "Add to Home Screen" instructions (tooltip on first visit, or a small persistent banner on mobile).
-
-*   **Product Hunt (Launch):**
-    *   **Launch Day:** Dedicate full attention to launch.
-    *   **Product Page:** Utilize all visual assets (images, GIFs, video).
-    *   **Engagement:** Actively respond to comments/questions.
-    *   **Community:** Announce launch within your network to encourage upvotes/comments.
 
 *   **Reddit (Targeted Niche Subreddits):**
     *   **Curated Posts:** Craft unique, value-driven posts for `/r/productivity`, `/r/ADHD`, `/r/bodyweightfitness`, `/r/meditation`, `/r/students`, `/r/simpleliving`, `/r/homeorganization`.
@@ -178,21 +146,7 @@ Here's the concise strategic placement for maximizing TimerFreak's exposure:
 *   **Twitter / X:**
     *   **Daily/Weekly:** Consistent posts using varied GIFs, screenshots, short tips on using timers for productivity/wellness.
     *   **Hashtags:** `#TimerFreak #Productivity #WorkoutTimer #StudyHacks #Meditation #WebDev #BuildInPublic #FreeTools`.
-    *   **Engagement:** Tag relevant accounts, respond to trending discussions related to time management.
-
-*   **LinkedIn:**
-    *   **Post:** Share announcement, link, and visual.
-    *   **Network:** Encourage professional contacts to share.
-    *   **Groups:** Share in relevant professional or hobby groups (e.g., project management, fitness coaching).
-
-*   **Instagram / TikTok (Visual Focus):**
-    *   **Short Videos/Reels:** Show timers in action with popular background music.
-    *   **Visual Cues:** Highlight the color changes and progress bars.
-    *   **Before/After:** Show a chaotic vs. organized workflow thanks to TimerFreak.
-    *   **Hashtags:** `#timerapp #focus #dailyroutine #lifehacks #productivitytools #fitnessmotivation`.
-
-*   **Email Signatures:**
-    *   Add a subtle link to TimerFreak.xyz with a quick benefit statement (e.g., "Manage Your Time Better with TimerFreak.xyz").
+    *   **Engagement:** Tag relevant accounts, respond to trending discussions related to time management..
 
 *   **Online Blogs/Forums/Directories (Guest Posting / Submissions):**
     *   **Research:** Find popular blogs listing productivity tools, open-source projects, web utilities.
