@@ -295,6 +295,14 @@ input[type="text"][name="sequence_name"] {
     font-family: 'Courier New', Courier, monospace;
 }
 
+.validation-message {
+background-color: #f8ffb7;
+color: red;
+margin-top: .5rem;
+padding: .5rem;
+
+}
+
 /* ========================================= */
 /* BUTTONS & CONTROLS                        */
 /* ========================================= */
