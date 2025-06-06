@@ -798,8 +798,7 @@ input[type="color"]::-moz-color-swatch {
 /* Tablet & Up (768px and up) */
 @media (min-width: 768px) {
     body {
-        padding-left: 1rem;
-        padding-right: 1rem;
+       
     }
 
     .app-title {
@@ -809,7 +808,7 @@ input[type="color"]::-moz-color-swatch {
     /* Main layout columns: side-by-side */
     .flex-container {
         flex-direction: row;
-        justify-content: center;
+        justify-content: left;
         align-items: flex-start;
     }
 
