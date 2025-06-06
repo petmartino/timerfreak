@@ -91,8 +91,11 @@ Special thanks and aknowledgment to creators of audio files:
 # V.0.2.1
 TESTS
 
-YO - Fix ancho de pantalla real a 370px 
-YO - Mejorar las  barras con mini bordes
+YO - FIX MOBIL
+YO - Mejorar las  barras con mini bordes y tentativamente con algun shade. 
+
+# V.0.2.2.
+
 - FIX GLITCH ULTIMA CAMPANA en desktop (con un nuevo evento). 
 - Display timer duration compact (04:30).
 - Display total duration at bottom
