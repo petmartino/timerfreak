@@ -1,12 +1,17 @@
 body {
     margin: 0;
     padding: 0;
+    /* Remove top padding as `padding-top` handles it */
     font-family: 'Courier New', Courier, monospace;
-    /* Default Light Theme styles */
-    background-color: #fff;
+    background-color: #00ffae;
+    /* Ensures this is CSS-controlled */
     color: #000;
     padding-top: 10px;
-    /* Account for fixed global bar on timer.html */
+    padding-left: 0.5rem;
+    /* Overall page padding for small screens */
+    padding-right: 0.5rem;
+    box-sizing: border-box;
+    /* Includes padding in element's total width */
 }
 
 /* Dark Theme specific overrides - apply this class to the body */
@@ -115,6 +120,282 @@ body.dark-theme #text-bottom hr {
 .most-used-sequences .view-sequence-link:hover {
     text-decoration: underline;
 }
+/* This is a new helper class you introduced for the main layout columns. */
+/* Ensure it's correctly used on the main .flex-container-internal divs in index.html */
+.flex-container-main-content {
+    background-color: white;
+    width: 100%; /* Default to full width for mobile */
+    max-width: 480px; /* Max width on mobile if you want content not to spread too wide */
+    margin: 0 auto 1rem auto; /* Center the block on page, add margin at bottom */
+    box-sizing: border-box;
+    /* Reapply padding that was on the inline style in the original HTML */
+    padding: 1rem;
+    padding-top: 0; /* Adjust as per your original inline for these specific sections */
+    min-width: unset; /* Prevent content from forcing too large a width */
+}
+
+/* Adjust `flex-container-internal` to ensure consistent box-sizing and padding */
+.flex-container-internal {
+    background-color: inherit;
+    box-sizing: border-box; /* Critical for consistent sizing in flex contexts */
+    /* Remove padding: 1rem; padding-top: 0; here as it is applied more specifically by flex-container-main-content now.
+       If some other .flex-container-internal elements *should* have padding: 1rem then you may need to apply a new class to them or explicitly. */
+}
+
+
+/* CRITICAL FIX FOR THE TIMER FORM LAYOUT */
+/* Target the flex container directly inside a `.timer-form` element. */
+.timer-form > .flex-container {
+    flex-direction: row;    /* Force horizontal layout ALWAYS for these two internal divs */
+    flex-wrap: nowrap;      /* ABSOLUTELY CRUCIAL: Prevent wrapping to a new line */
+    align-items: flex-start; /* Align content at the top of the flex container */
+    gap: 1em;               /* Space between the digit group and the textarea/table group */
+    width: 100%;            /* Ensure the flex container itself fills available width */
+}
+
+/* Adjust the first child (the digits section) */
+.timer-form > .flex-container > .flex-container-internal:first-child {
+    flex-shrink: 0;         /* Prevent this section from shrinking */
+    flex-grow: 0;           /* Prevent this section from growing */
+    width: fit-content;     /* Let the content (digits) determine this width */
+    margin-left: 0 !important; /* Override potential inline or inherited margin */
+    padding: 0;             /* Remove internal padding from this container itself if desired to be tight to content, otherwise manage with care */
+    /* If you want the content (digits) to have internal padding, add a child div and style that */
+}
+
+/* Ensure timer digits are left-aligned inside their flexible container */
+.timer-digits {
+    justify-content: flex-start; /* Left-align the digits themselves */
+    margin: 0; /* Clear any lingering margins */
+}
+
+
+/* Adjust the second child (the textarea/table section) */
+.timer-form > .flex-container > .flex-container-internal:last-child {
+    flex-grow: 1;           /* Allow this container to take up all remaining space */
+    min-width: 0;           /* IMPORTANT: Allow it to shrink if needed (prevents overflow on small screens) */
+    padding: 0;             /* Remove internal padding from this container if desired */
+}
+
+/* Ensure the textarea within its container fills all available width */
+textarea[name="timer_name[]"] {
+    width: 100%;            /* Fill 100% of its parent's (flex-grow:1) width */
+    max-width: 100%;        /* Ensures it doesn't break out of bounds */
+    min-height: 2.5em;      /* Maintains a reasonable height */
+    height: auto;           /* Allows natural height based on content */
+    resize: vertical;       /* User can only resize vertically */
+    box-sizing: border-box; /* Includes padding and border in width */
+    margin-bottom: 1em;     /* Adjust as needed */
+    padding: .5em;          /* Good practice for input fields */
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Ensure the table inside the second flex-item also takes full width */
+.timer-form > .flex-container > .flex-container-internal:last-child table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Responsive Media Queries Adjustments (if any further fine-tuning is needed based on new defaults) */
+
+/* Apply common padding to footer and about sections */
+#footer, .about-text {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    box-sizing: border-box;
+}
+
+/* Media Query for larger screens (e.g., 768px and up) */
+@media (min-width: 768px) {
+    /* Increase overall page padding on larger screens */
+    body {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    #footer, .about-text {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Main flex containers can now go side-by-side */
+    .flex-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        /* `flex-wrap: wrap;` can remain here if you want THESE top-level blocks to wrap on smaller overall screens */
+    }
+
+    .flex-container-main-content {
+        width: 48%; /* Roughly half width for each main block */
+        margin: 0 1% 1rem 1%; /* Margin between blocks and at the bottom */
+        min-width: 350px; /* Prevent them from becoming too narrow */
+        max-width: unset; /* Override potential smaller max-width */
+    }
+
+    /* The .timer-form > .flex-container remains `flex-direction: row` and `flex-wrap: nowrap` */
+    /* no need to redeclare it here as it is universal now. */
+}
+
+
+##############
+/* This is a new helper class you introduced for the main layout columns. */
+/* Ensure it's correctly used on the main .flex-container-internal divs in index.html */
+.flex-container-main-content {
+    background-color: white;
+    width: 100%;
+    /* Default to full width for mobile */
+    max-width: 480px;
+    /* Max width on mobile if you want content not to spread too wide */
+    margin: 0 auto 1rem auto;
+    /* Center the block on page, add margin at bottom */
+    box-sizing: border-box;
+    /* Reapply padding that was on the inline style in the original HTML */
+    padding: 1rem;
+    padding-top: 0;
+    /* Adjust as per your original inline for these specific sections */
+    min-width: unset;
+    /* Prevent content from forcing too large a width */
+}
+
+/* Adjust `flex-container-internal` to ensure consistent box-sizing and padding */
+.flex-container-internal {
+    background-color: inherit;
+    box-sizing: border-box;
+    /* Critical for consistent sizing in flex contexts */
+    /* Remove padding: 1rem; padding-top: 0; here as it is applied more specifically by flex-container-main-content now.
+       If some other .flex-container-internal elements *should* have padding: 1rem then you may need to apply a new class to them or explicitly. */
+}
+
+
+/* CRITICAL FIX FOR THE TIMER FORM LAYOUT */
+/* Target the flex container directly inside a `.timer-form` element. */
+.timer-form>.flex-container {
+    flex-direction: row;
+    /* Force horizontal layout ALWAYS for these two internal divs */
+    flex-wrap: nowrap;
+    /* ABSOLUTELY CRUCIAL: Prevent wrapping to a new line */
+    align-items: flex-start;
+    /* Align content at the top of the flex container */
+    gap: 1em;
+    /* Space between the digit group and the textarea/table group */
+    width: 100%;
+    /* Ensure the flex container itself fills available width */
+}
+
+/* Adjust the first child (the digits section) */
+.timer-form>.flex-container>.flex-container-internal:first-child {
+    flex-shrink: 0;
+    /* Prevent this section from shrinking */
+    flex-grow: 0;
+    /* Prevent this section from growing */
+    width: fit-content;
+    /* Let the content (digits) determine this width */
+    margin-left: 0 !important;
+    /* Override potential inline or inherited margin */
+    padding: 0;
+    /* Remove internal padding from this container itself if desired to be tight to content, otherwise manage with care */
+    /* If you want the content (digits) to have internal padding, add a child div and style that */
+}
+
+/* Ensure timer digits are left-aligned inside their flexible container */
+.timer-digits {
+    justify-content: flex-start;
+    /* Left-align the digits themselves */
+    margin: 0;
+    /* Clear any lingering margins */
+}
+
+
+/* Adjust the second child (the textarea/table section) */
+.timer-form>.flex-container>.flex-container-internal:last-child {
+    flex-grow: 1;
+    /* Allow this container to take up all remaining space */
+    min-width: 0;
+    /* IMPORTANT: Allow it to shrink if needed (prevents overflow on small screens) */
+    padding: 0;
+    /* Remove internal padding from this container if desired */
+}
+
+/* Ensure the textarea within its container fills all available width */
+textarea[name="timer_name[]"] {
+    width: 100%;
+    /* Fill 100% of its parent's (flex-grow:1) width */
+    max-width: 100%;
+    /* Ensures it doesn't break out of bounds */
+    min-height: 2.5em;
+    /* Maintains a reasonable height */
+    height: auto;
+    /* Allows natural height based on content */
+    resize: vertical;
+    /* User can only resize vertically */
+    box-sizing: border-box;
+    /* Includes padding and border in width */
+    margin-bottom: 1em;
+    /* Adjust as needed */
+    padding: .5em;
+    /* Good practice for input fields */
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Ensure the table inside the second flex-item also takes full width */
+.timer-form>.flex-container>.flex-container-internal:last-child table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Responsive Media Queries Adjustments (if any further fine-tuning is needed based on new defaults) */
+
+/* Apply common padding to footer and about sections */
+#footer,
+.about-text {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    box-sizing: border-box;
+}
+
+/* Media Query for larger screens (e.g., 768px and up) */
+@media (min-width: 768px) {
+
+    /* Increase overall page padding on larger screens */
+    body {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    #footer,
+    .about-text {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Main flex containers can now go side-by-side */
+    .flex-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        /* `flex-wrap: wrap;` can remain here if you want THESE top-level blocks to wrap on smaller overall screens */
+    }
+
+    .flex-container-main-content {
+        width: 48%;
+        /* Roughly half width for each main block */
+        margin: 0 1% 1rem 1%;
+        /* Margin between blocks and at the bottom */
+        min-width: 350px;
+        /* Prevent them from becoming too narrow */
+        max-width: unset;
+        /* Override potential smaller max-width */
+    }
+
+    /* The .timer-form > .flex-container remains `flex-direction: row` and `flex-wrap: nowrap` */
+    /* no need to redeclare it here as it is universal now. */
+}
+######################
+
 
 /* Timer Form & Digits */
 .timer-form {
