@@ -1,5 +1,7 @@
 
 # TimerFreak - Your Custom Sequence Timer
+Try at [https://timerfreak.xyz](https://timerfreak.xyz)
+
 ![TimerFreak](https://timerfreak.xyz/static/logotimerfreak.svg "TimerFreak")
 
 TimerFreak is a simple yet powerful web application designed to help you manage timed sequences. 
