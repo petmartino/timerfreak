@@ -4,6 +4,7 @@ Copyright (c) 2025 - Pet Martino
 
 This software is licensed under the MIT License.
 See the LICENSE file for more details.
+
 """
 from pytz import timezone as pytz_timezone
 from flask import Flask, render_template, request, redirect, url_for, jsonify, g
