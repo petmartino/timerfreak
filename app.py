@@ -14,7 +14,7 @@ import secrets
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime, Integer, String, ForeignKey
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, joinedload
 from flask_migrate import Migrate
 from datetime import datetime, timedelta, timezone
 from __version__ import __version__ as APP_VERSION 
@@ -22,7 +22,6 @@ from __version__ import __version__ as APP_VERSION
 
 ## app.py
 
-from datetime import datetime, timedelta, timezone # Ensure timezone is imported
 from pytz import timezone as pytz_timezone # Ensure this is imported for display
 from sqlalchemy.types import TypeDecorator, DateTime # NEW IMPORT
 from dateutil import parser # Add this import if not already there, for robust parsing in process_result_value
@@ -41,31 +40,25 @@ class UTCDateTime(TypeDecorator):
         Processes the Python datetime object before sending it to the database.
         Converts aware datetimes to naive UTC datetimes.
         """
-        print(f"DEBUG: process_bind_param - input value: {value}, type: {type(value)}")
         if value is None:
             return value # If value is None (e.g., if column is nullable and not set), return None.
 
         if value.tzinfo is None:
             # If the datetime object is naive, we assume it's already in UTC.
-            # We return it directly, and the underlying DateTime impl will format it.
             naive_utc_dt = value
-            print(f"DEBUG: process_bind_param - input naive (assumed UTC): {naive_utc_dt}")
         else:
             # If the datetime object is timezone-aware, convert it to UTC and remove tzinfo.
             # This creates a naive datetime that represents UTC.
             naive_utc_dt = value.astimezone(timezone.utc).replace(tzinfo=None)
-            print(f"DEBUG: process_bind_param - converted to naive UTC: {naive_utc_dt}")
         
-        # This is the CRUCIAL CHANGE: Return the datetime object, not a string.
-        # The `self.impl` (SQLAlchemy's built-in DateTime type) will handle the final string conversion for SQLite.
+        # Return the datetime object, not a string.
         return naive_utc_dt
 
     def process_result_value(self, value, dialect):
         """
-        Processes the string value retrieved from the database.
+        Processes the value retrieved from the database.
         Converts it into a timezone-aware UTC datetime object.
         """
-        print(f"DEBUG: process_result_value - raw value from DB: {value}, type: {type(value)}")
         if value is None:
             return value
 
@@ -82,35 +75,22 @@ class UTCDateTime(TypeDecorator):
                     # If still fails, use dateutil.parser as a last resort for robustness
                     try:
                         dt = parser.parse(value)
-                        print(f"DEBUG: process_result_value - parsed with dateutil.parser: {dt}")
-                    except Exception as e:
-                        print(f"ERROR: process_result_value - failed to parse string '{value}': {e}")
-                        # If parsing fails, return original value to avoid crashing, though it's not ideal.
+                    except Exception:
                         return value
         elif isinstance(value, datetime):
-            # If the value is already a datetime object (unlikely for SQLite strings)
             dt = value
-            print(f"DEBUG: process_result_value - value is already datetime object: {dt}")
         else:
-            # Handle any other unexpected types (e.g., int, float, etc.) by attempting to parse its string rep
             try:
                 dt = parser.parse(str(value))
-                print(f"DEBUG: process_result_value - parsed from non-string/datetime: {dt}")
-            except Exception as e:
-                print(f"ERROR: process_result_value - failed to parse non-string/datetime value '{value}': {e}")
-                return value # Return original value if parsing truly fails
+            except Exception:
+                return value
 
         # Attach UTC timezone info to the parsed naive datetime object
         if dt and dt.tzinfo is None:
-            aware_dt = dt.replace(tzinfo=timezone.utc)
-            print(f"DEBUG: process_result_value - successfully attached UTC: {aware_dt}")
-            return aware_dt
-        elif dt: # If it's already timezone-aware (shouldn't happen for SQLite typically)
-            print(f"DEBUG: process_result_value - dt is already timezone-aware: {dt}")
+            return dt.replace(tzinfo=timezone.utc)
+        elif dt: 
             return dt
         
-        # Fallback if parsing results in None or a non-datetime object unexpectedly
-        print(f"DEBUG: process_result_value - returned original value as final fallback: {value}")
         return value
     
 class ScriptNameMiddleware:
@@ -146,12 +126,12 @@ migrate = Migrate(app, db)
 
 class Sequence(db.Model):
     id = db.Column(String(20), primary_key=True)
-    name = db.Column(String(100))
+    name = db.Column(String(100), index=True)
     theme = db.Column(String(50), nullable=True)
-    featured = db.Column(Integer, default=0, nullable=False)
+    featured = db.Column(Integer, default=0, nullable=False, index=True)
     # Change 1: timezone=True tells SQLAlchemy to treat it as timezone-aware
     # Change 2: default=lambda: datetime.now(timezone.utc) makes Python generate UTC timestamp
-    created_at = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
     timers = relationship('Timer', backref='sequence', cascade="all, delete-orphan", order_by="Timer.timer_order")
 
     def __repr__(self):
@@ -159,10 +139,10 @@ class Sequence(db.Model):
 
 class Timer(db.Model):
     id = db.Column(Integer, primary_key=True)
-    sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False)
+    sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False, index=True)
     timer_name = db.Column(String(100))
     duration = db.Column(Integer, nullable=False)
-    timer_order = db.Column(Integer, nullable=False) # 0-based index
+    timer_order = db.Column(Integer, nullable=False, index=True) # 0-based index
     color = db.Column(String(7), default=DEFAULT_TIMER_COLOR)
     # alarm_sound will default to whatever the app determines is the default from DB
     alarm_sound = db.Column(String(100)) # Removed hardcoded default here, will be set on creation
@@ -175,7 +155,7 @@ class Sound(db.Model):
     filename = db.Column(String(100), nullable=False, unique=True)
     name = db.Column(String(100), nullable=False)
     # --- ADDED: New 'default' column ---
-    default = db.Column(Integer, default=0, nullable=False) # 0 for not default, 1 for default
+    default = db.Column(Integer, default=0, nullable=False, index=True) # 0 for not default, 1 for default
 
     # Method to convert Sound object to a dictionary for JSON serialization
     def to_dict(self):
@@ -186,12 +166,12 @@ class Sound(db.Model):
 
 class CounterLog(db.Model):
     id = db.Column(Integer, primary_key=True)
-    sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False)
+    sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False, index=True)
     timer_order = db.Column(Integer, nullable=True)
-    event_type = db.Column(String(50), nullable=False)
+    event_type = db.Column(String(50), nullable=False, index=True)
     # Change 1: timezone=True
     # Change 2: default=lambda: datetime.now(timezone.utc)
-    timestamp = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    timestamp = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
     sequence_rel = relationship('Sequence', backref='logs')
 
     def __repr__(self):
@@ -214,7 +194,7 @@ def index():
     available_sounds_for_template = [s.to_dict() for s in available_sounds_raw]
 
     # --- MODIFIED: Determine default sound filename from DB ---
-    default_sound_obj = Sound.query.filter_by(default=1).first()
+    default_sound_obj = next((s for s in available_sounds_raw if s.default == 1), None)
     if default_sound_obj:
         default_alarm_sound_filename = default_sound_obj.filename
     else:
@@ -242,9 +222,9 @@ def index():
         sequence_start_counts.c.start_count,
         sequence_timer_info.c.timer_count,
         sequence_timer_info.c.total_sequence_duration
-    ).outerjoin(sequence_start_counts, Sequence.id == sequence_start_counts.c.sequence_id)\
+    ).join(sequence_start_counts, Sequence.id == sequence_start_counts.c.sequence_id)\
     .outerjoin(sequence_timer_info, Sequence.id == sequence_timer_info.c.sequence_id)\
-    .order_by(sequence_start_counts.c.start_count.desc().nulls_last())\
+    .order_by(sequence_start_counts.c.start_count.desc())\
     .limit(35)
 
     most_used_sequences_raw = most_used_sequences_query.all()
@@ -364,7 +344,7 @@ def start_timer():
 
 @app.route("/timer/<sequence_id>")
 def show_timer(sequence_id):
-    sequence = Sequence.query.get_or_404(sequence_id)
+    sequence = Sequence.query.options(joinedload(Sequence.timers)).get_or_404(sequence_id)
 
     timers_in_order = sequence.timers
 
@@ -439,17 +419,16 @@ def show_logs(sequence_id):
                      .order_by(CounterLog.timestamp).all()
 
     logs_formatted = []
-    # Define the target display timezone (e.g., America/Chicago for CDT/CST)
-    # You can make this configurable if users need to choose their timezone.
-    display_timezone = pytz_timezone('America/Chicago') # Use 'America/New_York' for EDT/EST etc.
+    # Define the target display timezone. UTC is safer than hardcoded local time.
+    # Ideally, this should be handled on the client side based on their browser settings.
+    display_timezone = timezone.utc
 
     # In app.py, inside show_logs function:
     for log_entry, timer_info in logs_raw:
         utc_timestamp = log_entry.timestamp
-        print(f"DEBUG: Retrieved timestamp (utc_timestamp): {utc_timestamp}")
-        print(f"DEBUG: Type of utc_timestamp: {type(utc_timestamp)}")
-        print(f"DEBUG: tzinfo of utc_timestamp: {utc_timestamp.tzinfo}")
-        print(f"DEBUG: utcoffset of utc_timestamp: {utc_timestamp.utcoffset()}")
+        # Ensure the timestamp is timezone-aware as UTC
+        if utc_timestamp.tzinfo is None:
+            utc_timestamp = utc_timestamp.replace(tzinfo=timezone.utc)
 
 
         # Convert to the desired display timezone
@@ -468,6 +447,79 @@ def show_logs(sequence_id):
 
     sequence_name_display = sequence.name if sequence.name else f"Sequence {sequence_id}"
     return render_template("logs.html", logs=logs_formatted, sequence_id=sequence_id, sequence_name_for_logs=sequence_name_display)
+from functools import wraps
+from sqlalchemy import extract
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        admin_token = os.environ.get('ADMIN_STATS_TOKEN', 'dev-secret-123')
+        if request.args.get('token') != admin_token:
+            return "Unauthorized access. Provide valid token.", 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route("/admin/stats")
+@admin_required
+def admin_stats():
+    # 1. Daily Sequence Creation (Last 14 Days)
+    fourteen_days_ago = datetime.now(timezone.utc) - timedelta(days=14)
+    daily_creation = db.session.query(
+        func.date(Sequence.created_at).label('date'),
+        func.count(Sequence.id)
+    ).filter(Sequence.created_at >= fourteen_days_ago)\
+    .group_by(func.date(Sequence.created_at))\
+    .order_by(func.date(Sequence.created_at).desc()).all()
+
+    # 2. Completion Funnel (Last 30 Days)
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    start_count = CounterLog.query.filter(
+        CounterLog.event_type == 'sequence_start',
+        CounterLog.timestamp >= thirty_days_ago
+    ).count()
+    end_count = CounterLog.query.filter(
+        CounterLog.event_type == 'sequence_end',
+        CounterLog.timestamp >= thirty_days_ago
+    ).count()
+
+    # 3. Hourly Activity (Peak Times)
+    hourly_dist = db.session.query(
+        extract('hour', CounterLog.timestamp).label('hour'),
+        func.count(CounterLog.id)
+    ).group_by('hour').order_by(func.count(CounterLog.id).desc()).limit(5).all()
+
+    # 4. Sound Popularity
+    sound_popularity = db.session.query(
+        Timer.alarm_sound,
+        func.count(Timer.id)
+    ).group_by(Timer.alarm_sound).order_by(func.count(Timer.id).desc()).limit(10).all()
+
+    # 5. Most Engaged Sequences (Top 10)
+    top_sequences = db.session.query(
+        Sequence.id,
+        Sequence.name,
+        func.count(CounterLog.id).label('start_count')
+    ).join(CounterLog, Sequence.id == CounterLog.sequence_id)\
+    .filter(CounterLog.event_type == 'sequence_start')\
+    .group_by(Sequence.id).order_by(func.count(CounterLog.id).desc()).limit(10).all()
+
+    # Summary Stats
+    total_sequences = Sequence.query.count()
+    total_starts = CounterLog.query.filter_by(event_type='sequence_start').count()
+    total_timers = Timer.query.count()
+    avg_timers = total_timers / total_sequences if total_sequences > 0 else 0
+
+    return render_template("admin_stats.html",
+                           daily_creation=daily_creation,
+                           start_count=start_count,
+                           end_count=end_count,
+                           hourly_dist=hourly_dist,
+                           sound_popularity=sound_popularity,
+                           top_sequences=top_sequences,
+                           total_sequences=total_sequences,
+                           total_starts=total_starts,
+                           avg_timers=avg_timers)
+
 @app.route("/about")
 def about():
     return render_template("about.html")

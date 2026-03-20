@@ -173,7 +173,7 @@
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            oscillator.type = 'play'; // Sine wave for a clean beep
+            oscillator.type = 'sine'; // Sine wave for a clean beep
             oscillator.frequency.value = frequency;
 
             gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
@@ -373,12 +373,15 @@
             document.getElementById("globalBar").style.width = totalElapsedPercentage + "%";
         }
 
+        let barElements = []; // Cached DOM elements for timers: { container, bar, overlay, timerName, timerCountdown, timerInfo }
+
         function initUI() {
             const barsContainer = document.getElementById('bars');
             const jump = document.getElementById('jumpButtons');
             barsContainer.innerHTML = '';
             jump.innerHTML = '';
             bars = [];
+            barElements = [];
 
             for (let i = 0; i < durations.length; i++) {
                 const outer = document.createElement('div');
@@ -425,6 +428,14 @@
 
                 barsContainer.appendChild(outer);
                 bars.push(outer);
+                barElements.push({
+                    container: outer,
+                    bar: inner,
+                    overlay: overlayDiv,
+                    timerName: timerNameDiv,
+                    timerCountdown: timerCountdownDiv,
+                    timerInfo: timerInfoDiv
+                });
             }
 
             jump.innerHTML = '';
@@ -797,6 +808,8 @@
             }
         }
 
+        let lastCurrent = null; // Track current index to avoid resetting all bars every frame
+
         function update(currentTime) {
             if (!running || paused) {
                 cancelAnimationFrame(animationFrameId);
@@ -887,69 +900,56 @@
             }
 
             // Continue UI updates for the *current* timer until it ends
-            // This part only executes if the current timer has *not* just ended
-            // or if it just ended but wasn't the final one.
             if (current < durations.length) {
-                const barOuter = bars[current]; // Directly reference the current bar for updates
-                const barInner = barOuter.querySelector(".bar");
-                const overlay = barOuter.querySelector(".overlay");
-                const overlayContent = overlay.querySelector(".overlay-content");
-
-                const timerNameDiv = overlayContent.querySelector(".timer-name");
-                const timerCountdownDiv = overlayContent.querySelector(".timer-countdown");
+                const currentBar = barElements[current];
+                
+                // If current index changed, reset the old current bar and other bars
+                if (current !== lastCurrent) {
+                    barElements.forEach((be, i) => {
+                        if (i === current) {
+                            be.overlay.style.display = "flex";
+                            be.timerInfo.style.display = "none";
+                        } else {
+                            be.bar.style.width = "0%";
+                            be.overlay.style.display = "none";
+                            be.timerInfo.style.display = "flex";
+                        }
+                    });
+                    lastCurrent = current;
+                }
 
                 // Update properties for the current timer's visual elements
-                barInner.style.width = Math.min((elapsed / durations[current]) * 100, 100) + "%";
-                overlay.style.display = "flex";
-                barOuter.querySelector(".timer-info").style.display = "none"; // Hide info for current
+                const progressPct = Math.min((elapsed / durations[current]) * 100, 100);
+                currentBar.bar.style.width = progressPct + "%";
 
-                timerNameDiv.textContent = timerNames[current] || `Timer ${current + 1}`;
                 const remainingTime = Math.max(0, durations[current] - elapsed);
 
                 let countdownText = "";
-                const hours = Math.floor(remainingTime / 3600);
-                const minutes = Math.floor((remainingTime % 3600) / 60);
-                const seconds = Math.floor(remainingTime % 60);
+                const hrs = Math.floor(remainingTime / 3600);
+                const mins = Math.floor((remainingTime % 3600) / 60);
+                const secs = Math.floor(remainingTime % 60);
 
-                if (hours > 0) {
-                    countdownText += `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                } else if (minutes > 0) {
-                    countdownText += `${minutes}:${String(seconds).padStart(2, '0')}`;
+                if (hrs > 0) {
+                    countdownText += `${hrs}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                } else if (mins > 0) {
+                    countdownText += `${mins}:${String(secs).padStart(2, '0')}`;
                 } else {
-                    countdownText += seconds;
+                    countdownText += secs;
                 }
 
-                countdownText += ` (${Math.min((elapsed / durations[current]) * 100, 100).toFixed(0)}%)`;
-
-                timerCountdownDiv.textContent = countdownText;
-
-                // Ensure other bars are set to info state if they were previously active
-                for (let i = 0; i < bars.length; i++) {
-                    if (i !== current) {
-                        const otherBarOuter = bars[i];
-                        const otherBarInner = otherBarOuter.querySelector(".bar");
-                        const otherOverlay = otherBarOuter.querySelector(".overlay");
-                        const otherTimerInfo = otherBarOuter.querySelector(".timer-info");
-
-                        // Only change if needed to avoid unnecessary DOM writes
-                        if (otherBarInner.style.width !== "0%" || otherOverlay.style.display !== "none") {
-                            otherBarInner.style.width = "0%";
-                            otherOverlay.style.display = "none";
-                            otherTimerInfo.style.display = "flex";
-                        }
-                    }
+                const newCountdownHtml = `${countdownText} (${progressPct.toFixed(0)}%)`;
+                if (currentBar.timerCountdown.textContent !== newCountdownHtml) {
+                    currentBar.timerCountdown.textContent = newCountdownHtml;
                 }
             }
 
-
             updateCompletionBar();
-            updateDebug(); // Keep for console logging
+            // updateDebug(); // Optional: limit this to once every few frames if it impacts performance
 
 
             if (document.visibilityState === 'visible') {
                 animationFrameId = requestAnimationFrame(update);
             }
-            // If in background, setInterval handles updates, no need for rAF here
         }
 
 
