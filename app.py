@@ -520,6 +520,35 @@ def admin_stats():
                            total_starts=total_starts,
                            avg_timers=avg_timers)
 
+@app.route("/manifest/<sequence_id>.json")
+def get_manifest(sequence_id):
+    sequence = Sequence.query.get_or_404(sequence_id)
+    name = sequence.name if sequence.name else f"Timer {sequence_id}"
+    
+    manifest = {
+        "name": name,
+        "short_name": name[:12],
+        "start_url": url_for('show_timer', sequence_id=sequence_id),
+        "display": "standalone",
+        "background_color": "#00ffae",
+        "theme_color": "#00ffae",
+        "icons": [
+            {
+                "src": "/static/android-chrome-192x192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/android-chrome-512x512.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ],
+        "description": f"Custom Timer: {name}",
+        "version": "1.0.0"
+    }
+    return jsonify(manifest)
+
 @app.route("/about")
 def about():
     return render_template("about.html")

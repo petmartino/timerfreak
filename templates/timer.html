@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
-    <link rel="manifest" href="/static/site.webmanifest"> <!-- Or /static/manifest.json -->
+    <link rel="manifest" href="/manifest/{{ sequence_id }}.json"> 
     <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
@@ -62,6 +62,15 @@
     {% if sequence_name %}
     <h1 id="sequenceName">{{ sequence_name }}</h1>
     {% endif %}
+
+    <!-- PWA Install Banner (Timer Specific) -->
+    <div id="installBanner" style="display: none; background: #fff; border: 1px solid #15ccbe; padding: 10px; margin: 10px 0.5rem; border-radius: 5px; text-align: center; font-size: 0.9em;">
+        <span style="color: #333;">Install this timer on your mobile device: </span>
+        <a href="#" id="installLink" style="font-weight: bold; color: #15ccbe; text-decoration: underline;">Install App</a>
+        <span id="iosInstructions" style="display: none; color: #666; display: block; margin-top: 5px;">
+            Tap the <strong>Share</strong> icon then <strong>"Add to Home Screen"</strong>.
+        </span>
+    </div>
 
     <div id="controls">
         <a href="#" class="btn-solid-3d btn-darkgreen btn-fixed-width" onclick="toggleStart(event)" id="startBtn">START</a>
@@ -1081,6 +1090,52 @@
                     // For this app, simply let them know it might not work in background until first interaction.
                 });
             }
+
+            // --- PWA INSTALL BANNER LOGIC (TIMER SPECIFIC) ---
+            let deferredPrompt;
+            const installBanner = document.getElementById('installBanner');
+            const installLink = document.getElementById('installLink');
+            const iosInstructions = document.getElementById('iosInstructions');
+
+            // 1. Chrome / Android Logic (Standard PWA)
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBanner.style.display = 'block';
+
+                installLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    installBanner.style.display = 'none';
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the PWA prompt');
+                        } else {
+                            console.log('User dismissed the PWA prompt');
+                        }
+                        deferredPrompt = null;
+                    });
+                });
+            });
+
+            // 2. Safari / iOS Logic (Manual Instruction)
+            const isIos = () => {
+                const userAgent = window.navigator.userAgent.toLowerCase();
+                return /iphone|ipad|ipod/.test(userAgent);
+            }
+
+            const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+            if (isIos() && !isInStandaloneMode()) {
+                installBanner.style.display = 'block';
+                installLink.style.display = 'none'; // Hide the 'Install App' link for iOS
+                iosInstructions.style.display = 'inline'; // Show the text instructions inline
+            }
+
+            // Hide banner if app is installed
+            window.addEventListener('appinstalled', (evt) => {
+                installBanner.style.display = 'none';
+            });
         });
     </script>
 </body>
