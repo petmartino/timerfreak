@@ -1,33 +1,27 @@
 {
   "name": "TimerFreak",
   "short_name": "TimerFreak",
-  "start_url": "/",               
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#00ffae",
+  "theme_color": "#00ffae",
   "icons": [
     {
-      "src": "/static/icon-192x192.png",
+      "src": "/static/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/static/icon-512x512.png",
+      "src": "/static/android-chrome-512x512.png",
       "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ],
-  "description": "A simple and effective timer app to help you manage your time efficiently.",
-  "keywords": [
-    "timer",
-    "productivity",
-    "time management",
-    "multi timer",
-    "multiple timer",
-    "stacked timers",
-    "focus timers"
-  ],
-  "version": "0.1.0",
-  "author": "Your Online Handle",
-  "license": "MIT"
+  "description": "Create custom timed sequences with visual progress and custom alarms.",
+  "version": "1.0.0"
 }
