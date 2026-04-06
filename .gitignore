@@ -4,6 +4,10 @@ venv/
 env/
 .env/
 
+# Environment files (keep .env.example, ignore .env)
+.env
+!.env.example
+
 # Python cache files
 __pycache__/
 *.pyc

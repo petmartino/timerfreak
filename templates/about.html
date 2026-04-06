@@ -1,38 +1,215 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>About TimerFreak</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-        <!-- Add this entire block inside your <head> section -->
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
-        <link rel="manifest" href="/static/site.webmanifest"> <!-- Or /static/manifest.json -->
-        <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-        <!-- Traditional favicon.ico (optional if you have many PNGs, but good for broad support) -->
-        <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-        <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <style>
+        .user-nav {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .nav-logo-link:hover { text-decoration: underline; }
+        .nav-logo-link img { vertical-align: middle; }
+        .nav-title {
+            font-size: 0.875rem;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-text-link {
+            background: transparent;
+            border: none;
+            color: #333;
+            padding: 0.5rem 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .nav-text-link:hover { color: #0cd413; background: transparent; }
+        .nav-separator { color: #ccc; padding: 0 0.25rem; font-size: 0.875rem; }
+
+        .about-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .about-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .about-card h1 {
+            color: #333;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        .about-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .about-card a {
+            color: #0cd413;
+            text-decoration: none;
+        }
+        .about-card a:hover { text-decoration: underline; }
+        .about-logo {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .legal-links {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        .legal-links h3 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .legal-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .legal-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                align-items: center;
+                justify-content: center;
+            }
+            .nav-title { white-space: normal; }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body style="background-color: #00ffae">
-    <h1 style="padding-left: 1rem;">TimerFreak</h1>
-    <div class="about-text">
-        
-        <p>
-            Ideal for <strong>workout routines</strong>, <strong>interval training</strong>, <strong>work or study sessions</strong>, <strong>kids activities</strong>, <strong>meditation sessions</strong>,  or any activity that requires a series of timed
-            steps, TimerFreak helps you stay on track with visual and audio cues. 
-            </p>
-            <p>For feature requests, comments or questions, <a href="https://github.com/petmartino/timerfreak/issues/new/choose">contact me here</a>.  </p>
-        <p>Code and details about this app at <a href="https://github.com/petmartino/timerfreak">GitHub</a>.
-        </p>    <img src="/static/logotimerfreak.svg" height="100" />
-        
+    <nav class="user-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo-link">
+                <img src="{{ url_for('static', filename='logotimerfreak.svg') }}" alt="TimerFreak" height="32">
+                <span class="nav-title">TimerFreak: Custom Interval Timer ⏱⏱⏱</span>
+            </a>
+            <div class="nav-links">
+                {% if current_user and current_user.is_authenticated %}
+                <div class="nav-dropdown" id="userDropdown">
+                    <button class="nav-link nav-dropdown-toggle nav-user-toggle" id="dropdownToggle" type="button">
+                        <span class="user-avatar-small">{{ current_user.username[0]|upper }}</span>
+                        {{ current_user.display_name or current_user.username }} <span id="dropdownArrow">▼</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('auth.dashboard') }}" class="dropdown-item">📊 My Dashboard</a>
+                        <a href="{{ url_for('index') }}" class="dropdown-item">➕ New Timer</a>
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('auth.settings') }}" class="dropdown-item">⚙️ Settings</a>
+                        <a href="{{ url_for('auth.user_logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="nav-text-link">Login</a>
+                <span class="nav-separator">/</span>
+                <a href="{{ url_for('auth.register') }}" class="nav-text-link">Free Sign Up</a>
+                {% endif %}
+            </div>
         </div>
-    {% include 'footer.html' %}
-</body>
+    </nav>
 
+    <div class="about-container">
+        <div class="about-card">
+            <h1>About TimerFreak</h1>
+            <p>
+                Ideal for <strong>workout routines</strong>, <strong>interval training</strong>, <strong>work or study sessions</strong>, <strong>kids activities</strong>, <strong>meditation sessions</strong>, or any activity that requires a series of timed steps, TimerFreak helps you stay on track with visual and audio cues.
+            </p>
+            <p>For feature requests, comments or questions, <a href="https://github.com/petmartino/timerfreak/issues/new/choose">contact me here</a>.</p>
+            <p>Code and details about this app at <a href="https://github.com/petmartino/timerfreak">GitHub</a>.</p>
+
+            <div class="legal-links">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="/privacy">📋 Privacy Policy</a></li>
+                    <li><a href="/terms">📄 Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="about-logo">
+                <img src="{{ url_for('static', filename='logotimerfreak.svg') }}" alt="TimerFreak Logo" height="100">
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        // Dropdown toggle for mobile/touch devices
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('dropdownToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const dropdown = document.getElementById('userDropdown');
+
+            if (dropdownToggle && dropdownMenu && dropdown) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                });
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdownMenu.style.display = '';
+                    }
+                });
+                dropdown.addEventListener('mouseenter', function() {
+                    dropdownMenu.style.display = 'block';
+                });
+                dropdown.addEventListener('mouseleave', function() {
+                    dropdownMenu.style.display = '';
+                });
+            }
+        });
+    </script>
+</body>
 </html>

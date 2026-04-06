@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Preview: {{ sequence.name if sequence.name else sequence_id }} - TimerFreak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: #00ffae;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        .user-nav {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-logo-link:hover { text-decoration: underline; }
+        .nav-logo-link img { vertical-align: middle; }
+
+        .nav-title {
+            font-size: 0.875rem;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .nav-dropdown { position: relative; }
+
+        .nav-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #333;
+            padding: 0;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1;
+        }
+
+        .nav-dropdown-toggle:hover { background: #f5f5f5; }
+        .nav-user-toggle { background: transparent; padding: 0; }
+
+        .user-avatar-small {
+            width: 24px;
+            height: 24px;
+            background: #0cd413;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 3px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            min-width: 200px;
+            padding: 0.5rem 0;
+            margin-top: 0;
+            z-index: 1001;
+        }
+
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item.text-danger { color: #dc3545; }
+        .dropdown-item.text-danger:hover { background: #fef2f2; }
+        .dropdown-divider { height: 1px; background: #eee; margin: 0.5rem 0; }
+
+        .nav-text-link {
+            background: transparent;
+            border: none;
+            color: #333;
+            padding: 0.5rem 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-text-link:hover { color: #0cd413; background: transparent; }
+        .nav-separator { color: #ccc; padding: 0 0.25rem; font-size: 0.875rem; }
+
+        /* Preview Content */
+        .preview-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #666;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .preview-header .sequence-name {
+            font-size: 2rem;
+            color: #333;
+            margin-top: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Timer Grid - Horizontal Flow */
+        .timer-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Timer Square */
+        .timer-square {
+            width: 100px;
+            height: 100px;
+            border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .timer-square:hover { transform: scale(1.05); }
+
+        /* Timer Item - wrapper div for square + name */
+        .timer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-name-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            max-width: 100px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+            margin-top: 0.5rem;
+        }
+
+        .timer-number {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            margin-bottom: 2px;
+        }
+
+        .timer-icon {
+            font-size: 2.5rem;
+            line-height: 1;
+            margin: 2px 0;
+        }
+
+        .timer-duration {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Arrow Between Timers */
+        .timer-arrow {
+            font-size: 1.5rem;
+            color: #0cd413;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* Loop Info */
+        .loop-info {
+            margin: 1rem 0 1.5rem 0;
+            padding: 0.75rem;
+            background: #f0f9f0;
+            border-radius: 3px;
+            border: 1px solid #d4edda;
+            font-size: 0.875rem;
+            color: #555;
+            text-align: center;
+        }
+
+        .loop-info span { font-weight: 600; }
+
+        /* Action Buttons */
+        .preview-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-actions .btn-solid-3d {
+            min-width: 140px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .nav-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                align-items: center;
+                justify-content: center;
+            }
+            .nav-title { white-space: normal; }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-left: 0;
+            }
+            .nav-dropdown-menu {
+                position: static;
+                box-shadow: none;
+                border: 1px solid #eee;
+                margin-top: 0.25rem;
+            }
+            .nav-user-toggle { background: transparent; }
+
+            .preview-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .preview-actions {
+                flex-direction: column;
+            }
+
+            .preview-actions .btn-solid-3d {
+                min-width: 100%;
+            }
+
+            .timer-square {
+                width: 80px;
+                height: 80px;
+            }
+
+            .timer-icon { font-size: 2rem; }
+            .timer-duration { font-size: 0.75rem; }
+            .timer-arrow { font-size: 1.25rem; }
+            .timer-name-label {
+                font-size: 0.65rem;
+                max-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="user-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo-link">
+                <img src="{{ url_for('static', filename='logotimerfreak.svg') }}" alt="TimerFreak" height="32">
+                <span class="nav-title">TimerFreak: Custom Interval Timer ⏱⏱⏱</span>
+            </a>
+            <div class="nav-links">
+                {% if current_user and current_user.is_authenticated %}
+                <div class="nav-dropdown" id="userDropdown">
+                    <button class="nav-link nav-dropdown-toggle nav-user-toggle" id="dropdownToggle" type="button">
+                        <span class="user-avatar-small">{{ current_user.username[0]|upper }}</span>
+                        {{ current_user.display_name or current_user.username }} <span id="dropdownArrow">▼</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('auth.dashboard') }}" class="dropdown-item">📊 My Dashboard</a>
+                        <a href="{{ url_for('index') }}" class="dropdown-item">➕ New Timer</a>
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('auth.settings') }}" class="dropdown-item">⚙️ Settings</a>
+                        <a href="{{ url_for('auth.user_logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="nav-text-link">Login</a>
+                <span class="nav-separator">/</span>
+                <a href="{{ url_for('auth.register') }}" class="nav-text-link">Free Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="preview-container">
+        <div class="preview-header">
+            <h1>⏱ PREVIEW ⏱</h1>
+            <p class="sequence-name">{{ sequence.name if sequence.name else 'Unnamed Timer' }}</p>
+        </div>
+
+        <div class="timer-grid">
+            {% for timer in timers %}
+            <div class="timer-item">
+                <div class="timer-square" style="background-color: {{ timer.color }};">
+                    <span class="timer-number">#{{ loop.index }}</span>
+                    <span class="timer-icon">⏱</span>
+                    <span class="timer-duration">{{ timer.duration }}</span>
+                </div>
+                {% if timer.name %}
+                <span class="timer-name-label">{{ timer.name }}</span>
+                {% endif %}
+            </div>
+            {% if not loop.last %}
+            <span class="timer-arrow">&#8594;</span>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if loop_default %}
+        <div class="loop-info">
+            <span>&#8634; Looping enabled</span>:
+            {% if loop_count %}
+                {{ loop_count }} loop{{ 's' if loop_count != 1 }}
+            {% else %}
+                Unlimited loops
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="preview-actions">
+            <a href="{{ url_for('preview_back', token=preview_token) }}" class="btn-solid-3d btn-gray">Back</a>
+            <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}" class="btn-solid-3d btn-darkgreen">Create Timer</a>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('dropdownToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const dropdown = document.getElementById('userDropdown');
+
+            if (dropdownToggle && dropdownMenu && dropdown) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                });
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdownMenu.style.display = '';
+                    }
+                });
+                dropdown.addEventListener('mouseenter', function() {
+                    dropdownMenu.style.display = 'block';
+                });
+                dropdown.addEventListener('mouseleave', function() {
+                    dropdownMenu.style.display = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

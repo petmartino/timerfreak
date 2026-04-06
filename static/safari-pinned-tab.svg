@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- TimerFreak Safari Pinned Tab Icon -->
+    <!-- Simple clock/timer design that works well in monochrome -->
+    <circle cx="8" cy="8" r="7" stroke="#000000" stroke-width="1.5" fill="none"/>
+    <circle cx="8" cy="8" r="1.5" fill="#000000"/>
+    <line x1="8" y1="8" x2="8" y2="4" stroke="#000000" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="8" y1="8" x2="11" y2="8" stroke="#000000" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Small button on top right to indicate timer -->
+    <rect x="10" y="1" width="2" height="2" fill="#000000"/>
+</svg>

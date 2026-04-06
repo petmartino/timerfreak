@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Terms of Service - TimerFreak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body style="background-color: #00ffae">
+    <!-- User Navigation Header -->
+    <nav class="user-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo-link">
+                <img src="{{ url_for('static', filename='logotimerfreak.svg') }}" alt="TimerFreak" height="32">
+                <span class="nav-title">TimerFreak: Custom Interval Timer ⏱⏱⏱</span>
+            </a>
+            <div class="nav-links">
+                {% if current_user and current_user.is_authenticated %}
+                <div class="nav-dropdown" id="userDropdown">
+                    <button class="nav-link nav-dropdown-toggle nav-user-toggle" id="dropdownToggle" type="button">
+                        <span class="user-avatar-small">{{ current_user.username[0]|upper }}</span>
+                        {{ current_user.display_name or current_user.username }} <span id="dropdownArrow">▼</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('auth.dashboard') }}" class="dropdown-item">📊 My Dashboard</a>
+                        <a href="{{ url_for('index') }}" class="dropdown-item">➕ New Timer</a>
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('auth.settings') }}" class="dropdown-item">⚙️ Settings</a>
+                        <a href="{{ url_for('auth.user_logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="nav-text-link">Login</a>
+                <span class="nav-separator">/</span>
+                <a href="{{ url_for('auth.register') }}" class="nav-text-link">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <style>
+        .user-nav {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0.75rem 1rem;
+        }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .nav-logo-link:hover { text-decoration: underline; }
+        .nav-logo-link img { vertical-align: middle; }
+        .nav-title {
+            font-size: 0.875rem;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .nav-links { display: flex; align-items: center; gap: 1rem; }
+        .nav-text-link {
+            background: transparent;
+            border: none;
+            color: #333;
+            padding: 0.5rem 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .nav-text-link:hover { color: #0cd413; background: transparent; }
+        .nav-user { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; background: #f5f5f5; border-radius: 3px; }
+        .nav-separator { color: #ccc; padding: 0 0.25rem; font-size: 0.875rem; }
+        .user-avatar { width: 28px; height: 28px; background: #0cd413; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
+        .user-name { font-size: 0.875rem; color: #333; font-weight: 500; }
+    </style>
+    
+    <div class="legal-container">
+    <div class="legal-content">
+        <h1>Terms of Service</h1>
+        <p class="last-updated">Last Updated: March 30, 2026</p>
+        
+        <div class="legal-section">
+            <h2>1. Agreement to Terms</h2>
+            <p>By accessing or using TimerFreak (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Service.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>2. Description of Service</h2>
+            <p>TimerFreak is a web application that allows users to create and manage custom timer sequences. The Service includes features such as:</p>
+            <ul>
+                <li>Creating custom timer sequences with multiple timers</li>
+                <li>Setting custom durations, colors, and alarm sounds</li>
+                <li>Looping sequences</li>
+                <li>Tracking timer activity and progress</li>
+                <li>User account management</li>
+            </ul>
+        </div>
+
+        <div class="legal-section">
+            <h2>3. User Accounts</h2>
+            
+            <h3>3.1 Account Creation</h3>
+            <p>To access certain features, you must create an account. You agree to:</p>
+            <ul>
+                <li>Provide accurate and complete information</li>
+                <li>Maintain the security of your account credentials</li>
+                <li>Notify us immediately of any unauthorized access</li>
+                <li>Be responsible for all activities under your account</li>
+            </ul>
+
+            <h3>3.2 Account Eligibility</h3>
+            <p>You must be at least 13 years old to use this Service. By creating an account, you represent that you meet this age requirement.</p>
+
+            <h3>3.3 Account Termination</h3>
+            <p>We reserve the right to suspend or terminate accounts that violate these Terms or engage in abusive behavior.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>4. Acceptable Use</h2>
+            <p>You agree not to:</p>
+            <ul>
+                <li>Use the Service for any illegal purpose</li>
+                <li>Attempt to gain unauthorized access to the Service</li>
+                <li>Interfere with or disrupt the Service</li>
+                <li>Use automated systems to access the Service without permission</li>
+                <li>Reverse engineer or attempt to extract source code</li>
+                <li>Impersonate any person or entity</li>
+                <li>Upload malicious code or viruses</li>
+                <li>Harass, abuse, or harm other users</li>
+            </ul>
+        </div>
+
+        <div class="legal-section">
+            <h2>5. User Content</h2>
+            
+            <h3>5.1 Ownership</h3>
+            <p>You retain ownership of timer sequences and content you create. You grant us a license to store, display, and process this content to provide the Service.</p>
+
+            <h3>5.2 Responsibility</h3>
+            <p>You are responsible for your content and represent that it does not violate any laws or third-party rights.</p>
+
+            <h3>5.3 Public Sequences</h3>
+            <p>Timer sequences you create may be visible to others. Do not include sensitive or private information in timer names or sequences.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>6. Intellectual Property</h2>
+            <p>The Service, including its design, features, code, and content, is owned by TimerFreak and protected by intellectual property laws. You may not copy, modify, or create derivative works without our permission.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>7. Third-Party Services</h2>
+            <p>The Service may integrate with third-party services (e.g., Google, GitHub for authentication). Your use of these services is governed by their respective terms and privacy policies.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>8. Subscription and Payments</h2>
+            
+            <h3>8.1 Free Tier</h3>
+            <p>TimerFreak offers a free tier with basic features.</p>
+
+            <h3>8.2 Paid Subscriptions</h3>
+            <p>Pro and Team subscriptions may be offered with additional features. Subscription fees, billing cycles, and cancellation policies will be clearly communicated before purchase.</p>
+
+            <h3>8.3 Refunds</h3>
+            <p>Refund policies will be specified at the time of purchase. Contact support for refund requests.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>9. Disclaimer of Warranties</h2>
+            <p><strong>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.</strong></p>
+            <p>We do not warrant that the Service will be uninterrupted, error-free, or completely secure.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>10. Limitation of Liability</h2>
+            <p><strong>TO THE MAXIMUM EXTENT PERMITTED BY LAW, TIMERFREAK SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA, OR REVENUES ARISING FROM YOUR USE OF THE SERVICE.</strong></p>
+            <p>Our total liability shall not exceed the amount you paid us in the 12 months preceding the claim, or $100 if you have not paid anything.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>11. Indemnification</h2>
+            <p>You agree to indemnify and hold harmless TimerFreak from any claims, damages, or expenses arising from your use of the Service or violation of these Terms.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>12. Privacy</h2>
+            <p>Your use of the Service is also governed by our <a href="/privacy">Privacy Policy</a>, which explains how we collect, use, and protect your personal information.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>13. Changes to Terms</h2>
+            <p>We may modify these Terms at any time. We will notify you of material changes by posting the new Terms on the Service. Your continued use after changes constitutes acceptance of the new Terms.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>14. Termination</h2>
+            <p>We may terminate or suspend your access to the Service at any time, with or without cause, with or without notice. Upon termination, your right to use the Service will immediately cease.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>15. Governing Law</h2>
+            <p>These Terms shall be governed by the laws of the jurisdiction where TimerFreak operates, without regard to conflict of law principles.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>16. Dispute Resolution</h2>
+            <p>Any disputes arising from these Terms or the Service shall first be attempted to be resolved through good-faith negotiation. If unresolved, disputes shall be submitted to binding arbitration.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2>17. Contact Information</h2>
+            <p>For questions about these Terms, please contact us through our About page:</p>
+            <ul>
+                <li>About Page: <a href="/about">timerfreak.xyz/about</a></li>
+                <li>Support: Use the contact form on our <a href="/about">About page</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+.legal-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.legal-content h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.last-updated {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.legal-section {
+    margin-bottom: 2rem;
+}
+
+.legal-section h2 {
+    color: #0cd413;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.legal-section h3 {
+    color: #333;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.legal-section p {
+    color: #555;
+    line-height: 1.7;
+}
+
+.legal-section ul {
+    color: #555;
+    line-height: 1.7;
+    margin-left: 1.5rem;
+}
+
+.legal-section li {
+    margin-bottom: 0.5rem;
+}
+
+.legal-section a {
+    color: #0cd413;
+    text-decoration: none;
+}
+
+.legal-section a:hover {
+    text-decoration: underline;
+}
+</style>
+
+</div>
+</div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('dropdownToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const dropdown = document.getElementById('userDropdown');
+
+            if (dropdownToggle && dropdownMenu && dropdown) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                });
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdownMenu.style.display = '';
+                    }
+                });
+                dropdown.addEventListener('mouseenter', function() {
+                    dropdownMenu.style.display = 'block';
+                });
+                dropdown.addEventListener('mouseleave', function() {
+                    dropdownMenu.style.display = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

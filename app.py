@@ -6,25 +6,33 @@ This software is licensed under the MIT License.
 See the LICENSE file for more details.
 
 """
-from pytz import timezone as pytz_timezone
-from flask import Flask, render_template, request, redirect, url_for, jsonify, g
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
+
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort, session, send_file
+from flask_wtf.csrf import CSRFProtect
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import secrets
+import json
+import logging
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import DateTime, Integer, String, ForeignKey
+from sqlalchemy import DateTime, Integer, String, ForeignKey, extract
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, joinedload
 from flask_migrate import Migrate
 from datetime import datetime, timedelta, timezone
-from __version__ import __version__ as APP_VERSION 
+from functools import wraps
+from collections import defaultdict, OrderedDict
+import time
+from sqlalchemy.types import TypeDecorator, DateTime as SQLADateTime
+from dateutil import parser
+from __version__ import __version__ as APP_VERSION
+import qrcode
+import io
 
-
-## app.py
-
-from pytz import timezone as pytz_timezone # Ensure this is imported for display
-from sqlalchemy.types import TypeDecorator, DateTime # NEW IMPORT
-from dateutil import parser # Add this import if not already there, for robust parsing in process_result_value
+# Import models from models.py
+from models import db, User, Sequence, Timer, Sound, CounterLog, UserActivityLog, OAuthAccount, SubscriptionTier, SequenceShare, PreviewTempData, TimerCategory
 
 class UTCDateTime(TypeDecorator):
     """
@@ -32,7 +40,7 @@ class UTCDateTime(TypeDecorator):
     Stores naive UTC datetime objects in the database,
     and returns timezone-aware UTC datetime objects in Python.
     """
-    impl = DateTime
+    impl = SQLADateTime
     cache_ok = True
 
     def process_bind_param(self, value, dialect):
@@ -111,81 +119,58 @@ class ScriptNameMiddleware:
 app = Flask(__name__, static_url_path='/static')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_prefix=1)
 app.wsgi_app = ScriptNameMiddleware(app.wsgi_app)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY') or 'your_default_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///timerfreak.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress a warning
 
-# --- Application Defaults & Configuration ---
-DEFAULT_TIMER_COLOR = "#0cd413" # Default color for new timers (a green shade)
-# DEFAULT_ALARM_SOUND_FILENAME is now determined from DB.
-# Keep a fallback in case no sound is marked as default in the DB.
-FALLBACK_ALARM_SOUND_FILENAME = "alarm.mp3" 
+# Security: Require FLASK_SECRET_KEY to be set in production
+secret_key = os.environ.get('FLASK_SECRET_KEY')
+if not secret_key:
+    # Generate a random secret key for development only
+    secret_key = secrets.token_hex(32)
+    app.logger.warning("FLASK_SECRET_KEY not set. Using auto-generated random key (NOT for production).")
+app.secret_key = secret_key
 
-db = SQLAlchemy(app)
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
+
+# Database configuration
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'timerfreak.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['WTF_CSRF_TIME_LIMIT'] = 3600
+
+# Session configuration for "Remember Me" functionality
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# OAuth configuration
+app.config['GOOGLE_CLIENT_ID'] = os.environ.get('GOOGLE_CLIENT_ID')
+app.config['GOOGLE_CLIENT_SECRET'] = os.environ.get('GOOGLE_CLIENT_SECRET')
+app.config['GITHUB_CLIENT_ID'] = os.environ.get('GITHUB_CLIENT_ID')
+app.config['GITHUB_CLIENT_SECRET'] = os.environ.get('GITHUB_CLIENT_SECRET')
+
+# Initialize database with app
+db.init_app(app)
 migrate = Migrate(app, db)
 
-class Sequence(db.Model):
-    id = db.Column(String(20), primary_key=True)
-    name = db.Column(String(100), index=True)
-    theme = db.Column(String(50), nullable=True)
-    featured = db.Column(Integer, default=0, nullable=False, index=True)
-    # Change 1: timezone=True tells SQLAlchemy to treat it as timezone-aware
-    # Change 2: default=lambda: datetime.now(timezone.utc) makes Python generate UTC timestamp
-    created_at = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
-    timers = relationship('Timer', backref='sequence', cascade="all, delete-orphan", order_by="Timer.timer_order")
+# Application defaults
+DEFAULT_TIMER_COLOR = "#0cd413"
+FALLBACK_ALARM_SOUND_FILENAME = "alarm.mp3"
 
-    def __repr__(self):
-        return f'<Sequence {self.id}>'
-
-class Timer(db.Model):
-    id = db.Column(Integer, primary_key=True)
-    sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False, index=True)
-    timer_name = db.Column(String(100))
-    duration = db.Column(Integer, nullable=False)
-    timer_order = db.Column(Integer, nullable=False, index=True) # 0-based index
-    color = db.Column(String(7), default=DEFAULT_TIMER_COLOR)
-    # alarm_sound will default to whatever the app determines is the default from DB
-    alarm_sound = db.Column(String(100)) # Removed hardcoded default here, will be set on creation
-
-    def __repr__(self):
-        return f'<Timer {self.id}>'
-
-class Sound(db.Model):
-    id = db.Column(Integer, primary_key=True)
-    filename = db.Column(String(100), nullable=False, unique=True)
-    name = db.Column(String(100), nullable=False)
-    # --- ADDED: New 'default' column ---
-    default = db.Column(Integer, default=0, nullable=False, index=True) # 0 for not default, 1 for default
-
-    # Method to convert Sound object to a dictionary for JSON serialization
-    def to_dict(self):
-        return {"filename": self.filename, "name": self.name, "default": self.default}
-
-    def __repr__(self):
-        return f'<Sound {self.name} ({self.filename})>'
-
-class CounterLog(db.Model):
-    id = db.Column(Integer, primary_key=True)
-    sequence_id = db.Column(String(20), ForeignKey('sequence.id'), nullable=False, index=True)
-    timer_order = db.Column(Integer, nullable=True)
-    event_type = db.Column(String(50), nullable=False, index=True)
-    # Change 1: timezone=True
-    # Change 2: default=lambda: datetime.now(timezone.utc)
-    timestamp = db.Column(UTCDateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
-    sequence_rel = relationship('Sequence', backref='logs')
-
-    def __repr__(self):
-        return f'<CounterLog {self.id} - {self.event_type} - Seq: {self.sequence_id} - Timer: {self.timer_order}>'
-    
-with app.app_context():
-    db.create_all()
-
-
+# Initialize authentication
+from auth import init_auth, login_manager, log_user_activity, owner_required
+init_auth(app)
 
 
 @app.context_processor
 def inject_global_data():
-    return dict(current_year=datetime.now().year, app_version=APP_VERSION)
+    from flask_login import current_user
+    return dict(
+        current_year=datetime.now().year,
+        app_version=APP_VERSION,
+        current_user=current_user if current_user.is_authenticated else None
+    )
 
 @app.route("/")
 def index():
@@ -256,12 +241,127 @@ def index():
             'total_duration_display': duration_display.strip()
         })
 
+    # Division by zero protection for avg_timers calculation in template context
+    total_sequences_count = Sequence.query.count()
+    total_timers_count = Timer.query.count()
+    avg_timers_per_sequence = total_timers_count / total_sequences_count if total_sequences_count > 0 else 0
+
+    # Initialize prefilled data variables
+    prefilled_timers = None
+    prefilled_sequence_name = None
+    prefilled_loop_default = False
+    prefilled_loop_count = None
+
+    # Priority 1: URL-based prefill_token (survives server restarts)
+    prefill_token = request.args.get('prefill_token', '')
+    if prefill_token:
+        temp_data = PreviewTempData.query.filter_by(preview_token=prefill_token).first()
+        if temp_data:
+            try:
+                prefilled_timers = json.loads(temp_data.timers_data) if temp_data.timers_data else None
+                prefilled_sequence_name = temp_data.sequence_name
+                prefilled_loop_default = bool(temp_data.loop_default)
+                prefilled_loop_count = temp_data.loop_count
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+    # Priority 2: Session-based prefilled data (only if no URL token found data)
+    if prefilled_timers is None:
+        prefilled_timers = session.pop('preview_timers', None)
+        prefilled_sequence_name = session.pop('preview_sequence_name', None)
+        prefilled_loop_default = session.pop('preview_loop_default', False)
+        prefilled_loop_count = session.pop('preview_loop_count', None)
+
+    # Priority 3: Session-based DB lookup (legacy fallback) - get most recent entry
+    if prefilled_timers is None and 'session_id' in session:
+        temp_data = PreviewTempData.query.filter_by(session_id=session['session_id']).order_by(PreviewTempData.created_at.desc()).first()
+        if temp_data:
+            try:
+                prefilled_timers = json.loads(temp_data.timers_data) if temp_data.timers_data else None
+                prefilled_sequence_name = temp_data.sequence_name
+                prefilled_loop_default = bool(temp_data.loop_default)
+                prefilled_loop_count = temp_data.loop_count
+            except (json.JSONDecodeError, TypeError):
+                pass
+
     return render_template("index.html",
                            available_sounds=available_sounds_for_template,
                            most_used_sequences=most_used_sequences,
                            DEFAULT_TIMER_COLOR=DEFAULT_TIMER_COLOR,
-                           # --- MODIFIED: Pass the determined default sound filename ---
-                           DEFAULT_ALARM_SOUND_FILENAME=default_alarm_sound_filename)
+                           DEFAULT_ALARM_SOUND_FILENAME=default_alarm_sound_filename,
+                           prefilled_timers=prefilled_timers,
+                           prefilled_sequence_name=prefilled_sequence_name,
+                           prefilled_loop_default=prefilled_loop_default,
+                           prefilled_loop_count=prefilled_loop_count,
+                           prefill_token=prefill_token or '')
+
+@app.route("/browse")
+def browse():
+    """Browse public Timers - top 100 by usage, grouped by category"""
+    # Fetch all public Timers with their stats using subqueries to avoid cartesian product
+    timer_counts = db.session.query(
+        Timer.sequence_id,
+        db.func.count(Timer.id).label('timer_count'),
+        db.func.sum(Timer.duration).label('total_duration')
+    ).group_by(Timer.sequence_id).subquery()
+
+    # Top 100 sequences by use count
+    Timers_query = db.session.query(
+        Sequence,
+        db.func.count(CounterLog.id).label('start_count'),
+        timer_counts.c.timer_count,
+        timer_counts.c.total_duration
+    ).outerjoin(CounterLog, Sequence.id == CounterLog.sequence_id)\
+    .outerjoin(timer_counts, Sequence.id == timer_counts.c.sequence_id)\
+    .filter(Sequence.is_public == True)\
+    .group_by(Sequence.id, timer_counts.c.timer_count, timer_counts.c.total_duration)\
+    .order_by(db.func.count(CounterLog.id).desc().nullslast())\
+    .limit(100).all()
+
+    # Fetch all categories
+    categories = TimerCategory.query.filter_by(is_active=1).order_by(TimerCategory.sort_order).all()
+    category_map = {c.id: c for c in categories}
+
+    # Build timer list with category info (ordered by category sort_order)
+    categorized = OrderedDict()
+    for c in categories:
+        categorized[c.id] = []
+    uncategorized = []
+
+    for seq, start_count, timer_count, total_duration in Timers_query:
+        total_seconds = total_duration if total_duration else 0
+
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+
+        duration_parts = []
+        if hours > 0:
+            duration_parts.append(f"{hours}h")
+        if minutes > 0:
+            duration_parts.append(f"{minutes}m")
+        if seconds > 0 or not duration_parts:
+            duration_parts.append(f"{seconds}s")
+
+        duration_display = " ".join(duration_parts)
+
+        timer_data = {
+            'id': seq.id,
+            'name': seq.name if seq.name else 'Unnamed Timer',
+            'use_count': start_count or 0,
+            'timer_count': timer_count or 0,
+            'total_duration_display': duration_display.strip()
+        }
+
+        if seq.category_id and seq.category_id in category_map:
+            categorized[seq.category_id].append(timer_data)
+        else:
+            uncategorized.append(timer_data)
+
+    return render_template("browse.html",
+                           categories=categorized,
+                           uncategorized=uncategorized,
+                           category_map=category_map)
 
 @app.route("/timer", methods=["POST"])
 def start_timer():
@@ -269,7 +369,7 @@ def start_timer():
         app.logger.warning("Honeypot field filled. Bot detected, redirecting to index.")
         return redirect(url_for('index', error="Bot activity detected."))
 
-    sequence_name = request.form.get("sequence_name")
+    sequence_name = request.form.get("Timer_name") or request.form.get("sequence_name")
     timer_names = request.form.getlist("timer_name[]")
     hours = request.form.getlist("hours[]")
     minutes = request.form.getlist("minutes[]")
@@ -280,16 +380,29 @@ def start_timer():
     timers_data = []
 
     num_timers = len(hours)
-    if not (num_timers == len(minutes) == len(seconds) == len(colors) == len(alarm_sounds)):
-        app.logger.error("Error: Inconsistent list lengths for timer parameters.")
-        return redirect(url_for('index', error="Inconsistent timer data provided."))
 
-    # Get the default alarm sound from the database for new timer creation if needed
+    # Pad alarm_sounds with default if fewer than num_timers (handles missing select values)
     default_sound_obj = Sound.query.filter_by(default=1).first()
     if default_sound_obj:
         default_alarm_sound_for_db_save = default_sound_obj.filename
     else:
         default_alarm_sound_for_db_save = FALLBACK_ALARM_SOUND_FILENAME
+
+    original_sound_count = len(alarm_sounds)
+    while len(alarm_sounds) < num_timers:
+        alarm_sounds.append(default_alarm_sound_for_db_save)
+
+    # Log for debugging
+    if original_sound_count < num_timers:
+        app.logger.warning(f"Padded alarm_sounds from {original_sound_count} to {num_timers} with default sound")
+
+    if not (num_timers == len(minutes) == len(seconds) == len(colors)):
+        app.logger.error(f"Error: Inconsistent list lengths for timer parameters. hours={len(hours)}, minutes={len(minutes)}, seconds={len(seconds)}, colors={len(colors)}, names={len(timer_names)}")
+        return redirect(url_for('index', error="Inconsistent timer data provided."))
+
+    # Get all valid sound filenames from database for validation
+    valid_sound_filenames = {s.filename for s in Sound.query.all()}
+    valid_sound_filenames.add(FALLBACK_ALARM_SOUND_FILENAME)  # Always allow fallback
 
 
     for i in range(num_timers):
@@ -303,12 +416,18 @@ def start_timer():
                 app.logger.warning(f"Timer {i+1} has non-positive duration ({total_seconds}s). Skipping this timer.")
                 continue
 
+            # Validate sound filename against database
+            submitted_sound = alarm_sounds[i] if alarm_sounds[i] else default_alarm_sound_for_db_save
+            if submitted_sound not in valid_sound_filenames:
+                app.logger.warning(f"Invalid sound filename '{submitted_sound}' for timer {i+1}. Using default.")
+                submitted_sound = default_alarm_sound_for_db_save
+
             timers_data.append({
                 'name': timer_names[i] if i < len(timer_names) else None,
                 'duration': total_seconds,
                 'color': colors[i] if i < len(colors) else DEFAULT_TIMER_COLOR,
-                # Use the submitted alarm sound, or the determined default if not provided
-                'alarm_sound': alarm_sounds[i] if alarm_sounds[i] else default_alarm_sound_for_db_save
+                # Use the validated alarm sound
+                'alarm_sound': submitted_sound
             })
         except ValueError as e:
             app.logger.error(f"Error parsing timer duration for timer {i+1}: {e}")
@@ -318,9 +437,30 @@ def start_timer():
         app.logger.warning("No valid timers submitted after parsing. All timers had zero or negative duration.")
         return redirect(url_for('index', error="No valid timers submitted. Please ensure at least one timer has a duration greater than 0."))
 
+    # Capture loop settings from form
+    loop_default = request.form.get('loop_default') == 'on'
+    loop_count_raw = request.form.get('loop_count')
+    loop_count = None
+    if loop_default and loop_count_raw:
+        try:
+            loop_count = int(loop_count_raw)
+            if loop_count < 1:
+                loop_count = None  # Treat invalid numbers as unlimited
+        except (ValueError, TypeError):
+            loop_count = None  # Empty or invalid = unlimited
+
     sequence_id = secrets.token_urlsafe(8)
 
-    sequence = Sequence(id=sequence_id, name=sequence_name)
+    # Create sequence with owner if user is logged in
+    from flask_login import current_user
+    owner_id = current_user.id if current_user.is_authenticated else None
+
+    sequence = Sequence(
+        id=sequence_id,
+        name=sequence_name,
+        owner_id=owner_id,
+        is_public=True  # Public by default for backward compatibility
+    )
     db.session.add(sequence)
 
     for i, data in enumerate(timers_data):
@@ -330,17 +470,47 @@ def start_timer():
             duration=data['duration'],
             timer_order=i,
             color=data['color'],
-            alarm_sound=data['alarm_sound'] # This now correctly uses the determined default or submitted value
+            alarm_sound=data['alarm_sound'],
+            loop_default=loop_default,
+            loop_count=loop_count
         )
         db.session.add(timer)
     db.session.commit()
 
-    log = CounterLog(sequence_id=sequence_id, event_type='sequence_start')
+    # Log sequence start with owner info
+    log = CounterLog(
+        sequence_id=sequence_id,
+        event_type='sequence_start',
+        owner_id=owner_id
+    )
     db.session.add(log)
     db.session.commit()
 
+    # Log user activity if logged in
+    if current_user.is_authenticated:
+        log_user_activity('create_sequence', 'sequence', sequence_id=sequence_id)
+
+    # Clean up temporary preview data since the form has been successfully created
+    prefill_token_from_form = request.form.get('prefill_token', '')
+    if prefill_token_from_form:
+        temp_data = PreviewTempData.query.filter_by(preview_token=prefill_token_from_form).first()
+        if temp_data:
+            db.session.delete(temp_data)
+            app.logger.info(f"Cleaned up temp data for prefill_token: {prefill_token_from_form[:20]}...")
+    # Also clear session preview data and legacy session_id-based temp data
+    session.pop('preview_timers', None)
+    session.pop('preview_sequence_name', None)
+    session.pop('preview_loop_default', None)
+    session.pop('preview_loop_count', None)
+    if 'session_id' in session:
+        legacy_temp = PreviewTempData.query.filter_by(session_id=session['session_id']).first()
+        if legacy_temp:
+            db.session.delete(legacy_temp)
+            app.logger.info(f"Cleaned up legacy temp data for session_id: {session['session_id'][:20]}...")
+    db.session.commit()
+
     app.logger.info(f"Created sequence {sequence_id} with {len(timers_data)} timers.")
-    return redirect(url_for('show_timer', sequence_id=sequence_id))
+    return redirect(url_for('preview_sequence', sequence_id=sequence_id))
 
 @app.route("/timer/<sequence_id>")
 def show_timer(sequence_id):
@@ -353,10 +523,31 @@ def show_timer(sequence_id):
     timer_colors = [timer.color for timer in timers_in_order]
     timer_alarm_sounds = [timer.alarm_sound for timer in timers_in_order]
 
+    # Get loop settings from the first timer (they're the same for all timers in a sequence)
+    # Handle NULL values for existing timers created before migration
+    loop_default = bool(timers_in_order[0].loop_default) if timers_in_order else False
+    loop_count = timers_in_order[0].loop_count if (timers_in_order and timers_in_order[0].loop_count is not None) else None
+
     all_available_sounds_db = Sound.query.order_by(Sound.name).all()
     all_available_sound_filenames = [s.filename for s in all_available_sounds_db]
 
-    sequence_name_for_logs = sequence.name if sequence.name else f"Sequence {sequence_id}"
+    sequence_name_for_logs = sequence.name if sequence.name else f"Timer {sequence_id}"
+
+    # Generate or get share token
+    share = SequenceShare.query.filter_by(sequence_id=sequence_id).first()
+    if not share:
+        share = SequenceShare(
+            sequence_id=sequence_id,
+            share_token=secrets.token_urlsafe(16),
+            is_public=sequence.is_public,
+            allow_copy=True
+        )
+        db.session.add(share)
+        db.session.commit()
+
+    # Generate share URL
+    share_url = url_for('show_timer', sequence_id=sequence_id, _external=True)
+    qr_code_url = url_for('qr_code', sequence_id=sequence_id)
 
     return render_template("timer.html",
                            timers=timers_durations,
@@ -367,18 +558,193 @@ def show_timer(sequence_id):
                            alarm_sounds=all_available_sound_filenames,
                            timer_alarm_sounds=timer_alarm_sounds,
                            sequence_name_for_logs=sequence_name_for_logs,
-                           base_url=request.host_url.rstrip('/'))
+                           base_url=request.host_url.rstrip('/'),
+                           share_url=share_url,
+                           share_token=share.share_token,
+                           qr_code_url=qr_code_url,
+                           loop_default=loop_default,
+                           loop_count=loop_count)
+
+@app.route("/qr/<sequence_id>.png")
+def qr_code(sequence_id):
+    """Generate and serve QR code for timer sequence"""
+    from flask import make_response
+    sequence = db.session.get(Sequence, sequence_id) or abort(404)
+    share_url = url_for('show_timer', sequence_id=sequence_id, _external=True)
+
+    # Generate QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(share_url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Save to bytes
+    img_io = io.BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+
+    response = make_response(send_file(img_io, mimetype='image/png'))
+    # Cache QR code for 30 days
+    response.headers['Cache-Control'] = 'public, max-age=2592000'
+    return response
+
+@app.route("/preview/<sequence_id>")
+def preview_sequence(sequence_id):
+    """Preview page showing timers in order with arrows before starting"""
+    sequence = Sequence.query.options(joinedload(Sequence.timers)).get_or_404(sequence_id)
+
+    timers_in_order = sequence.timers
+
+    timers_data = []
+    for timer in timers_in_order:
+        timer_name = timer.timer_name if timer.timer_name else f"Timer {timer.timer_order + 1}"
+        hours = timer.duration // 3600
+        minutes = (timer.duration % 3600) // 60
+        seconds = timer.duration % 60
+        duration_parts = []
+        if hours > 0:
+            duration_parts.append(f"{hours}h")
+        if minutes > 0:
+            duration_parts.append(f"{minutes}m")
+        duration_parts.append(f"{seconds}s")
+        duration_display = " ".join(duration_parts)
+
+        timers_data.append({
+            'order': timer.timer_order,
+            'name': timer_name,
+            'duration': duration_display,
+            'color': timer.color,
+            'total_seconds': timer.duration
+        })
+
+    # Get loop settings
+    # Handle NULL values for existing timers created before migration
+    loop_default = bool(timers_in_order[0].loop_default) if timers_in_order else False
+    loop_count = timers_in_order[0].loop_count if (timers_in_order and timers_in_order[0].loop_count is not None) else None
+
+    # Generate a URL-based preview token that survives server restarts
+    preview_token = secrets.token_urlsafe(32)
+
+    # Store timer data in session for backward compatibility (cookie-based, may break on restart)
+    session['preview_timers'] = [
+        {
+            'name': t.timer_name,
+            'duration': t.duration,
+            'color': t.color,
+            'alarm_sound': t.alarm_sound
+        }
+        for t in timers_in_order
+    ]
+    session['preview_sequence_name'] = sequence.name
+    session['preview_loop_default'] = loop_default
+    session['preview_loop_count'] = loop_count
+
+    # Persist form data to database with the preview_token for reliable back-button restoration
+    timers_json = json.dumps([
+        {
+            'name': t.timer_name,
+            'duration': t.duration,
+            'color': t.color,
+            'alarm_sound': t.alarm_sound
+        }
+        for t in timers_in_order
+    ])
+
+    temp_data = PreviewTempData(
+        preview_token=preview_token,
+        session_id=session.get('session_id'),
+        sequence_name=sequence.name,
+        timers_data=timers_json,
+        loop_default=loop_default,
+        loop_count=loop_count
+    )
+    db.session.add(temp_data)
+    db.session.commit()
+
+    return render_template("preview.html",
+                           sequence=sequence,
+                           sequence_id=sequence_id,
+                           timers=timers_data,
+                           loop_default=loop_default,
+                           loop_count=loop_count,
+                           preview_token=preview_token)
+
+@app.route("/preview_back")
+def preview_back():
+    """Redirect to index with prefilled form data from preview"""
+    token = request.args.get('token', '')
+    if token:
+        return redirect(url_for('index', prefill_token=token))
+    return redirect(url_for('index'))
+
+@app.route("/clone/<sequence_id>")
+def clone_timer(sequence_id):
+    """Clone a timer sequence - store data and redirect to index with prefilled form"""
+    sequence = Sequence.query.options(joinedload(Sequence.timers)).get_or_404(sequence_id)
+    timers_in_order = sequence.timers
+
+    # Generate a new preview_token for the cloned data
+    preview_token = secrets.token_urlsafe(32)
+
+    # Get loop settings
+    loop_default = bool(timers_in_order[0].loop_default) if timers_in_order else False
+    loop_count = timers_in_order[0].loop_count if (timers_in_order and timers_in_order[0].loop_count is not None) else None
+
+    # Clean up any existing temp data for this session to avoid conflicts
+    current_session_id = session.get('session_id')
+    if current_session_id:
+        old_temp = PreviewTempData.query.filter_by(session_id=current_session_id).all()
+        for old in old_temp:
+            db.session.delete(old)
+
+    # Store timer data in database
+    timers_json = json.dumps([
+        {
+            'name': t.timer_name,
+            'duration': t.duration,
+            'color': t.color,
+            'alarm_sound': t.alarm_sound
+        }
+        for t in timers_in_order
+    ])
+
+    temp_data = PreviewTempData(
+        preview_token=preview_token,
+        session_id=current_session_id,
+        sequence_name=sequence.name,
+        timers_data=timers_json,
+        loop_default=loop_default,
+        loop_count=loop_count
+    )
+    db.session.add(temp_data)
+    db.session.commit()
+
+    # Redirect to index with the new prefill_token
+    return redirect(url_for('index', prefill_token=preview_token))
 
 @app.route("/<string:sequence_id>")
 def redirect_to_timer(sequence_id):
-    sequence = Sequence.query.get(sequence_id)
+    sequence = db.session.get(Sequence, sequence_id)
     if sequence:
         return redirect(url_for('show_timer', sequence_id=sequence_id))
     else:
         return redirect(url_for('index', error=f"Sequence '{sequence_id}' not found."))
 
 @app.route("/log_activity", methods=["POST"])
+@csrf.exempt
 def log_activity():
+    # Rate limiting check
+    client_ip = get_client_ip()
+    if not check_rate_limit(client_ip):
+        app.logger.warning(f"Rate limit exceeded for IP: {client_ip}")
+        return jsonify({'message': 'Rate limit exceeded. Try again later.'}), 429
+    
     data = request.get_json()
     sequence_id = data.get('sequence_id')
     timer_order = data.get('timer_order')
@@ -399,10 +765,25 @@ def log_activity():
                 app.logger.error(f"Invalid timer_order format: {timer_order} (type: {type(timer_order)})")
                 return jsonify({'message': 'Invalid timer_order format'}), 400
 
-        log = CounterLog(sequence_id=sequence_id, timer_order=timer_order_int, event_type=event_type)
+        # Get owner info from sequence if available
+        sequence = db.session.get(Sequence, sequence_id)
+        owner_id = sequence.owner_id if sequence else None
+
+        log = CounterLog(
+            sequence_id=sequence_id,
+            timer_order=timer_order_int,
+            event_type=event_type,
+            owner_id=owner_id
+        )
         db.session.add(log)
         db.session.commit()
         app.logger.info(f"Activity logged successfully: Seq={sequence_id}, TimerOrder={timer_order_int}, Event={event_type}")
+        
+        # Log user activity if logged in
+        from flask_login import current_user
+        if current_user.is_authenticated:
+            log_user_activity(event_type, 'timer', sequence_id=sequence_id, timer_order=timer_order_int)
+        
         return jsonify({'message': 'Activity logged successfully'}), 201
     except Exception as e:
         db.session.rollback()
@@ -411,7 +792,7 @@ def log_activity():
 
 @app.route("/logs/<sequence_id>")
 def show_logs(sequence_id):
-    sequence = Sequence.query.get_or_404(sequence_id)
+    sequence = db.session.get(Sequence, sequence_id) or abort(404)
 
     logs_raw = db.session.query(CounterLog, Timer)\
                      .outerjoin(Timer, (CounterLog.sequence_id == Timer.sequence_id) & (CounterLog.timer_order == Timer.timer_order))\
@@ -447,15 +828,43 @@ def show_logs(sequence_id):
 
     sequence_name_display = sequence.name if sequence.name else f"Sequence {sequence_id}"
     return render_template("logs.html", logs=logs_formatted, sequence_id=sequence_id, sequence_name_for_logs=sequence_name_display)
-from functools import wraps
-from sqlalchemy import extract
+# Rate limiting for /log_activity endpoint
+_rate_limit_store = defaultdict(list)
+_RATE_LIMIT_WINDOW = 60  # seconds
+_RATE_LIMIT_MAX_REQUESTS = 100  # max requests per window
+
+def check_rate_limit(client_ip):
+    """Check if client has exceeded rate limit. Returns True if allowed, False if limited."""
+    current_time = time.time()
+    # Clean old entries
+    _rate_limit_store[client_ip] = [
+        t for t in _rate_limit_store[client_ip]
+        if current_time - t < _RATE_LIMIT_WINDOW
+    ]
+    # Check limit
+    if len(_rate_limit_store[client_ip]) >= _RATE_LIMIT_MAX_REQUESTS:
+        return False
+    # Record this request
+    _rate_limit_store[client_ip].append(current_time)
+    return True
+
+def get_client_ip():
+    """Get client IP address, considering proxy headers."""
+    if request.headers.get('X-Forwarded-For'):
+        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    return request.remote_addr or '127.0.0.1'
 
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        admin_token = os.environ.get('ADMIN_STATS_TOKEN', 'dev-secret-123')
+        # Security: Require ADMIN_STATS_TOKEN to be set in production
+        admin_token = os.environ.get('ADMIN_STATS_TOKEN')
+        if not admin_token:
+            app.logger.error("ADMIN_STATS_TOKEN not set. Admin stats endpoint disabled.")
+            abort(403)
         if request.args.get('token') != admin_token:
-            return "Unauthorized access. Provide valid token.", 403
+            app.logger.warning(f"Unauthorized admin stats access attempt from {get_client_ip()}")
+            abort(403)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -482,11 +891,11 @@ def admin_stats():
         CounterLog.timestamp >= thirty_days_ago
     ).count()
 
-    # 3. Hourly Activity (Peak Times)
+    # 3. Hourly Activity (Peak Times) - Fixed: use column expression instead of string
     hourly_dist = db.session.query(
         extract('hour', CounterLog.timestamp).label('hour'),
         func.count(CounterLog.id)
-    ).group_by('hour').order_by(func.count(CounterLog.id).desc()).limit(5).all()
+    ).group_by(extract('hour', CounterLog.timestamp)).order_by(func.count(CounterLog.id).desc()).limit(5).all()
 
     # 4. Sound Popularity
     sound_popularity = db.session.query(
@@ -520,9 +929,108 @@ def admin_stats():
                            total_starts=total_starts,
                            avg_timers=avg_timers)
 
+
+# --- Sharing API Endpoints ---
+@app.route("/api/share/<sequence_id>", methods=["POST"])
+def manage_share(sequence_id):
+    """Manage sharing settings for a timer"""
+    from flask_login import current_user
+    
+    sequence = db.session.get(Sequence, sequence_id) or abort(404)
+    
+    # Check ownership
+    if sequence.owner_id and (not current_user.is_authenticated or current_user.id != sequence.owner_id):
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    data = request.get_json()
+    share = SequenceShare.query.filter_by(sequence_id=sequence_id).first()
+    
+    if not share:
+        share = SequenceShare(
+            sequence_id=sequence_id,
+            share_token=secrets.token_urlsafe(16),
+            is_public=data.get('is_public', True),
+            allow_copy=data.get('allow_copy', True)
+        )
+        db.session.add(share)
+    else:
+        if 'is_public' in data:
+            share.is_public = data['is_public']
+        if 'allow_copy' in data:
+            share.allow_copy = data['allow_copy']
+    
+    db.session.commit()
+    
+    share_url = url_for('show_timer', sequence_id=sequence_id, _external=True)
+    
+    return jsonify({
+        'share_token': share.share_token,
+        'share_url': share_url,
+        'is_public': share.is_public,
+        'allow_copy': share.allow_copy,
+        'view_count': share.view_count,
+        'copy_count': share.copy_count
+    })
+
+
+@app.route("/api/share/<sequence_id>/copy", methods=["POST"])
+def copy_shared_timer(sequence_id):
+    """Copy a shared timer to user's account"""
+    from flask_login import current_user, login_required
+    
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Login required'}), 401
+    
+    sequence = Sequence.query.options(joinedload(Sequence.timers)).get_or_404(sequence_id)
+    
+    # Check if copying is allowed
+    share = SequenceShare.query.filter_by(sequence_id=sequence_id).first()
+    if share and not share.allow_copy:
+        return jsonify({'error': 'Copying not allowed for this timer'}), 403
+    
+    # Create a copy
+    new_sequence_id = secrets.token_urlsafe(8)
+    new_sequence = Sequence(
+        id=new_sequence_id,
+        name=f"{sequence.name} (Copy)" if sequence.name else f"Timer Copy",
+        owner_id=current_user.id,
+        is_public=False,
+        created_at=datetime.now(timezone.utc)
+    )
+    db.session.add(new_sequence)
+    
+    # Copy all segments
+    for timer in sequence.timers:
+        new_timer = Timer(
+            sequence_id=new_sequence_id,
+            timer_name=timer.timer_name,
+            duration=timer.duration,
+            timer_order=timer.timer_order,
+            color=timer.color,
+            alarm_sound=timer.alarm_sound
+        )
+        db.session.add(new_timer)
+    
+    # Update copy count
+    if share:
+        share.copy_count += 1
+    
+    db.session.commit()
+    
+    # Log activity
+    log = CounterLog(sequence_id=new_sequence_id, event_type='timer_copied', owner_id=current_user.id)
+    db.session.add(log)
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Timer copied successfully',
+        'new_sequence_id': new_sequence_id,
+        'redirect_url': url_for('show_timer', sequence_id=new_sequence_id)
+    })
+
 @app.route("/manifest/<sequence_id>.json")
 def get_manifest(sequence_id):
-    sequence = Sequence.query.get_or_404(sequence_id)
+    sequence = db.session.get(Sequence, sequence_id) or abort(404)
     name = sequence.name if sequence.name else f"Timer {sequence_id}"
     
     manifest = {
@@ -553,9 +1061,55 @@ def get_manifest(sequence_id):
 def about():
     return render_template("about.html")
 
+@app.route("/privacy")
+def privacy():
+    """Privacy policy page"""
+    return render_template("privacy.html")
+
+@app.route("/terms")
+def terms():
+    """Terms of service page"""
+    return render_template("terms.html")
+
+
+# --- Error Handlers ---
+@app.errorhandler(404)
+def not_found_error(error):
+    """Handle 404 errors with a user-friendly redirect."""
+    if request.is_json or request.path.startswith('/api'):
+        return jsonify({'error': 'Resource not found', 'message': str(error)}), 404
+    return redirect(url_for('index', error='The requested page was not found.'))
+
+@app.errorhandler(500)
+def internal_error(error):
+    """Handle 500 errors with database rollback."""
+    db.session.rollback()
+    if request.is_json or request.path.startswith('/api'):
+        return jsonify({'error': 'Internal server error', 'message': str(error)}), 500
+    return redirect(url_for('index', error='An internal error occurred. Please try again.'))
+
+@app.errorhandler(400)
+def bad_request_error(error):
+    """Handle 400 errors."""
+    if request.is_json or request.path.startswith('/api'):
+        return jsonify({'error': 'Bad request', 'message': str(error)}), 400
+    return redirect(url_for('index', error='Bad request.'))
+
+@app.errorhandler(403)
+def forbidden_error(error):
+    """Handle 403 errors."""
+    if request.is_json or request.path.startswith('/api'):
+        return jsonify({'error': 'Forbidden', 'message': str(error)}), 403
+    return render_template("index.html", error="Access denied."), 403
+
+
 if __name__ == "__main__":
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, host='127.0.0.1', port=5001)
+    # Production logging configuration
+    # For development, set LOG_LEVEL environment variable if needed
+    log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+    logging.basicConfig(
+        level=getattr(logging, log_level, logging.INFO),
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    app.logger.info(f"Starting TimerFreak in development mode (LOG_LEVEL={log_level})")
+    app.run(debug=(os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'), host='127.0.0.1', port=5001)

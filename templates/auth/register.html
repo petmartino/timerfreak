@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sign Up - TimerFreak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body style="background-color: #00ffae">
+<div class="auth-container">
+    <div class="auth-card-split">
+        <!-- Left Side: OAuth Options -->
+        <div class="auth-split-left">
+            <h2>Sign up with</h2>
+            <p class="auth-subtitle">Quick and secure authentication</p>
+            
+            <div class="oauth-buttons">
+                {% if config.GOOGLE_CLIENT_ID %}
+                <a href="{{ url_for('auth.oauth_login', provider='google') }}" class="btn-oauth btn-google">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                    </svg>
+                    Google
+                </a>
+                {% endif %}
+                
+                {% if config.GITHUB_CLIENT_ID %}
+                <a href="{{ url_for('auth.oauth_login', provider='github') }}" class="btn-oauth btn-github">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+                {% endif %}
+                
+                <!-- Apple Sign In removed - requires $99/year Apple Developer Program -->
+                <!-- Uncomment below when Apple Developer account is available -->
+                <!--
+                {% if config.APPLE_CLIENT_ID %}
+                <a href="{{ url_for('auth.oauth_login', provider='apple') }}" class="btn-oauth btn-apple">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                    </svg>
+                    Apple
+                </a>
+                {% endif %}
+                -->
+            </div>
+            
+            <div class="oauth-benefits">
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>No password to remember</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Instant verification</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Enhanced security</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vertical Divider -->
+        <div class="auth-divider-vertical"></div>
+        
+        <!-- Right Side: Email Registration Form -->
+        <div class="auth-split-right">
+            <h2>Or sign up with email</h2>
+            <p class="auth-subtitle">Create a traditional account</p>
+            
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required minlength="3" autocomplete="username" placeholder="Choose a username">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" placeholder="8+ characters">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required minlength="8" autocomplete="new-password" placeholder="Confirm password">
+                    </div>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" name="terms" required>
+                        I agree to the <a href="{{ url_for('terms') }}" target="_blank">Terms of Service</a> and <a href="{{ url_for('privacy') }}" target="_blank">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn-submit">Create Account</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+}
+
+.auth-card-split {
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: flex;
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+}
+
+.auth-split-left, .auth-split-right {
+    padding: 2.5rem;
+    flex: 1;
+}
+
+.auth-split-left {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8f5e9 100%);
+    border-right: 1px solid #eee;
+}
+
+.auth-split-left h2, .auth-split-right h2 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.oauth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.btn-oauth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid #ddd;
+}
+
+.btn-google {
+    background: #fff;
+    color: #333;
+}
+
+.btn-google:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+}
+
+.btn-github {
+    background: #24292e;
+    color: #fff;
+    border-color: #24292e;
+}
+
+.btn-github:hover {
+    background: #1c2128;
+}
+
+.oauth-benefits {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: #555;
+}
+
+.benefit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #0cd413;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.auth-divider-vertical {
+    width: 1px;
+    background: linear-gradient(to bottom, #eee 0%, #ddd 50%, #eee 100%);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0cd413;
+    box-shadow: 0 0 0 3px rgba(12, 212, 19, 0.1);
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.checkbox-group label a {
+    color: #0cd413;
+    text-decoration: none;
+}
+
+.checkbox-group label a:hover {
+    text-decoration: underline;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: #0cd413;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover {
+    background: #0ab811;
+}
+
+.auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.auth-footer a {
+    color: #0cd413;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .auth-card-split {
+        flex-direction: column;
+    }
+    
+    .auth-split-left, .auth-split-right {
+        padding: 1.5rem;
+    }
+    
+    .auth-divider-vertical {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(to right, #eee 0%, #ddd 50%, #eee 100%);
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+</style>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    {% for category, message in messages %}
+    <div style="background: {{ '#dc3545' if category == 'error' else '#28a745' if category == 'success' else '#17a2b8' }}; color: white; padding: 1rem; margin-bottom: 0.5rem; border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+
+<!-- Microsoft Clarity Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w71gu3ru80");
+</script>
+</body>
+</html>

@@ -30,7 +30,36 @@
             color: #000;
         }
 
-        
+        /* Icon button styles */
+        .btn-icon {
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            min-height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .btn-icon svg {
+            display: block;
+        }
+
+        /* Controls container - all buttons on one line */
+        #controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+
+        /* Transport buttons (Play/Pause/Stop) - match settings/theme button border-radius */
+        .btn-transport {
+            border-radius: 3px;
+        }
+
         /* Light mode disabled button style (default) */
         .btn-solid-3d[data-disabled="true"],
         .btn-solid-3d.disabled-link {
@@ -50,6 +79,203 @@
             /* Light theme footer line */
             border-top-color: #eee;
         }
+        
+        /* Sharing Section Styles */
+        .sharing-section {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 3px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .sharing-header h4 {
+            margin: 0 0 1rem 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .sharing-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .qr-code {
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .qr-code img {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 0.25rem;
+            background: white;
+            width: 150px;
+            height: 150px;
+        }
+
+        .qr-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .sharing-options {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .share-url-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .share-url-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            background: #fff;
+        }
+
+        .btn-copy-url {
+            padding: 0.5rem 1rem;
+            background: #0cd413;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+        
+        .btn-copy-url:hover {
+            background: #0ab811;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .share-btn {
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .share-btn:hover {
+            background: #eee;
+            border-color: #ccc;
+        }
+
+        /* Clone Section Styles */
+        .clone-section {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 3px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .clone-section h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2e7d32;
+            font-size: 1rem;
+        }
+
+        .clone-section p {
+            margin: 0 0 1rem 0;
+            color: #555;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .btn-clone {
+            display: inline-block;
+            padding: 0.6rem 1.25rem;
+            background: #0cd413;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-clone:hover {
+            background: #0ab811;
+        }
+        
+        .share-settings {
+            padding: 0.5rem 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .toggle-setting {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: #555;
+        }
+        
+        .toggle-setting input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .btn-copy-timer {
+            padding: 0.75rem 1.5rem;
+            background: #0cd413;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            align-self: flex-start;
+        }
+        
+        .btn-copy-timer:hover {
+            background: #0ab811;
+        }
+        
+        @media (max-width: 600px) {
+            .sharing-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .share-url-container {
+                flex-direction: column;
+            }
+
+            .share-buttons {
+                justify-content: center;
+            }
+
+            #loopControls {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.5rem !important;
+            }
+        }
     </style>
 </head>
 
@@ -64,27 +290,82 @@
     {% endif %}
 
     <div id="controls">
-        <a href="#" class="btn-solid-3d btn-darkgreen btn-fixed-width" onclick="toggleStart(event)" id="startBtn">START</a>
-        <a href="#" class="btn-solid-3d btn-orange btn-fixed-width" onclick="togglePause(event)" id="pauseBtn"
-            data-disabled="true">PAUSE</a>
-        <a href="#" class="btn-solid-3d btn-gray emoji-btn" onclick="toggleAdvanced(event)" id="advancedBtn">⚙️</a>
-        <a href="#" class="btn-solid-3d btn-gray emoji-btn" onclick="toggleTheme(event)" id="theme-toggle"
-            style="float: right;">💡</a>
+        <!-- Play/Pause Button (DAW-style: toggles between play and pause) -->
+        <a href="#" class="btn-solid-3d btn-darkgreen btn-icon btn-transport" onclick="togglePlayPause(event)" id="playPauseBtn" title="Play Timer">
+            <svg id="transportPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5,3 19,12 5,21" />
+            </svg>
+            <svg id="transportPauseIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <rect x="5" y="3" width="5" height="18" rx="1" />
+                <rect x="14" y="3" width="5" height="18" rx="1" />
+            </svg>
+        </a>
+        <!-- Stop Button (DAW-style: always stop, square icon) -->
+        <a href="#" class="btn-solid-3d btn-red btn-icon btn-transport" onclick="toggleStop(event)" id="stopBtn"
+            data-disabled="true" title="Stop Timer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="5" y="5" width="14" height="14" rx="2" />
+            </svg>
+        </a>
+        <!-- Previous / Restart Timer Button (double triangle left) -->
+        <!-- First click: restart current timer, Additional clicks: go to previous timer -->
+        <a href="#" class="btn-solid-3d btn-gray btn-icon btn-transport" onclick="goToPreviousTimer(event)" id="prevBtn"
+            data-disabled="true" title="Restart / Previous Timer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="17,3 9,12 17,21" />
+                <polygon points="9,3 1,12 9,21" />
+            </svg>
+        </a>
+        <!-- Next Timer Button (double triangle right) -->
+        <a href="#" class="btn-solid-3d btn-gray btn-icon btn-transport" onclick="goToNextTimer(event)" id="nextBtn"
+            data-disabled="true" title="Next Timer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="7,3 15,12 7,21" />
+                <polygon points="15,3 23,12 15,21" />
+            </svg>
+        </a>
+        <!-- Settings Button -->
+        <a href="#" class="btn-solid-3d btn-gray btn-icon btn-transport" onclick="toggleAdvanced(event)" id="advancedBtn" title="Settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+            </svg>
+        </a>
+        <!-- Loop Toggle Button -->
+        <a href="#" class="btn-solid-3d btn-gray btn-icon btn-transport" onclick="toggleLoopMode(event)" id="loopToggleBtn" title="Toggle Loop">
+            <svg id="loopOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+            </svg>
+            <svg id="loopOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+            </svg>
+        </a>
+        <!-- Theme Toggle Button -->
+        <a href="#" class="btn-solid-3d btn-gray btn-icon btn-transport" onclick="toggleTheme(event)" id="theme-toggle" title="Toggle Theme">
+            <svg id="themeLightIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 S11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0 s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/>
+            </svg>
+            <svg id="themeDarkIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Loop Controls Section - Only visible when loop is enabled -->
+    <div id="loopControls" style="background: #f9f9f9; border: 1px solid #eee; border-radius: 3px; padding: 0.75rem 1rem; margin: 0.5rem 0 1rem 0; display: none; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #555; white-space: nowrap; margin: 0;">
+            <span>Loops:</span>
+            <div id="loopCountGroup" style="display: flex; align-items: center; gap: 0.25rem;">
+                <a href="#" class="digit-button" onclick="decrementLoopCount(event)" style="padding: 2px 8px; font-size: 0.875rem;">-</a>
+                <input type="number" id="loopCount" min="1" placeholder="∞" value="" size="3"
+                    onchange="updateLoopSettings()" style="width: 50px; padding: 2px 4px; font-size: 0.875rem; text-align: center;">
+                <a href="#" class="digit-button" onclick="incrementLoopCount(event)" style="padding: 2px 8px; font-size: 0.875rem;">+</a>
+            </div>
+            <span style="font-size: 0.75rem; color: #999;">(empty = unlimited)</span>
+        </label>
     </div>
 
     <!-- Advanced Controls Section -->
     <div id="advancedControls">
-        <div>
-            <label><input type="checkbox" id="loopToggle" onchange="updateLoopSettings()"> Loop Sequence</label>
-            <label>Loops:
-                <div id="loopCountGroup">
-                    <a href="#" class="digit-button" onclick="decrementLoopCount(event)">-</a>
-                    <input type="number" id="loopCount" min="1" placeholder="∞" value="" size="2"
-                        onchange="updateLoopSettings()">
-                    <a href="#" class="digit-button" onclick="incrementLoopCount(event)">+</a>
-                </div>
-            </label>
-        </div>
         <div id="quickControls">
             <a href="#" style="margin-top: 10px;"class="btn-solid-3d btn-default" onclick="restartCurrent(event)" id="restartCurrent"
                 data-disabled="true">Restart Current</a>
@@ -95,27 +376,57 @@
     </div>
     <div id="bars"></div>
     <div id="text-bottom">
+        <!-- Timer URL -->
+        <div class="timer-url-section">
+            <a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">{{ base_url }}{{ url_for('redirect_to_timer', sequence_id=sequence_id) }}</a>
+        </div>
+        <p>&nbsp; &#8627; This is the permanent URL for this Timer.</p>
+
+        <!-- Sharing Section -->
+        <div class="sharing-section">
+            <div class="sharing-header">
+                <h4>🔗 Share this Timer</h4>
+            </div>
+            <div class="sharing-content">
+                <div class="qr-code">
+                    <img src="{{ qr_code_url }}" alt="QR Code" title="Scan to open timer">
+                    <p class="qr-label">Scan to open</p>
+                </div>
+
+                <div class="sharing-options">
+                    <div class="share-url-container">
+                        <input type="text" class="share-url-input" value="{{ share_url }}" readonly onclick="this.select()">
+                        <button class="btn-copy-url" onclick="navigator.clipboard.writeText(this.previousElementSibling.value);this.textContent='✓ Copied!';setTimeout(()=>this.textContent='📋 Copy Link',2000)">📋 Copy Link</button>
+                    </div>
+
+                    <div class="share-buttons">
+                        <a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20Timer&url={{ share_url|urlencode }}" target="_blank" class="share-btn" title="Share on X (Twitter)">X/Twitter</a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" class="share-btn" title="Share on Facebook">📘 Facebook</a>
+                        <a href="mailto:?subject=Timer:%20{{ (sequence_name or sequence_id)|urlencode }}&body=Check%20out%20this%20timer:%20{{ share_url|urlencode }}" class="share-btn" title="Share via Email">✉️ Email</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clone & Edit Section -->
+        <div class="clone-section">
+            <h4>📋 Clone &amp; Edit This Timer</h4>
+            <p>Want to use this timer as a starting point? Clone it to create your own copy with all the same settings pre-filled. You can then edit any detail before creating your new timer.</p>
+            <a href="{{ url_for('clone_timer', sequence_id=sequence_id) }}" class="btn-clone">Clone &amp; Edit Timer</a>
+        </div>
         
-                        <div ><a href="{{ url_for('show_timer', sequence_id=sequence_id) }}">{{ base_url }}{{ url_for('redirect_to_timer',
-                sequence_id=sequence_id) }}</a></div>
-                <p>&nbsp; &#8627; This is the permanent URL for this sequence. 
-                <span id="installBanner" style="display: none;">
-                    <strong>Install this timer on your mobile device:</strong> 
-                    <a href="#" id="installLink" style="font-weight: bold; color: #15ccbe; text-decoration: underline;">Install App</a>
-                    <span id="iosInstructions" style="display: none; color: #666; font-size: 0.9em; margin-top: 5px;">
-                         Tap the <strong>Share</strong> icon then <strong>"Add to Home Screen"</strong>.
-                    </span>
-                </span>
-                </p>
+        <span id="installBanner" style="display: none;">
+            <strong>Install this timer on your mobile device:</strong>
+            <a href="#" id="installLink" style="font-weight: bold; color: #15ccbe; text-decoration: underline;">Install App</a>
+            <span id="iosInstructions" style="display: none; color: #666; font-size: 0.9em; margin-top: 5px;">
+                 Tap the <strong>Share</strong> icon then <strong>"Add to Home Screen"</strong>.
+            </span>
+        </span>
 
         <audio id="alarm" src="" preload="auto"></audio>
         <!-- Background audio element for keeping audio engine alive -->
         <audio id="backgroundAlarm" src="{{ url_for('static', filename='silence.mp3') }}" loop preload="auto"
             volume="0"></audio>
-
-        
-
-       
     </div>
     {% include 'footer.html' %}
     <script>
@@ -127,6 +438,10 @@
         const timerAlarmSounds = {{ timer_alarm_sounds | tojson }}; // Specific sounds for each timer
 
         const staticBaseUrl = "{{ url_for('static', filename='') }}";
+
+        // Loop settings from database
+        const defaultLoopEnabled = {{ loop_default|lower if loop_default is defined and loop_default else 'false' }};
+        const defaultLoopCount = {{ loop_count if loop_count is defined and loop_count is not none else 'null' }};
 
         console.log("Durations:", durations);
         console.log("Timer Names:", timerNames);
@@ -150,9 +465,14 @@
         let loopLimit = null;
         let startTime = null; // Reference time for the current timer's elapsed calculation
         let pauseStartTime = null; // Time when pause was initiated
-        // lastUpdateTime will now ONLY be used to calculate delta for globalElapsed in background, 
+        // lastUpdateTime will now ONLY be used to calculate delta for globalElapsed in background,
         // elapsed is always calculated from startTime.
         let lastUpdateTime = performance.now();
+
+        // Previous button click tracking
+        let prevBtnClickCount = 0; // Tracks clicks on previous button
+        let prevBtnLastTimerIndex = -1; // Last timer index when prev button was clicked
+        let prevBtnLastTimerStartTime = 0; // Time when current timer started (for 10s reset)
 
         // AudioContext for synthesized beeps
         let audioContext;
@@ -186,6 +506,31 @@
             oscillator.stop(audioContext.currentTime + duration);
         }
 
+        // Helper to format duration (seconds to readable format)
+        function formatDuration(totalSeconds) {
+            if (totalSeconds < 60) {
+                return `${totalSeconds} second${totalSeconds !== 1 ? 's' : ''}`;
+            }
+            
+            const mins = Math.floor(totalSeconds / 60);
+            const secs = totalSeconds % 60;
+            
+            if (mins >= 60) {
+                const hrs = Math.floor(mins / 60);
+                const remainingMins = mins % 60;
+                let parts = [];
+                if (hrs > 0) parts.push(`${hrs} hour${hrs !== 1 ? 's' : ''}`);
+                if (remainingMins > 0) parts.push(`${remainingMins} minute${remainingMins !== 1 ? 's' : ''}`);
+                if (secs > 0) parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+                return parts.join(' ');
+            }
+            
+            let parts = [];
+            if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+            if (secs > 0) parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+            return parts.join(' ');
+        }
+
         // Helper to set/get disabled state for links
         function setLinkDisabled(linkElement, disabled) {
             if (!linkElement) {
@@ -206,53 +551,167 @@
             return linkElement.getAttribute('data-disabled') === 'true';
         }
 
+        // Helper to get the button element from event (handles clicks on SVG icons inside buttons)
+        function getButtonElement(event) {
+            const target = event.target;
+            // If target is the button itself (has data-disabled attribute)
+            if (target.getAttribute('data-disabled') !== undefined) {
+                return target;
+            }
+            // If target is SVG or child element, find parent button
+            return target.closest('a');
+        }
+
         // Helper to set button text/emoji and class for consistent size
         // Uses CSS min-width for fixed button size.
         function setButtonState(buttonId, text, colorClass) {
             const button = document.getElementById(buttonId);
             if (!button) return;
 
-            // Remove all existing color classes except btn-solid-3d (and emoji-btn/btn-fixed-width if applicable)
+            // Remove all existing color classes except btn-solid-3d (and emoji-btn/btn-icon if applicable)
             button.className = 'btn-solid-3d'; // Reset base classes
             if (buttonId === 'advancedBtn' || buttonId === 'theme-toggle') {
-                button.classList.add('emoji-btn');
-            } else if (buttonId === 'startBtn' || buttonId === 'pauseBtn') {
-                button.classList.add('btn-fixed-width');
+                button.classList.add('btn-icon');
+                button.classList.add('btn-transport');
+            }
+            if (buttonId === 'playPauseBtn' || buttonId === 'stopBtn' || buttonId === 'prevBtn' || buttonId === 'nextBtn' || buttonId === 'loopToggleBtn') {
+                button.classList.add('btn-icon');
+                button.classList.add('btn-transport');
             }
             // Add the new color class
             button.classList.add(colorClass);
 
-            button.innerHTML = text; // Set text directly, CSS min-width handles sizing
+            // Handle SVG icon toggling for transport buttons
+            if (buttonId === 'playPauseBtn') {
+                const isPaused = text === "PAUSE";
+                document.getElementById('transportPlayIcon').style.display = isPaused ? 'none' : 'block';
+                document.getElementById('transportPauseIcon').style.display = isPaused ? 'block' : 'none';
+                button.title = isPaused ? 'Pause Timer' : 'Play Timer';
+            }
+            // For buttons with permanent SVG icons (advancedBtn, theme-toggle), don't overwrite innerHTML
         }
 
 
-        // --- Event handlers for link buttons ---
-        function toggleStart(event) {
+        // --- DAW-style Transport Controls ---
+        function togglePlayPause(event) {
             event.preventDefault();
-            if (isLinkDisabled(event.target)) return;
-            playBeep(4400, 0.1,.1); // High pitch for start
-            _toggleStart();
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
+            playBeep(4400, 0.1, .1);
+
+            if (running) {
+                // Currently playing, so pause
+                _togglePause();
+            } else {
+                // Not playing, so start
+                _toggleStart();
+            }
         }
 
-        function togglePause(event) {
+        function toggleStop(event) {
             event.preventDefault();
-            if (isLinkDisabled(event.target)) return;
-            playBeep(4400, 0.1,.1); // Low pitch for other interactions
-            _togglePause();
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
+            playBeep(880, 0.05, .01);
+            stopSequence();
         }
 
         function restartCurrent(event) {
             event.preventDefault();
-            if (isLinkDisabled(event.target)) return;
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
             playBeep(880, 0.05,.01); // Low pitch for other interactions
             _restartCurrent();
         }
 
         function restartAll(event) {
             event.preventDefault();
-            if (isLinkDisabled(event.target)) return;
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
             playBeep(880, 0.05,.01); // Low pitch for other interactions
             _restartAll();
+        }
+
+        // New navigation functions for timer sequence
+        function goToPreviousTimer(event) {
+            event.preventDefault();
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
+            playBeep(880, 0.05, .01);
+
+            // Check if we should reset the click count
+            // Reset if: timer changed or 10+ seconds elapsed since timer start
+            const now = performance.now();
+            const timeSinceStart = (now / 1000) - startTime;
+            if (prevBtnLastTimerIndex !== current || timeSinceStart >= 10) {
+                prevBtnClickCount = 0;
+            }
+
+            prevBtnClickCount++;
+
+            if (prevBtnClickCount === 1) {
+                // First click: restart current timer
+                _restartCurrent();
+            } else {
+                // Additional clicks: go to previous timer
+                const prevIndex = Math.max(0, current - 1);
+                if (prevIndex !== current) {
+                    _jumpToTimer(prevIndex);
+                }
+            }
+
+            // Track state
+            prevBtnLastTimerIndex = current;
+            prevBtnLastTimerStartTime = now;
+        }
+
+        function goToNextTimer(event) {
+            event.preventDefault();
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
+            playBeep(880, 0.05, .01);
+            const nextIndex = Math.min(durations.length - 1, current + 1);
+            if (nextIndex !== current) {
+                _jumpToTimer(nextIndex);
+            }
+        }
+
+        // Loop toggle button function
+        function toggleLoopMode(event) {
+            event.preventDefault();
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
+            playBeep(880, 0.05, .01);
+
+            loopEnabled = !loopEnabled;
+            updateLoopUI();
+        }
+
+        function updateLoopUI() {
+            const loopControls = document.getElementById("loopControls");
+            const loopOffIcon = document.getElementById('loopOffIcon');
+            const loopOnIcon = document.getElementById('loopOnIcon');
+            const loopToggleBtn = document.getElementById('loopToggleBtn');
+
+            if (loopEnabled) {
+                loopControls.style.display = 'flex';
+                // Update button to active (green) state
+                loopToggleBtn.classList.remove('btn-gray');
+                loopToggleBtn.classList.add('btn-darkgreen');
+                // Show loop icon (single icon, currentColor will be white)
+                loopOffIcon.style.display = 'none';
+                loopOnIcon.style.display = 'block';
+                loopToggleBtn.title = 'Loop: ON';
+            } else {
+                loopControls.style.display = 'none';
+                // Update button to inactive (gray) state
+                loopToggleBtn.classList.remove('btn-darkgreen');
+                loopToggleBtn.classList.add('btn-gray');
+                // Show loop off icon
+                loopOffIcon.style.display = 'block';
+                loopOnIcon.style.display = 'none';
+                loopToggleBtn.title = 'Loop: OFF';
+            }
         }
 
         function toggleAdvanced(event) {
@@ -277,9 +736,77 @@
             _toggleTheme();
         }
 
+        // Cookie helpers for theme preference (only for logged-in users)
+        const isLoggedIn = {{ 'true' if current_user else 'false' }};
+
+        function setThemeCookie(isDark) {
+            if (!isLoggedIn) return;
+            // No expiration - cookie persists until browser is closed or manually cleared
+            document.cookie = `tf_theme=${isDark ? 'dark' : 'light'}; path=/; SameSite=Lax`;
+        }
+
+        function getThemeCookie() {
+            if (!isLoggedIn) return null;
+            const match = document.cookie.match(/(?:^|; )tf_theme=([^;]*)/);
+            return match ? match[1] : null;
+        }
+
+        function prefersDarkMode() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+
+        function _toggleTheme() {
+            const bodyElement = document.body;
+            if (!bodyElement) {
+                console.error("Body element not found!");
+                return;
+            }
+
+            const isDark = bodyElement.classList.contains('dark-theme');
+            const newIsDark = !isDark;
+
+            if (newIsDark) {
+                bodyElement.classList.add('dark-theme');
+            } else {
+                bodyElement.classList.remove('dark-theme');
+            }
+
+            // Update SVG icons
+            document.getElementById('themeLightIcon').style.display = newIsDark ? 'none' : 'block';
+            document.getElementById('themeDarkIcon').style.display = newIsDark ? 'block' : 'none';
+
+            // Save to cookie for logged-in users
+            setThemeCookie(newIsDark);
+        }
+
+        function applyThemePreference() {
+            const bodyElement = document.body;
+            const cookieTheme = getThemeCookie();
+            let isDark;
+
+            if (cookieTheme) {
+                // Use saved preference
+                isDark = cookieTheme === 'dark';
+            } else {
+                // Default to system/browser preference
+                isDark = prefersDarkMode();
+            }
+
+            if (isDark) {
+                bodyElement.classList.add('dark-theme');
+            } else {
+                bodyElement.classList.remove('dark-theme');
+            }
+
+            // Update SVG icons
+            document.getElementById('themeLightIcon').style.display = isDark ? 'none' : 'block';
+            document.getElementById('themeDarkIcon').style.display = isDark ? 'block' : 'none';
+        }
+
         function jumpToTimer(index, event) {
             event.preventDefault();
-            if (isLinkDisabled(event.target)) return;
+            const btn = getButtonElement(event);
+            if (isLinkDisabled(btn)) return;
             playBeep(880, 0.05,.01); // Low pitch for other interactions
             _jumpToTimer(index);
         }
@@ -330,6 +857,23 @@
                 alarm.src = "";
                 return;
             }
+
+            // Remove any previous error handler to prevent duplicates
+            alarm.onerror = null;
+
+            // Add error handler to fallback to beep.mp3 if the sound file fails to load
+            alarm.onerror = function() {
+                console.warn(`Failed to load alarm sound "${soundFileName}", falling back to beep.mp3`);
+                alarm.onerror = null; // Prevent infinite fallback
+                alarm.src = staticBaseUrl + 'beep.mp3';
+                alarm.load();
+                alarm.play().catch(e => {
+                    console.error(`Error playing fallback alarm sound beep.mp3:`, e);
+                    if (backgroundAlarm && backgroundAlarm.paused && backgroundAlarm.volume === 0) {
+                        backgroundAlarm.play().catch(e2 => console.warn("Failed to restart background audio:", e2));
+                    }
+                });
+            };
 
             alarm.src = staticBaseUrl + soundFileName;
             alarm.load(); // Explicitly load the media for robustness
@@ -403,7 +947,7 @@
                 timerInfoDiv.appendChild(timerInfoNameDiv);
                 const timerInfoDurationDiv = document.createElement('div');
                 timerInfoDurationDiv.className = "timer-info-duration";
-                timerInfoDurationDiv.textContent = `${durations[i]} seconds`;
+                timerInfoDurationDiv.textContent = formatDuration(durations[i]);
                 timerInfoDiv.appendChild(timerInfoDurationDiv);
                 outer.appendChild(timerInfoDiv);
 
@@ -419,7 +963,7 @@
 
                 const timerCountdownDiv = document.createElement('div');
                 timerCountdownDiv.className = "timer-countdown";
-                timerCountdownDiv.textContent = `${durations[i]} seconds`;
+                timerCountdownDiv.textContent = formatDuration(durations[i]);
                 overlayContentDiv.appendChild(timerCountdownDiv);
 
                 overlayDiv.appendChild(overlayContentDiv);
@@ -500,9 +1044,11 @@
                 backgroundAlarm.play().catch(e => console.warn("Failed to start background audio:", e));
             }
 
-            // Set button states
-            setButtonState('startBtn', "STOP", 'btn-red'); // Updated name and color, NO  
-            setLinkDisabled(document.getElementById("pauseBtn"), false);
+            // Set button states (DAW-style)
+            setButtonState('playPauseBtn', "PAUSE", 'btn-darkgreen'); // Now playing, show pause icon
+            setLinkDisabled(document.getElementById("stopBtn"), false);
+            setLinkDisabled(document.getElementById("prevBtn"), false);
+            setLinkDisabled(document.getElementById("nextBtn"), false);
             setLinkDisabled(document.getElementById("restartCurrent"), false);
             setLinkDisabled(document.getElementById("restartAll"), false);
             // Ensure jump buttons are enabled when sequence starts
@@ -516,7 +1062,7 @@
             loopIndex = 1;
 
             updateCompletionBar();
-            // updateDebug(); // Debug info removed from GUI
+
 
             pauseStartTime = null;
             startTime = performance.now() / 1000; // Initialize startTime directly
@@ -572,10 +1118,11 @@
                 });
             }
             document.getElementById("globalBar").style.width = "0%";
-            // Set button states
-            setButtonState('startBtn', "START", 'btn-darkgreen'); // Updated name and color, NO  
-            setButtonState('pauseBtn', "PAUSE", 'btn-orange'); // Reset Pause text and color, NO  
-            setLinkDisabled(document.getElementById("pauseBtn"), true);
+            // Set button states (DAW-style)
+            setButtonState('playPauseBtn', "PLAY", 'btn-darkgreen'); // Reset to play icon
+            setLinkDisabled(document.getElementById("stopBtn"), true);
+            setLinkDisabled(document.getElementById("prevBtn"), true);
+            setLinkDisabled(document.getElementById("nextBtn"), true);
             setLinkDisabled(document.getElementById("restartCurrent"), true);
             setLinkDisabled(document.getElementById("restartAll"), true);
             // Ensure jump buttons are disabled when sequence stops
@@ -588,15 +1135,15 @@
                 alarmElement.src = ""; // Clear sound source
             }
 
-            // updateDebug(); // Debug info removed from GUI
+
             logActivity('sequence_end');
         }
 
         function _togglePause() {
             paused = !paused;
-            // Set button states
-            setButtonState('pauseBtn', paused ? "RESUME" : "PAUSE", paused ? 'btn-darkgreen' : 'btn-orange'); // Updated color and name, NO  
-            // updateDebug(); // Debug info removed from GUI
+            // Set button states (DAW-style)
+            setButtonState('playPauseBtn', paused ? "PLAY" : "PAUSE", paused ? 'btn-darkgreen' : 'btn-darkgreen');  
+
 
             logActivity(paused ? 'pause_timer' : 'resume_timer', current);
 
@@ -672,14 +1219,14 @@
             } else if (!paused && !running) {
                 _toggleStart();
             }
-            // updateDebug(); // Debug info removed from GUI
+
         }
 
         function _restartAll() {
             logActivity('restart_sequence');
             stopSequence();
             _toggleStart();
-            // updateDebug(); // Debug info removed from GUI
+
         }
 
         function _jumpToTimer(index) {
@@ -729,14 +1276,16 @@
                     bar.querySelector(".overlay").style.display = "flex";
                     bar.querySelector(".timer-info").style.display = "none";
                     bar.querySelector(".timer-info-name").textContent = timerNames[i] || `Timer ${i + 1}`;
-                    bar.querySelector(".timer-info-duration").textContent = `${durations[i]} seconds`;
+                    bar.querySelector(".timer-info-duration").textContent = formatDuration(durations[i]);
                 });
             }
 
             if (!running && !paused) {
                 running = true;
-                setButtonState('startBtn', "STOP", 'btn-red'); // Update Start/Stop button, NO  
-                setLinkDisabled(document.getElementById("pauseBtn"), false);
+                setButtonState('playPauseBtn', "PAUSE", 'btn-darkgreen');
+                setLinkDisabled(document.getElementById("stopBtn"), false);
+                setLinkDisabled(document.getElementById("prevBtn"), false);
+                setLinkDisabled(document.getElementById("nextBtn"), false);
                 setLinkDisabled(document.getElementById("restartCurrent"), false);
                 setLinkDisabled(document.getElementById("restartAll"), false);
                 document.querySelectorAll(".jump-button").forEach(link => setLinkDisabled(link, false));
@@ -754,7 +1303,7 @@
                     bars[current].querySelector(".timer-countdown").textContent = `${durations[current]} (${0}%)`;
                 }
             }
-            // updateDebug(); // Debug info removed from GUI
+
         }
 
         function startTimer(timerIndex) {
@@ -947,7 +1496,7 @@
             }
 
             updateCompletionBar();
-            // updateDebug(); // Optional: limit this to once every few frames if it impacts performance
+
 
 
             if (document.visibilityState === 'visible') {
@@ -955,73 +1504,9 @@
             }
         }
 
-
-        // updateDebug function for console logging (removed from GUI)
-        function updateDebug() {
-            let debugText = durations.map((dur, i) => {
-                let state = "Stopped",
-                    pct = 0,
-                    secs = 0;
-
-                if (i === current && running && !paused) {
-                    state = "Running";
-                    pct = (elapsed / dur * 100).toFixed(2);
-                    secs = elapsed.toFixed(2);
-                } else if (i === current && running && paused) {
-                    state = "Paused";
-                    pct = (elapsed / dur * 100).toFixed(2);
-                    secs = elapsed.toFixed(2);
-                } else if (timestamps[i] && timestamps[i].end) {
-                    state = "Finished";
-                    pct = "100.00";
-                    secs = dur.toFixed(2);
-                } else if (i < current && running && !paused) {
-                    state = "Finished (Passed)";
-                    pct = "100.00";
-                    secs = dur.toFixed(2);
-                } else {
-                    state = "Waiting";
-                    pct = "0.00";
-                    secs = "0.00";
-                }
-                return `Timer ${i + 1}/${durations.length}: Status: ${state} | Progress: ${pct}% | ${secs}/${dur.toFixed(2)}s\nStart: ${timestamps[i] ? timestamps[i].start || "-" : "-"}\nEnd: ${timestamps[i] ? timestamps[i].end || "-" : "-"}`;
-            });
-            const loopStatus = loopEnabled ? `Looping: ON (${loopLimit !== null ? loopLimit : '∞'}x)` : `Looping: OFF`;
-            const sequenceStatus = running ? (paused ? "Paused" : "Running") : "Stopped";
-            const globalElapsedFormatted = globalElapsed.toFixed(2);
-            const globalProgress = totalDuration > 0 ? (globalElapsed / totalDuration * 100).toFixed(2) : "0.00";
-
-            console.log(
-                `Sequence Status: ${sequenceStatus} | ${loopStatus}\n` +
-                `Current Loop: ${loopIndex} of ${loopLimit !== null ? loopLimit : '∞'}\n` +
-                `Global Progress: ${globalElapsedFormatted}s / ${totalDuration.toFixed(2)}s (${globalProgress}%)\n\n` +
-                debugText.join("\n\n")
-            );
-        }
-
         function updateLoopSettings() {
-            loopEnabled = document.getElementById("loopToggle").checked;
             const loopVal = parseInt(document.getElementById("loopCount").value);
             loopLimit = isNaN(loopVal) || loopVal < 1 ? null : loopVal;
-            updateDebug();
-        }
-
-        function _toggleTheme() {
-            const bodyElement = document.body;
-            if (!bodyElement) {
-                console.error("Body element not found!");
-                return;
-            }
-
-            const isLight = !bodyElement.classList.contains('dark-theme');
-
-            if (isLight) {
-                bodyElement.classList.add('dark-theme');
-                setButtonState('theme-toggle', "☀️", 'btn-gray'); // Moon emoji for dark mode
-            } else {
-                bodyElement.classList.remove('dark-theme');
-                setButtonState('theme-toggle', "🌙", 'btn-gray'); // Light bulb emoji for light mode
-            }
         }
 
         // --- Background/Foreground Visibility Handling ---
@@ -1061,18 +1546,29 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initUI(); // Initialize bars, sets all to overlay (active) state
-            updateDebug(); // Initial console logging
             // Initial setup for advanced controls links to be disabled.
             // Advanced controls are initially hidden, so their buttons should be disabled.
             document.querySelectorAll("#advancedControls .btn-solid-3d").forEach(link => setLinkDisabled(link, true));
 
             // Set initial states for main buttons with specific colors and fixed width
-            // Note: `btn-fixed-width` class added to style.css to ensure these have minimum width
-            setButtonState('startBtn', "START", 'btn-darkgreen');
-            setButtonState('pauseBtn', "PAUSE", 'btn-orange');
-            setButtonState('advancedBtn', "⚙️", 'btn-gray');
-            setButtonState('theme-toggle', "🌙", 'btn-gray');
-            setLinkDisabled(document.getElementById("advancedBtn"), false); // Advanced button always enabled
+            setButtonState('playPauseBtn', "PLAY", 'btn-darkgreen');
+            setLinkDisabled(document.getElementById("stopBtn"), true);
+            setLinkDisabled(document.getElementById("prevBtn"), true);
+            setLinkDisabled(document.getElementById("nextBtn"), true);
+            setLinkDisabled(document.getElementById("advancedBtn"), false); // Settings button always enabled
+
+            // Apply theme preference (system default or saved cookie for logged-in users)
+            applyThemePreference();
+
+            // Initialize loop settings from database defaults
+            const loopCountInput = document.getElementById("loopCount");
+            loopEnabled = defaultLoopEnabled;
+            if (loopCountInput && defaultLoopCount !== null) {
+                loopCountInput.value = defaultLoopCount;
+            }
+            // Apply the initialized settings
+            updateLoopUI();
+            updateLoopSettings();
 
             // Initial play of background silent audio (user interaction might be needed on first load)
             const backgroundAlarm = document.getElementById("backgroundAlarm");

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Settings - TimerFreak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body style="background-color: #00ffae">
+    <!-- User Navigation Header -->
+    <nav class="user-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo-link">
+                <img src="{{ url_for('static', filename='logotimerfreak.svg') }}" alt="TimerFreak" height="32">
+                <span class="nav-title">TimerFreak</span>
+            </a>
+            <div class="nav-links">
+                <!-- Logged In: User submenu -->
+                <div class="nav-dropdown" id="userDropdown">
+                    <button class="nav-link nav-dropdown-toggle nav-user-toggle" id="dropdownToggle" type="button">
+                        <span class="user-avatar-small">{{ current_user.username[0]|upper }}</span>
+                        {{ current_user.display_name or current_user.username }} <span id="dropdownArrow">▼</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('auth.dashboard') }}" class="dropdown-item">📊 My Dashboard</a>
+                        <a href="{{ url_for('index') }}" class="dropdown-item">➕ New Sequence</a>
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('auth.settings') }}" class="dropdown-item">⚙️ Settings</a>
+                        <a href="{{ url_for('auth.user_logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <style>
+        .user-nav {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .nav-logo-link:hover { text-decoration: underline; }
+        .nav-logo-link img { vertical-align: middle; }
+        .nav-title {
+            font-size: 0.875rem;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        /* Dropdown Styles */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #333;
+            padding: 0;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1;
+        }
+        .nav-dropdown-toggle:hover { background: #f5f5f5; }
+        .nav-user-toggle {
+            background: transparent;
+            padding: 0;
+        }
+        .user-avatar-small {
+            width: 24px;
+            height: 24px;
+            background: #0cd413;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 3px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            min-width: 200px;
+            padding: 0.5rem 0;
+            margin-top: 0;
+            z-index: 1001;
+        }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: transparent;
+        }
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 0.875rem;
+        }
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item.text-danger { color: #dc3545; }
+        .dropdown-item.text-danger:hover { background: #fef2f2; }
+        .dropdown-divider { height: 1px; background: #eee; margin: 0.5rem 0; }
+    </style>
+    
+    <div class="settings-container">
+    <h1>Account Settings</h1>
+    
+    <div class="settings-sections">
+        <div class="settings-section">
+            <h2>Profile Information</h2>
+            <form method="POST" action="{{ url_for('auth.settings') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="form-group">
+                    <label for="display_name">Display Name</label>
+                    <input type="text" id="display_name" name="display_name" value="{{ current_user.display_name or '' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="{{ current_user.username }}" required minlength="3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email (read-only)</label>
+                    <input type="email" id="email" value="{{ current_user.email }}" disabled>
+                    <small>Email changes require verification</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Change Password</h2>
+            <form method="POST" action="{{ url_for('auth.change_password') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" id="new_password" name="new_password" required minlength="8">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+                </div>
+                
+                <button type="submit" class="btn btn-secondary">Change Password</button>
+            </form>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Subscription</h2>
+            <div class="subscription-info">
+                <div class="current-plan">
+                    <span class="plan-label">Current Plan:</span>
+                    <span class="plan-value">{{ current_user.subscription_tier.value|upper }}</span>
+                </div>
+                {% if current_user.subscription_expires %}
+                <div class="plan-expires">
+                    Expires: {{ current_user.subscription_expires.strftime('%B %d, %Y') }}
+                </div>
+                {% endif %}
+            </div>
+            <a href="#" class="btn btn-primary">Upgrade Plan</a>
+        </div>
+        
+        <div class="settings-section danger-zone">
+            <h2>Danger Zone</h2>
+            <p>Once you delete your account, there is no going back. Please be certain.</p>
+            <button class="btn btn-danger" onclick="confirm('Are you sure you want to delete your account? This action cannot be undone.')">Delete Account</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.settings-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.settings-container h1 {
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.settings-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.settings-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.settings-section h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.25rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0cd413;
+    box-shadow: 0 0 0 3px rgba(12, 212, 19, 0.1);
+}
+
+.form-group input:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #0cd413;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0ab811;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.subscription-info {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 3px;
+    margin-bottom: 1rem;
+}
+
+.current-plan, .plan-expires {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.plan-label {
+    color: #666;
+}
+
+.plan-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.danger-zone {
+    border: 1px solid #dc3545;
+}
+
+.danger-zone h2 {
+    color: #dc3545;
+}
+
+.danger-zone p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+</style>
+<script>
+    // Dropdown toggle for mobile/touch devices
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggle = document.getElementById('dropdownToggle');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdown = document.getElementById('userDropdown');
+
+        if (dropdownToggle && dropdownMenu && dropdown) {
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdownMenu.style.display = '';
+                }
+            });
+
+            dropdown.addEventListener('mouseenter', function() {
+                dropdownMenu.style.display = 'block';
+            });
+
+            dropdown.addEventListener('mouseleave', function() {
+                dropdownMenu.style.display = '';
+            });
+        }
+    });
+</script>
+
+</div>
+
+<!-- Microsoft Clarity Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w71gu3ru80");
+</script>
+</body>
+</html>

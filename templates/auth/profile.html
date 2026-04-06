@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Profile - TimerFreak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body style="background-color: #00ffae">
+    <!-- User Navigation Header -->
+    <nav class="user-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo-link">
+                <img src="{{ url_for('static', filename='logotimerfreak.svg') }}" alt="TimerFreak" height="32">
+                <span class="nav-title">TimerFreak</span>
+            </a>
+            <div class="nav-links">
+                <!-- Logged In: User submenu -->
+                <div class="nav-dropdown" id="userDropdown">
+                    <button class="nav-link nav-dropdown-toggle nav-user-toggle" id="dropdownToggle" type="button">
+                        <span class="user-avatar-small">{{ current_user.username[0]|upper }}</span>
+                        {{ current_user.display_name or current_user.username }} <span id="dropdownArrow">▼</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('auth.dashboard') }}" class="dropdown-item">📊 My Dashboard</a>
+                        <a href="{{ url_for('index') }}" class="dropdown-item">➕ New Sequence</a>
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">👤 Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('auth.settings') }}" class="dropdown-item">⚙️ Settings</a>
+                        <a href="{{ url_for('auth.user_logout') }}" class="dropdown-item text-danger">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <style>
+        .user-nav {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .nav-logo-link:hover { text-decoration: underline; }
+        .nav-logo-link img { vertical-align: middle; }
+        .nav-title {
+            font-size: 0.875rem;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        /* Dropdown Styles */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #333;
+            padding: 0;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1;
+        }
+        .nav-dropdown-toggle:hover { background: #f5f5f5; }
+        .nav-user-toggle {
+            background: transparent;
+            padding: 0;
+        }
+        .user-avatar-small {
+            width: 24px;
+            height: 24px;
+            background: #0cd413;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 3px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            min-width: 200px;
+            padding: 0.5rem 0;
+            margin-top: 0;
+            z-index: 1001;
+        }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: transparent;
+        }
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 0.875rem;
+        }
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item.text-danger { color: #dc3545; }
+        .dropdown-item.text-danger:hover { background: #fef2f2; }
+        .dropdown-divider { height: 1px; background: #eee; margin: 0.5rem 0; }
+    </style>
+    
+    <div class="profile-container">
+    <div class="profile-header">
+        <h1>{{ current_user.display_name or current_user.username }}</h1>
+        <p class="username">@{{ current_user.username }}</p>
+        
+        {% if current_user.is_pro %}
+        <span class="badge badge-pro">PRO</span>
+        {% elif current_user.is_team %}
+        <span class="badge badge-team">TEAM</span>
+        {% else %}
+        <span class="badge badge-free">FREE</span>
+        {% endif %}
+    </div>
+    
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-value">{{ sequences_count }}</div>
+            <div class="stat-label">Sequences Created</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ current_user.is_verified and 'Verified' or 'Unverified' }}</div>
+            <div class="stat-label">Email Status</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ current_user.oauth_accounts|length }}</div>
+            <div class="stat-label">Linked Accounts</div>
+        </div>
+    </div>
+    
+    <div class="profile-sections">
+        <div class="profile-section">
+            <h2>Account Information</h2>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ current_user.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Username:</span>
+                <span class="info-value">{{ current_user.username }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Member Since:</span>
+                <span class="info-value">{{ current_user.created_at.strftime('%B %d, %Y') }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Last Login:</span>
+                <span class="info-value">{{ current_user.last_login.strftime('%B %d, %Y %H:%M') if current_user.last_login else 'Never' }}</span>
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <h2>Linked Accounts</h2>
+            {% if current_user.oauth_accounts %}
+            <ul class="linked-accounts">
+                {% for oauth in current_user.oauth_accounts %}
+                <li class="linked-account">
+                    <span class="provider-icon provider-{{ oauth.provider }}">{{ oauth.provider|title }}</span>
+                    <span class="connected-since">Connected {{ oauth.created_at.strftime('%B %Y') }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="no-accounts">No linked accounts</p>
+            {% endif %}
+        </div>
+        
+        <div class="profile-section">
+            <h2>Recent Activity</h2>
+            {% if recent_activity %}
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in recent_activity %}
+                    <tr>
+                        <td>{{ activity.action }}</td>
+                        <td><span class="category-badge">{{ activity.category }}</span></td>
+                        <td>{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="no-activity">No recent activity</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="profile-actions">
+        <a href="{{ url_for('auth.settings') }}" class="btn btn-secondary">Edit Profile</a>
+        <a href="{{ url_for('auth.dashboard') }}" class="btn btn-primary">Dashboard</a>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+    margin: 0;
+    color: #333;
+}
+
+.username {
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-pro {
+    background: #ffd700;
+    color: #333;
+}
+
+.badge-team {
+    background: #6366f1;
+    color: white;
+}
+
+.badge-free {
+    background: #e5e7eb;
+    color: #333;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 3px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0cd413;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+.profile-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.profile-section h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.25rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.info-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #333;
+}
+
+.linked-accounts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.linked-account {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.provider-icon {
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.provider-google {
+    background: #4285f4;
+    color: white;
+}
+
+.provider-github {
+    background: #24292e;
+    color: white;
+}
+
+.connected-since {
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.no-accounts, .no-activity {
+    color: #666;
+    font-style: italic;
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.activity-table th,
+.activity-table td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.activity-table th {
+    color: #666;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 3px;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #0cd413;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0ab811;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+</style>
+<script>
+    // Dropdown toggle for mobile/touch devices
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggle = document.getElementById('dropdownToggle');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdown = document.getElementById('userDropdown');
+
+        if (dropdownToggle && dropdownMenu && dropdown) {
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdownMenu.style.display = '';
+                }
+            });
+
+            dropdown.addEventListener('mouseenter', function() {
+                dropdownMenu.style.display = 'block';
+            });
+
+            dropdown.addEventListener('mouseleave', function() {
+                dropdownMenu.style.display = '';
+            });
+        }
+    });
+</script>
+
+</div>
+
+<!-- Microsoft Clarity Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w71gu3ru80");
+</script>
+</body>
+</html>

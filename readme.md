@@ -41,35 +41,38 @@ It's built to be straightforward and effective, helping you focus on the task at
     ```bash
     pip install -r requirements.txt
     ```
-4.  **Download Alarm Sounds:**
-    Navigate to the `static/` directory and download your desired MP3 alarm sounds. You can use `wget` or `curl`. Ensure the filenames match those referenced in the database migration (e.g., `alarm.mp3`, `beep.mp3`, etc.).
-    Example:
+4.  **Set up environment variables (Development):**
     ```bash
-    cd static/
-    # Replace with actual direct download links to CC0 or public domain MP3 files
-    # wget -O alarm.mp3 "https://example.com/alarm.mp3"
-    # wget -O beep.mp3 "https://example.com/beep.mp3"
-    # ... and so on for bell.mp3, chime.mp3, ding.mp3
-    cd ..
+    # Copy the example .env file
+    cp .env.example .env
+    
+    # Edit .env with your development values (optional - defaults work for dev)
+    nano .env
     ```
-    (Note: The default sounds from `app.py` are `alarm.mp3`, `beep.mp3`, `bell.mp3`, `chime.mp3`, `ding.mp3`. You need to ensure these files are present.)
-
-5.  **Initialize and apply database migrations:**
+5.  **Initialize the database:**
     ```bash
-    flask db init
-    flask db migrate -m "Initial migration" # Only if this is the first time running migrations
     flask db upgrade
-    # After adding the Sound table and initial data migration (see instructions from your collaborator), run:
-    flask db migrate -m "Add Sound table and initial data" # This will create a new migration script
-    # IMPORTANT: You MUST manually edit the newly created migration file to insert initial sound data.
-    # Follow the instructions provided by your collaborator for editing the upgrade/downgrade functions.
-    flask db upgrade # Apply the updated migration
     ```
 6.  **Run the application:**
     ```bash
     flask run --host=127.0.0.1 --port=5001
     ```
     Open your browser to `http://127.0.0.1:5001/`
+
+## Production Deployment
+
+For production deployment with proper security configuration, systemd service setup, SSL/TLS, and nginx reverse proxy, see **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
+**Quick Production Setup:**
+```bash
+# Generate secure keys
+FLASK_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+ADMIN_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
+
+# Create systemd service (see DEPLOYMENT.md for full template)
+sudo systemctl enable timerfreak
+sudo systemctl start timerfreak
+```
 
 
 # License

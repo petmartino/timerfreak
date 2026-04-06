@@ -65,7 +65,8 @@ body.dark-theme #text-bottom hr {
     display: flex;
     flex-wrap: wrap;
     /* Allows main sections to wrap */
-    align-content: stretch;
+    align-content: center;
+    justify-content: center;
 }
 
 .flex-container-internal {
@@ -273,7 +274,7 @@ textarea[name="timer_name[]"] {
     padding: .5em;
     /* Consistent padding inside input */
     border: 1px solid #ccc;
-    border-radius: 2px;
+    border-radius: 3px;
     /* Slight adjustment from original */
     font-size: .9em;
     /* Slight adjustment from original */
@@ -625,7 +626,7 @@ input[type="color"]::-moz-color-swatch {
 .overlay-content {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 3px;
     color: white;
     text-align: center;
     font-size: 1.2rem;
@@ -734,7 +735,7 @@ input[type="color"]::-moz-color-swatch {
 #footer {
     width: 100%;
     clear: both;
-    text-align: left;
+    text-align: center;
     /* Side padding applied via body, so just top/bottom here */
     padding-top: .5rem;
     padding-bottom: .5rem;
@@ -776,7 +777,7 @@ input[type="color"]::-moz-color-swatch {
     padding: 0;
     /* Base padding set here, adjusted when visible */
     border: 0px solid #ccc;
-    border-radius: 5px;
+    border-radius: 3px;
     background-color: rgba(0, 0, 0, 0.00);
     /* Nearly transparent */
     max-height: 0;
@@ -816,7 +817,7 @@ input[type="color"]::-moz-color-swatch {
     /* Main layout columns: side-by-side */
     .flex-container {
         flex-direction: row;
-        justify-content: left;
+        justify-content: center;
         align-items: flex-start;
     }
 
