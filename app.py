@@ -134,12 +134,12 @@ csrf = CSRFProtect(app)
 # Database configuration
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Support both instance/ and root-level database paths
-# (local dev uses instance/, some deployments use root level)
-if os.path.exists(os.path.join(basedir, 'instance', 'timerfreak.db')):
-    db_path = os.path.join(basedir, 'instance', 'timerfreak.db')
-elif os.path.exists(os.path.join(basedir, 'timerfreak.db')):
+# Support both root-level and instance/ database paths
+# Priority: 1) root-level timerfreak.db (production), 2) instance/ (local dev)
+if os.path.exists(os.path.join(basedir, 'timerfreak.db')):
     db_path = os.path.join(basedir, 'timerfreak.db')
+elif os.path.exists(os.path.join(basedir, 'instance', 'timerfreak.db')):
+    db_path = os.path.join(basedir, 'instance', 'timerfreak.db')
 else:
     # Default to instance/ for new deployments
     db_path = os.path.join(basedir, 'instance', 'timerfreak.db')
