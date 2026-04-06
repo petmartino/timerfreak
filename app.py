@@ -133,9 +133,24 @@ csrf = CSRFProtect(app)
 
 # Database configuration
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'timerfreak.db')
+
+# Support both instance/ and root-level database paths
+# (local dev uses instance/, some deployments use root level)
+if os.path.exists(os.path.join(basedir, 'instance', 'timerfreak.db')):
+    db_path = os.path.join(basedir, 'instance', 'timerfreak.db')
+elif os.path.exists(os.path.join(basedir, 'timerfreak.db')):
+    db_path = os.path.join(basedir, 'timerfreak.db')
+else:
+    # Default to instance/ for new deployments
+    db_path = os.path.join(basedir, 'instance', 'timerfreak.db')
+    os.makedirs(os.path.join(basedir, 'instance'), exist_ok=True)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['WTF_CSRF_TIME_LIMIT'] = 3600
+
+# Log database path on startup
+app.logger.info(f"Using database: {db_path}")
 
 # Session configuration for "Remember Me" functionality
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
