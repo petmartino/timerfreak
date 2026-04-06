@@ -299,13 +299,28 @@
 
         .timer-list-item {
             break-inside: avoid;
+            min-width: 0; /* Allow flex item to shrink below content size */
         }
 
-        @media (max-width: 768px) {
+        .timer-list-name {
+            max-width: 100%; /* Prevent overflow */
+            min-width: 0; /* Allow text to truncate */
+        }
+
+        /* Responsive columns: 3 -> 2 -> 1 */
+        @media (max-width: 900px) {
+            .category-grid {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 600px) {
             .category-grid {
                 column-count: 1;
             }
+        }
 
+        @media (max-width: 768px) {
             .nav-container {
                 flex-direction: row;
                 flex-wrap: wrap;
